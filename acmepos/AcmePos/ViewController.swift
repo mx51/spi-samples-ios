@@ -63,7 +63,7 @@ class ViewController: UIViewController {
         spi.start() // should only be called once here only after instantiation.
     }
 
-    @IBAction func savePosEfpos() {
+    @IBAction func savePosEftpos() {
         spi.eftposAddress = eftposTextField.text
         spi.posId = posIdTextField.text
         UserDefaults.standard.set(eftposTextField.text, forKey: "eftposAddress")
@@ -139,7 +139,7 @@ class ViewController: UIViewController {
 
     func pair() {
         SPILogMsg("vc pair")
-        savePosEfpos()
+        savePosEftpos()
         spi.pair()
     }
 
@@ -498,6 +498,7 @@ extension ViewController: SPIDelegate {
                 // B. Override Order as Paid in you POS - If Merchant is confident that payment went through.
                 // C. Cancel out of the order all together - If the customer has left / given up without paying
                 buffer += "# NOT SURE IF WE GOT PAID OR NOT. CHECK LAST TRANSACTION MANUALLY ON EFTPOS!\n"
+                buffer += "# RETRY (TH-5R), OVERRIDE AS PAID (TH-5D), CANCEL (TH-5C)\n"
             } else {
                 
                 // We have a result...

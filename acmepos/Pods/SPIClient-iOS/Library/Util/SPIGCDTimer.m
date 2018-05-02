@@ -41,20 +41,20 @@
     
     [self performWhileLocked:^{
         
-        if (_timer == nil) _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _queue);
+        if (self->_timer == nil) self->_timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self->_queue);
         
-        if (_timer) {
-            dispatch_source_set_timer(_timer, dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), delay * NSEC_PER_SEC, (1ull * NSEC_PER_SEC) / 10);
+        if (self->_timer) {
+            dispatch_source_set_timer(self->_timer, dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC), delay * NSEC_PER_SEC, (1ull * NSEC_PER_SEC) / 10);
             
-            dispatch_source_set_event_handler(_timer, ^{
-                block(_obj);
+            dispatch_source_set_event_handler(self->_timer, ^{
+                block(self->_obj);
                 
                 if (!repeat) {
                     [self _cancel];
                 }
             });
             
-            dispatch_resume(_timer);
+            dispatch_resume(self->_timer);
         }
     }];
 }

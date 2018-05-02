@@ -206,7 +206,6 @@
 				3FFE2EFD1FC82F4D00C5D79B /* Frameworks */,
 				3FFE2EFE1FC82F4D00C5D79B /* Resources */,
 				3E1F849ED1392D24E0E6DA75 /* [CP] Embed Pods Frameworks */,
-				BD5B36D1229D2224E91D5D19 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -226,7 +225,6 @@
 				3FFE2F151FC82F4E00C5D79B /* Frameworks */,
 				3FFE2F161FC82F4E00C5D79B /* Resources */,
 				1CF1DB605241BBF856C8B9A0 /* [CP] Embed Pods Frameworks */,
-				BEA2B2ABFA7CC2C86EE806CB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -363,36 +361,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AcmePos/Pods-AcmePos-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BD5B36D1229D2224E91D5D19 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AcmePos/Pods-AcmePos-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BEA2B2ABFA7CC2C86EE806CB /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AcmePosTests/Pods-AcmePosTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		E0CA50FFD33C6EB797E6E816 /* [CP] Check Pods Manifest.lock */ = {

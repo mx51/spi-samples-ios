@@ -161,6 +161,10 @@
     return [[NSDateFormatter dateNoTimeZoneFormatter] dateFromString:bankDateTimeString];
 }
 
+- (SPIMessageSuccessState)successState {
+    return self.message.successState;
+}
+
 - (NSString *)getResponseValue:(NSString *)attribute {
     if (!attribute) return @"";
     

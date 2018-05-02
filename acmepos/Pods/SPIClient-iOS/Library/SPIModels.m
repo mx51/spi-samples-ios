@@ -84,6 +84,9 @@
             
         case SPITransactionTypeSettle:
             return @"SETTLE";
+            
+        case SPITransactionTypeGetLastTransaction:
+            return @"GET_LAST_TRANSACTION";
     }
 }
 

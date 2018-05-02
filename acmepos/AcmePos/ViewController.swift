@@ -323,6 +323,15 @@ class ViewController: UIViewController {
             })
     }
     
+    @IBAction func showGetLastTx() {
+        spi.initiateGetLastTx(completion: { [weak self] pres in
+            guard let pres = pres, let `self` = self else { return }
+            
+            self.showAlert("EFTPOS - ", message: pres.isInitiated ? "# Get Last Transaction Initiated. Will be updated with Progress." : "# Could not initiate get last transaction: \(pres.message). Please Retry.")
+            
+        })
+    }
+    
 
 // MARK: - Alert Helpers
     
@@ -560,6 +569,20 @@ extension ViewController: SPIDelegate {
                         }
                         
                         self.appendReceipt(settleResponse.getReceipt())
+                    } else {
+                        // We did not even get a response, like in the case of a time-out.
+                    }
+                    
+                case .getLastTransaction:
+                    
+                    if let response = txFlowState.response, let gltResponse = SPIGetLastTransactionResponse(message: response) {
+                        buffer += "# Type: \(gltResponse.getTxType())\n"
+                        buffer += "# Amount: \(gltResponse.getAmount())\n"
+                        buffer += "# Success State: \(gltResponse.successState)\n"
+                        
+                        if let error = txFlowState.response.error {
+                            buffer += "# Error: \(error)\n"
+                        }
                     } else {
                         // We did not even get a response, like in the case of a time-out.
                     }

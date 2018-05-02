@@ -124,24 +124,31 @@
                                 <rect key="frame" x="334" y="644" width="445" height="140"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yy7-tI-Wkp">
-                                        <rect key="frame" x="190.5" y="0.0" width="64" height="41.5"/>
+                                        <rect key="frame" x="190.5" y="0.0" width="64" height="29"/>
                                         <state key="normal" title="Purchase"/>
                                         <connections>
                                             <action selector="showPurchase" destination="BYZ-38-t0r" eventType="touchUpInside" id="Nu1-w7-Gye"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="24a-yk-35u">
-                                        <rect key="frame" x="198" y="49.5" width="49" height="41"/>
+                                        <rect key="frame" x="198" y="37" width="49" height="29"/>
                                         <state key="normal" title="Refund"/>
                                         <connections>
                                             <action selector="showRefund" destination="BYZ-38-t0r" eventType="touchUpInside" id="R8j-NE-OwF"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w3p-Pc-fN3">
-                                        <rect key="frame" x="202.5" y="98.5" width="40" height="41.5"/>
+                                        <rect key="frame" x="202.5" y="74" width="40" height="29"/>
                                         <state key="normal" title="Settle"/>
                                         <connections>
                                             <action selector="showSettle" destination="BYZ-38-t0r" eventType="touchUpInside" id="bLr-SA-Daz"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kg5-ew-eDT">
+                                        <rect key="frame" x="151.5" y="111" width="142" height="29"/>
+                                        <state key="normal" title="Get Last Transaction"/>
+                                        <connections>
+                                            <action selector="showGetLastTx" destination="BYZ-38-t0r" eventType="touchUpInside" id="5Yi-se-IT7"/>
                                         </connections>
                                     </button>
                                 </subviews>

@@ -401,6 +401,33 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     });
 }
 
+- (void)initiateGetLastTxWithCompletion:(SPICompletionTxResult)completion {
+    __weak __typeof(& *self) weakSelf = self;
+    
+    dispatch_async(self.queue, ^{
+        if (weakSelf.state.status == SPIStatusUnpaired) return completion([[SPIInitiateTxResult alloc] initWithTxResult:NO message:@"Not paired"]);
+        
+        if (weakSelf.state.flow != SPIFlowIdle) return completion([[SPIInitiateTxResult alloc] initWithTxResult:NO message:@"Not idle"]);
+        
+        SPIGetLastTransactionRequest *gltRequest = [SPIGetLastTransactionRequest new];
+        
+        weakSelf.state.flow = SPIFlowTransaction;
+        SPIMessage *gltMessage = [gltRequest toMessage];
+        weakSelf.state.txFlowState = [[SPITransactionFlowState alloc] initWithTid:gltMessage.mid
+                                                                             type:SPITransactionTypeGetLastTransaction
+                                                                      amountCents:0
+                                                                          message:gltMessage
+                                                                              msg:@"Waiting for EFTPOS connection to make a get last transaction request"];
+        
+        if ([weakSelf send:gltMessage]) {
+            [weakSelf.state.txFlowState sent:@"Asked EFTPOS to get last transaction."];
+        }
+        
+        [weakSelf.delegate spi:weakSelf transactionFlowStateChanged:weakSelf.state.copy];
+        completion([[SPIInitiateTxResult alloc] initWithTxResult:YES message:@"Get last transaction initiated"]);
+    });
+}
+
 - (void)canceltransactionMonitoringTimer {
     [self.transactionMonitoringTimer cancel];
 }
@@ -700,14 +727,14 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     SPILog(@"Got last transaction. Attempting recovery.");
     [txState gotGltResponse];
     
-    SPIGetLastTransactionResponse *gtlResponse = [[SPIGetLastTransactionResponse alloc] initWithMessage:m];
+    SPIGetLastTransactionResponse *gltResponse = [[SPIGetLastTransactionResponse alloc] initWithMessage:m];
     
     NSDate *reqServerDate = [txState.requestDate dateByAddingTimeInterval:self.spiMessageStamp.serverTimeDelta];
     reqServerDate = [reqServerDate dateByAddingTimeInterval:txServerAdjustmentTimeInterval];
     //NSDate *gtlBankDate = gtlResponse.bankDate;
     
-    if (!gtlResponse.wasRetrievedSuccessfully) {
-        if (gtlResponse.wasOperationInProgressError) {
+    if (!gltResponse.wasRetrievedSuccessfully) {
+        if (gltResponse.wasOperationInProgressError) {
             // TH-4E - Operation In Progress
             SPILog(@"Operation still in progress... Stay waiting.");
         } else {
@@ -717,24 +744,57 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
         }
     } else {
         // TH-4A - Let's try to match the received last transaction against the current transaction
-        NSDate *reqServerDate = [txState.requestDate dateByAddingTimeInterval:self.spiMessageStamp.serverTimeDelta];
-        reqServerDate = [reqServerDate dateByAddingTimeInterval:txServerAdjustmentTimeInterval];
-        NSDate *gtlBankDate = gtlResponse.bankDate;
+        SPIMessageSuccessState successState = [self gltMatch:gltResponse
+                                                expectedType:txState.type
+                                              expectedAmount:txState.amountCents
+                                                 requestDate:txState.requestDate
+                                                    posRefId:@"_NOT_IMPL_YET"];
         
-        SPILog(@"Amount: %ld->%ld, Date: %@->%@", txState.amountCents, gtlResponse.getTransactionAmount, reqServerDate, gtlBankDate);
-        
-        if (txState.amountCents != gtlResponse.getTransactionAmount || [reqServerDate compare:gtlBankDate] == NSOrderedDescending) {
+        if (successState == SPIMessageSuccessStateUnknown) {
             // TH-4N: Didn't Match our transaction. Consider Unknown State.
             SPILog(@"Did not match transaction.");
             [txState unknownCompleted:@"Failed to recover transaction status. Check EFTPOS."];
         } else {
             // TH-4Y: We Matched, transaction finished, let's update ourselves
-            [gtlResponse copyMerchantReceiptToCustomerReceipt];
-            [txState completed:m.successState response:m msg:@"Transaction ended."];
+            [gltResponse copyMerchantReceiptToCustomerReceipt];
+            [txState completed:successState response:m msg:@"Transaction ended."];
         }
         
         [self.delegate spi:self transactionFlowStateChanged:self.state.copy];
     }
+}
+
+- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
+                      expectedType:(SPITransactionType)expectedType
+                    expectedAmount:(NSInteger)expectedAmount
+                       requestDate:(NSDate *)requestDate
+                          posRefId:(NSString *)posRefId {
+    // adjust request time for serverTime and also give 5 seconds slack.
+    NSDate *reqServerDate = [requestDate dateByAddingTimeInterval:self.spiMessageStamp.serverTimeDelta];
+    reqServerDate = [reqServerDate dateByAddingTimeInterval:txServerAdjustmentTimeInterval];
+    NSDate *gltBankDate = gltResponse.bankDate;
+    
+    // For now we use amount and date to match as best we can.
+    // In the future we will be able to pass our own pos_ref_id in the tx request that will be returned here.
+    SPILog(@"GLT CHECK: Type: %ld->%@, Amount: %ld->%ld, Date: %@->%@",
+           expectedType, gltResponse.getTxType,
+           expectedAmount, gltResponse.getTransactionAmount,
+           reqServerDate, gltBankDate);
+    
+    if (expectedAmount != gltResponse.getTransactionAmount) return SPIMessageSuccessStateUnknown;
+    
+    NSString *txType = gltResponse.getTxType;
+    if ([@"PURCHASE" isEqualToString:txType]) {
+        if (expectedType != SPITransactionTypePurchase) return SPIMessageSuccessStateUnknown;
+    } else if ([@"REFUND" isEqualToString:txType]) {
+        if (expectedType != SPITransactionTypeRefund) return SPIMessageSuccessStateUnknown;
+    } else {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    if ([reqServerDate compare:gltBankDate] == NSOrderedDescending) return SPIMessageSuccessStateUnknown;
+    
+    return gltResponse.successState;
 }
 
 - (void)transactionMonitoring {
@@ -1039,19 +1099,6 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
  */
 - (void)callGetLastTransaction {
     [self send:[[SPIGetLastTransactionRequest new] toMessage]];
-}
-
-/**
- *
- * Ask the PIN pad to tell us what the Most Recent Transaction was
- */
-- (void)getLastTransaction {
-    NSLog(@"getLastTransaction");
-    
-    // Create a GetLastTransactionRequest.
-    SPIGetLastTransactionRequest *gltRequest = [SPIGetLastTransactionRequest new];
-    SPILog(@"\nAsking EFTPOS to tell me what the most recent transaction was...");
-    [self.connection send:[[gltRequest toMessage] toJson:self.spiMessageStamp]]; // Send it to the PIN pad server
 }
 
 /**

@@ -164,4 +164,28 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  */
 - (void)initiateSettleTx:(NSString *)pid completion:(SPICompletionTxResult)completion;
 
+/**
+ * Initiates a get last transaction operation.
+ * Use this when you want to retrieve the most recent transaction that was processed by the EFTPOS.
+ * Be subscribed to TxFlowStateChanged to get updates on the process.
+ */
+- (void)initiateGetLastTxWithCompletion:(SPICompletionTxResult)completion;
+
+/**
+ * Attempts to conclude whether a gltResponse matches an expected transaction and returns the outcome.
+ * If Success/Failed is returned, it means that the GTL response did match, and that transaction was successful/failed.
+ * If Unknown is returned, it means that the gltResponse does not match the expected transaction.
+ *
+ * @param gltResponse    The gltResponse message to check.
+ * @param expectedType   The expected type (e.g. Purchase, Refund).
+ * @param expectedAmount The expected amount in cents.
+ * @param requestDate    The time you made your request.
+ * @param posRefId       The reference ID that you passed in with the original request. Currently not used.
+ */
+- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
+                      expectedType:(SPITransactionType)expectedType
+                    expectedAmount:(NSInteger)expectedAmount
+                       requestDate:(NSDate *)requestDate
+                          posRefId:(NSString *)posRefId;
+
 @end

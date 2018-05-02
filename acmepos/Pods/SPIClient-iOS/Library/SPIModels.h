@@ -41,6 +41,7 @@ typedef NS_ENUM (NSUInteger, SPITransactionType) {
     SPITransactionTypePurchase,
     SPITransactionTypeRefund,
     SPITransactionTypeSettle,
+    SPITransactionTypeGetLastTransaction,
 };
 
 /**

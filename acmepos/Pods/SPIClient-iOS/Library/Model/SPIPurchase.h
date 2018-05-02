@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SPIMessage.h"
 
 @class SPIMessage;
 
@@ -52,6 +53,7 @@
 @property (nonatomic, strong) SPIMessage       *message;
 @property (nonatomic, copy, readonly) NSString *bankDateTimeString;
 @property (nonatomic, copy, readonly) NSDate   *bankDate;
+@property (nonatomic) SPIMessageSuccessState   successState;
 
 - (instancetype)initWithMessage:(SPIMessage *)message;
 

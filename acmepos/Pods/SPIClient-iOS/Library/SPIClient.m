@@ -731,7 +731,6 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     
     NSDate *reqServerDate = [txState.requestDate dateByAddingTimeInterval:self.spiMessageStamp.serverTimeDelta];
     reqServerDate = [reqServerDate dateByAddingTimeInterval:txServerAdjustmentTimeInterval];
-    //NSDate *gtlBankDate = gtlResponse.bankDate;
     
     if (!gltResponse.wasRetrievedSuccessfully) {
         if (gltResponse.wasOperationInProgressError) {
@@ -743,21 +742,28 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
             [txState unknownCompleted:@"Unexpected error when recovering transaction status. Check EFTPOS."];
         }
     } else {
-        // TH-4A - Let's try to match the received last transaction against the current transaction
-        SPIMessageSuccessState successState = [self gltMatch:gltResponse
-                                                expectedType:txState.type
-                                              expectedAmount:txState.amountCents
-                                                 requestDate:txState.requestDate
-                                                    posRefId:@"_NOT_IMPL_YET"];
-        
-        if (successState == SPIMessageSuccessStateUnknown) {
-            // TH-4N: Didn't Match our transaction. Consider Unknown State.
-            SPILog(@"Did not match transaction.");
-            [txState unknownCompleted:@"Failed to recover transaction status. Check EFTPOS."];
-        } else {
-            // TH-4Y: We Matched, transaction finished, let's update ourselves
+        if (txState.type == SPITransactionTypeGetLastTransaction) {
+            // THIS WAS A PLAIN GET LAST TRANSACTION REQUEST, NOT FOR RECOVERY PURPOSES.
+            SPILog(@"Retrieved last transaction as asked directly by the user.");
             [gltResponse copyMerchantReceiptToCustomerReceipt];
-            [txState completed:successState response:m msg:@"Transaction ended."];
+            [txState completed:gltResponse.successState response:m msg:@"Last transaction retrieved"];
+        } else {
+            // TH-4A - Let's try to match the received last transaction against the current transaction
+            SPIMessageSuccessState successState = [self gltMatch:gltResponse
+                                                    expectedType:txState.type
+                                                  expectedAmount:txState.amountCents
+                                                     requestDate:txState.requestDate
+                                                        posRefId:@"_NOT_IMPL_YET"];
+            
+            if (successState == SPIMessageSuccessStateUnknown) {
+                // TH-4N: Didn't Match our transaction. Consider Unknown State.
+                SPILog(@"Did not match transaction.");
+                [txState unknownCompleted:@"Failed to recover transaction status. Check EFTPOS."];
+            } else {
+                // TH-4Y: We Matched, transaction finished, let's update ourselves
+                [gltResponse copyMerchantReceiptToCustomerReceipt];
+                [txState completed:successState response:m msg:@"Transaction ended."];
+            }
         }
         
         [self.delegate spi:self transactionFlowStateChanged:self.state.copy];

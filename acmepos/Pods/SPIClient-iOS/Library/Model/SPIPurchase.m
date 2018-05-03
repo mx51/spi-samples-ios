@@ -123,7 +123,9 @@
 }
 
 - (NSString *)getTxType {
-    return (NSString *)self.message.data[@"transaction_type"] ?: @"";
+    NSObject *v = self.message.data[@"transaction_type"];
+    if ([v isKindOfClass:[NSString class]]) return (NSString *)v;
+    return @"";
 }
 
 - (NSString *)getSchemeName {

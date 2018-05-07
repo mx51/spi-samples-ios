@@ -99,11 +99,11 @@ NSString * const SPIEventError           = @"error";
 }
 
 - (BOOL)isSuccess {
-    return ((NSString *)_data[@"success"]).boolValue;
+    return [self getDataBoolValue:@"success"];
 }
 
 - (NSString *)error {
-    return (NSString *)_data[@"error_reason"];
+    return [self getDataStringValue:@"error_reason"];
 }
 
 - (NSTimeInterval)serverTimeDelta {
@@ -117,7 +117,7 @@ NSString * const SPIEventError           = @"error";
         if (!self.data) {
             _successState = SPIMessageSuccessStateUnknown;
         } else {
-            _successState = ((NSString *)self.data[@"success"]).boolValue ? SPIMessageSuccessStateSuccess : SPIMessageSuccessStateFailed;
+            _successState = [self getDataBoolValue:@"success"] ? SPIMessageSuccessStateSuccess : SPIMessageSuccessStateFailed;
         }
     }
     
@@ -176,6 +176,36 @@ NSString * const SPIEventError           = @"error";
     }
     
     return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+}
+
+- (NSString *)getDataStringValue:(NSString *)attribute {
+    NSObject *v = self.data[attribute];
+    if ([v isKindOfClass:[NSString class]]) return (NSString *)v;
+    return @"";
+}
+
+- (NSInteger)getDataIntegerValue:(NSString *)attribute {
+    NSObject *v = self.data[attribute];
+    if (v != [NSNull null]) return ((NSString *)v).integerValue;
+    return 0;
+}
+
+- (BOOL)getDataBoolValue:(NSString *)attribute {
+    NSObject *v = self.data[attribute];
+    if (v != [NSNull null]) return ((NSString *)v).boolValue;
+    return false;
+}
+
+- (NSDictionary *)getDataDictionaryValue:(NSString *)attribute {
+    NSObject *v = self.data[attribute];
+    if ([v isKindOfClass:[NSDictionary class]]) return (NSDictionary *)v;
+    return [NSDictionary new];
+}
+
+- (NSArray *)getDataArrayValue:(NSString *)attribute {
+    NSObject *v = self.data[attribute];
+    if ([v isKindOfClass:[NSArray class]]) return (NSArray *)v;
+    return [NSArray new];
 }
 
 + (SPIMessage *)fromJson:(NSString *)msgJson secrets:(SPISecrets *)secrets {

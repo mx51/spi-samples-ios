@@ -28,8 +28,8 @@
     
     if (self) {
         _requestId = message.mid;
-        _aenc      = ((NSDictionary *)message.data[@"enc"])[@"A"];
-        _ahmac     = ((NSDictionary *)message.data[@"hmac"])[@"A"];
+        _aenc      = [message getDataDictionaryValue:@"enc"][@"A"];
+        _ahmac     = [message getDataDictionaryValue:@"hmac"][@"A"];
     }
     
     return self;
@@ -82,7 +82,7 @@
     self = [super init];
     
     if (self) {
-        _isSuccess = ((NSString *)message.data[@"success"]).boolValue;
+        _isSuccess = [message getDataBoolValue:@"success"];
     }
     
     return self;

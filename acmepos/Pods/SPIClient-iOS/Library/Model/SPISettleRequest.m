@@ -44,11 +44,11 @@
 }
 
 - (NSString *)getResponseText {
-    return (NSString *)self.message.data[@"host_response_text"] ?: @"";
+    return [self.message getDataStringValue:@"host_response_text"];
 }
 
 - (NSString *)getReceipt {
-    return (NSString *)self.message.data[@"merchant_receipt"] ?: @"";
+    return [self.message getDataStringValue:@"merchant_receipt"];
 }
 
 @end

@@ -109,6 +109,16 @@ typedef NS_ENUM (NSInteger, SPIMessageSuccessState) {
 
 - (instancetype)initWithDict:(NSDictionary *)dict;
 
+- (NSString *)getDataStringValue:(NSString *)attribute;
+
+- (NSInteger)getDataIntegerValue:(NSString *)attribute;
+
+- (BOOL)getDataBoolValue:(NSString *)attribute;
+
+- (NSDictionary *)getDataDictionaryValue:(NSString *)attribute;
+
+- (NSArray *)getDataArrayValue:(NSString *)attribute;
+
 - (NSString *)toJson:(SPIMessageStamp *)stamp;
 
 + (SPIMessage *)fromJson:(NSString *)msgJson secrets:(SPISecrets *)secrets;

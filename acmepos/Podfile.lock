@@ -2,13 +2,13 @@ PODS:
   - PMAlertController (3.2.0)
   - RNCryptor-objc (3.0.5)
   - SocketRocket (0.5.1)
-  - SPIClient-iOS (2.0.3):
+  - SPIClient-iOS (2.0.5):
     - RNCryptor-objc
     - SocketRocket
 
 DEPENDENCIES:
   - PMAlertController (from `https://github.com/mokten/PMAlertController.git`, branch `develop`)
-  - SPIClient-iOS (~> 2.0.3)
+  - SPIClient-iOS (~> 2.0.5)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -30,8 +30,8 @@ SPEC CHECKSUMS:
   PMAlertController: 5ed781ed6849c9d810480925c44a089c8e4fa41d
   RNCryptor-objc: a65b15493de05dda4af0f392c70372b7a5625aab
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
-  SPIClient-iOS: a2bdacf23c690575368e9fffd4ba825bbaf1f881
+  SPIClient-iOS: 94c4b4fd6b5f23e1c600d627a565512ccf3fb562
 
-PODFILE CHECKSUM: ce17d5af254fce2985e7aa4915aacbcd67683c27
+PODFILE CHECKSUM: fdc5115db54ab4c7b1b864aaee0d449bab875f17
 
 COCOAPODS: 1.5.0

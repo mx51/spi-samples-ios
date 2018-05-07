@@ -29,8 +29,8 @@
     self = [super init];
     
     if (self) {
-        _isSuccess = ((NSString *)message.data[@"success"]).boolValue;
-        _expires   = (NSString *)message.data[@"expires_datetime"];
+        _isSuccess = [message getDataBoolValue:@"success"];
+        _expires   = [message getDataStringValue:@"expires_datetime"];
     }
     
     return self;

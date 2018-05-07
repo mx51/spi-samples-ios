@@ -42,7 +42,7 @@
     if (self) {
         _message       = message;
         _requestid     = message.mid;
-        _schemeName = (NSString *)message.data[@"scheme_name"];
+        _schemeName    = [message getDataStringValue:@"scheme_name"];
         _isSuccess     = message.successState == SPIMessageSuccessStateSuccess;
     }
     
@@ -51,25 +51,23 @@
 }
 
 - (NSString *)getRRN {
-    return (NSString *)self.message.data[@"rrn"] ?: @"";
+    return [self.message getDataStringValue:@"rrn"];
 }
 
 - (NSString *)getCustomerReceipt {
-    return (NSString *)self.message.data[@"customer_receipt"] ?: @"";
+    return [self.message getDataStringValue:@"customer_receipt"];
 }
 
 - (NSString *)getResponseText {
-    return (NSString *)self.message.data[@"host_response_text"] ?: @"";
+    return [self.message getDataStringValue:@"host_response_text"];
 }
 
 - (NSString *)getResponseValueWithAttribute:(NSString *)attribute {
-    if (!attribute) return @"";
-    
-    return (NSString *)self.message.data[attribute] ?: @"";
+    return [self.message getDataStringValue:attribute];
 }
 
 - (NSString *)hostResponseText {
-    return (NSString *)self.message.data[@"host_response_text"];
+    return [self.message getDataStringValue:@"host_response_text"];
 }
 
 @end
@@ -123,31 +121,29 @@
 }
 
 - (NSString *)getTxType {
-    NSObject *v = self.message.data[@"transaction_type"];
-    if ([v isKindOfClass:[NSString class]]) return (NSString *)v;
-    return @"";
+    return [self.message getDataStringValue:@"transaction_type"];
 }
 
 - (NSString *)getSchemeName {
-    return (NSString *)self.message.data[@"scheme_name"] ?: @"";
+    return [self.message getDataStringValue:@"scheme_name"];
 }
 
 - (NSInteger)getAmount {
-    return ((NSString *)self.message.data[@"amount_purchase"]).integerValue;
+    return [self.message getDataIntegerValue:@"amount_purchase"];
 }
 
 - (NSInteger)getTransactionAmount {
-    return ((NSString *)self.message.data[@"amount_transaction_type"]).integerValue;
+    return [self.message getDataIntegerValue:@"amount_transaction_type"];
 }
 
 - (NSString *)getRRN {
-    return (NSString *)self.message.data[@"rrn"] ?: @"";
+    return [self.message getDataStringValue:@"rrn"];
 }
 
 - (NSString *)getBankDateTimeString {
     // bank_date":"07092017","bank_time":"152137"
-    NSString *date = (NSString *)self.message.data[@"bank_date"];
-    NSString *time = (NSString *)self.message.data[@"bank_time"];
+    NSString *date = [self.message getDataStringValue:@"bank_date"];
+    NSString *time = [self.message getDataStringValue:@"bank_time"];
     
     if (!date || !time) return nil;
     
@@ -174,8 +170,8 @@
 }
 
 - (void)copyMerchantReceiptToCustomerReceipt {
-    NSString *cr = (NSString *)self.message.data[@"customer_receipt"];
-    NSString *mr = (NSString *)self.message.data[@"merchant_receipt"];
+    NSString *cr = [self.message getDataStringValue:@"customer_receipt"];
+    NSString *mr = [self.message getDataStringValue:@"merchant_receipt"];
     
     if (cr.length != 0 && mr.length != 0) {
         NSMutableDictionary *data = self.message.data.mutableCopy;
@@ -218,7 +214,7 @@
     if (self) {
         _message       = message;
         _requestId     = message.mid;
-        _schemeName = (NSString *)message.data[@"scheme_name"];
+        _schemeName    = [message getDataStringValue:@"scheme_name"];
         _isSuccess     = message.isSuccess;
     }
     
@@ -227,19 +223,19 @@
 }
 
 - (NSString *)getRRN {
-    return (NSString *)self.message.data[@"rrn"] ?: @"";
+    return [self.message getDataStringValue:@"rrn"];
 }
 
 - (NSString *)getCustomerReceipt {
-    return (NSString *)self.message.data[@"customer_receipt"] ?: @"";
+    return [self.message getDataStringValue:@"customer_receipt"];
 }
 
 - (NSString *)getMerchantReceipt {
-    return (NSString *)self.message.data[@"merchant_receipt"] ?: @"";
+    return [self.message getDataStringValue:@"merchant_receipt"];
 }
 
 - (NSString *)getResponseText {
-    return (NSString *)self.message.data[@"host_response_text"] ?: @"";
+    return [self.message getDataStringValue:@"host_response_text"];
 }
 
 - (NSString *)getResponseValue:(NSString *)attribute {
@@ -266,7 +262,7 @@
 }
 
 - (NSString *)getMerchantReceipt {
-    return (NSString *)self.message.data[@"merchant_receipt"] ?: @"";
+    return [self.message getDataStringValue:@"merchant_receipt"];
 }
 
 @end

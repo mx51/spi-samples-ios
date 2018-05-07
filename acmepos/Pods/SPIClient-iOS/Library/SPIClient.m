@@ -72,12 +72,12 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     self = [super init];
     
     if (self) {
-        _queue = dispatch_queue_create("au.com.assemblypayments", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0));
+        _queue = dispatch_queue_create("com.assemblypayments", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0));
         
-        _pingTimer                     = [[SPIGCDTimer alloc] initWithObject:self queue:"au.com.assemblypayments.ping"];
-        _disconnectIfNeededSourceTimer = [[SPIGCDTimer alloc] initWithObject:self queue:"au.com.assemblypayments.disconnect"];
-        _transactionMonitoringTimer    = [[SPIGCDTimer alloc] initWithObject:self queue:"au.com.assemblypayments.txMonitor"];
-        _tryToReconnectTimer           = [[SPIGCDTimer alloc] initWithObject:self queue:"au.com.assemblypayments.tryToReconnect"];
+        _pingTimer                     = [[SPIGCDTimer alloc] initWithObject:self queue:"com.assemblypayments.ping"];
+        _disconnectIfNeededSourceTimer = [[SPIGCDTimer alloc] initWithObject:self queue:"com.assemblypayments.disconnect"];
+        _transactionMonitoringTimer    = [[SPIGCDTimer alloc] initWithObject:self queue:"com.assemblypayments.txMonitor"];
+        _tryToReconnectTimer           = [[SPIGCDTimer alloc] initWithObject:self queue:"com.assemblypayments.tryToReconnect"];
         
         _state = [SPIState new];
     }

@@ -5,7 +5,7 @@ use_frameworks!
 source 'https://github.com/CocoaPods/Specs.git'
 
 def import_pods
-    pod 'SPIClient-iOS', '~> 2.0.4'
+    pod 'SPIClient-iOS', '~> 2.0.5'
     pod 'PMAlertController',  :git => 'https://github.com/mokten/PMAlertController.git', :branch => 'develop'  
 end
 

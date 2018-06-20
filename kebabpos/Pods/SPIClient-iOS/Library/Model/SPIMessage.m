@@ -121,11 +121,11 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
 }
 
 - (NSString *)error {
-    return [self getDataStringValue:@"error_detail"];
+    return [self getDataStringValue:@"error_reason"];
 }
 
 - (NSString *)errorDetail {
-    return [self getDataStringValue:@"error_reason"];
+    return [self getDataStringValue:@"error_detail"];
 }
 
 - (NSTimeInterval)serverTimeDelta {

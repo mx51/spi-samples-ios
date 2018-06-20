@@ -8,6 +8,7 @@
 
 #import "NSObject+Util.h"
 #import "NSString+Util.h"
+#import "NSDate+Util.h"
 #import "SPICashout.h"
 #import "SPIClient.h"
 #import "SPIConnection.h"
@@ -270,28 +271,16 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     [self onPairingFailed];
 }
 
-- (void)unpair {
-    __weak __typeof(&*self) weakSelf = self;
-    
-    dispatch_async(self.queue, ^{
-        NSLog(@"unpair");
-        
-        if (weakSelf.state.status == SPIStatusUnpaired)
-            return;
-        
-        if (weakSelf.state.flow != SPIFlowIdle)
-            return;
-        
-        weakSelf.state.status = SPIStatusUnpaired;
-        weakSelf.state.pairingFlowState = nil;
-        weakSelf.state.txFlowState = nil;
-        [weakSelf.delegate spi:self statusChanged:weakSelf.state];
-        
-        [weakSelf.connection disconnect];
-        weakSelf.secrets = nil;
-        weakSelf.spiMessageStamp.secrets = nil;
-        [weakSelf.delegate spi:weakSelf secretsChanged:nil state:weakSelf.state];
-    });
+- (BOOL)unpair {
+    if (_state.status == SPIStatusUnpaired) {
+        return false;
+    }
+    if (_state.flow != SPIFlowIdle) {
+        return false;
+    }
+    [self send:[[[SPIDropKeysRequest alloc] init] toMessage]];
+    [self doUnpair];
+    return true;
 }
 
 #pragma mark - Transactions
@@ -483,6 +472,7 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                                        amountCents:amountCents];
         refund.config = weakSelf.config;
         weakSelf.state.flow = SPIFlowTransaction;
+        
         SPIMessage *purchaseMessage = [refund toMessage];
         weakSelf.state.txFlowState = [[SPITransactionFlowState alloc]
                                       initWithTid:pid
@@ -492,6 +482,7 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                                       msg:[NSString
                                            stringWithFormat:@"Waiting for EFTPOS connection to make refund request for $%.2f",
                                            amountCents / 100.0]];
+        [self.delegate spi:self transactionFlowStateChanged:weakSelf.state.txFlowState];
         
         if ([weakSelf send:purchaseMessage]) {
             [weakSelf.state.txFlowState
@@ -1366,23 +1357,18 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                 needsPublishing = YES;
                 
             } else if (state.isRequestSent &&
-                       [now compare:[state.lastStateRequestTime
-                                     dateByAddingTimeInterval:
-                                     checkOnTxFrequency]] ==
-                       NSOrderedDescending) {
+                       [now compare:[state.lastStateRequestTime dateByAddingTimeInterval: checkOnTxFrequency]] ==  NSOrderedDescending) {
                 
                 // TH-1T, TH-4T - It's been a while since we received an update,
                 // let's call a GLT
-                SPILog(@"Checking on our transaction. Last we asked was at %@...",
-                       state.lastStateRequestTime);
+                SPILog(@"Checking on our transaction. Last we asked was at %@...", [state.lastStateRequestTime toString]);
                 [txState callingGlt];
                 [weakSelf callGetLastTransaction];
             }
         }
         
         if (needsPublishing) {
-            [weakSelf.delegate spi:weakSelf
-       transactionFlowStateChanged:weakSelf.state];
+            [weakSelf.delegate spi:weakSelf transactionFlowStateChanged:weakSelf.state];
         }
     });
 }

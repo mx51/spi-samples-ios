@@ -238,17 +238,15 @@
 }
 
 - (BOOL)wasOperationInProgressError {
-    return [self.message.error isEqualToString:@"OPERATION_IN_PROGRESS"];
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS"];
 }
 
 - (BOOL)isWaitingForSignatureResponse {
-    return [self.message.error
-            isEqualToString:@"OPERATION_IN_PROGRESS_AWAITING_SIGNATURE"];
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS_AWAITING_SIGNATURE"];
 }
 
 - (BOOL)isWaitingForAuthCode {
-    return [self.message.error
-            hasPrefix:@"OPERATION_IN_PROGRESS_AWAITING_PHONE_AUTH_CODE"];
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS_AWAITING_PHONE_AUTH_CODE"];
 }
 
 - (BOOL)isStillInProgress:(NSString *)posRefId {

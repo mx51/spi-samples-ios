@@ -150,7 +150,7 @@ secretsChanged:(SPISecrets *)secrets
  * The CurrentState is then changed to Unpaired.
  * Call this only if you are not yet in the Unpaired state.
  */
-- (void)unpair;
+- (BOOL)unpair;
 
 /**
  * Initiates a purchase transaction. Be subscribed to TxFlowStateChanged event

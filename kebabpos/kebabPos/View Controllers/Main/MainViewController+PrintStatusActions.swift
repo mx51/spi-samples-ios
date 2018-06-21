@@ -40,19 +40,19 @@ extension MainViewController {
             logMessage(String(format: "# Attempting to Cancel : %@", NSNumber(booleanLiteral: txState.isAttemptingToCancel)))
             logMessage(String(format: "# Finished: %@", NSNumber(booleanLiteral: txState.isFinished)))
             logMessage(String(format: "# Success: %@", txState.successState.name))
-
+            
             if (txState.isAwaitingSignatureCheck) {
                 // We need to print the receipt for the customer to sign.
                 logMessage(String(format: "# RECEIPT TO PRINT FOR SIGNATURE"))
                 logMessage(txState.signatureRequiredMessage.getMerchantReceipt())
             }
-
+            
             if (txState.isAwaitingPhoneForAuth) {
                 logMessage(String(format: "# PHONE FOR AUTH DETAILS:"))
                 logMessage(String(format: "# CALL: {txState.PhoneForAuthRequiredMessage.getPhoneNumber()}"))
                 logMessage(String(format: "# QUOTE: Merchant Id: {txState.PhoneForAuthRequiredMessage.getMerchantId()}"))
             }
-
+            
             if (txState.isFinished) {
                 switch (txState.type) {
                 case .purchase:
@@ -73,7 +73,7 @@ extension MainViewController {
                 case .settleEnquiry:
                     handleFinishedSettlementEnquiry(txState: txState)
                     break
-
+                    
                 case .getLastTransaction:
                     handleFinishedGetLastTransaction(txState: txState)
                     break
@@ -84,9 +84,9 @@ extension MainViewController {
             }
         case .idle:
             break
-
+            
         }
-
+        
     }
     func handleFinishedPurchase(txState: SPITransactionFlowState) {
         let purchaseResponse: SPIPurchaseResponse
@@ -126,7 +126,7 @@ extension MainViewController {
             break
         }
     }
-
+    
     func handleFinishedRefund(txState: SPITransactionFlowState) {
         let refundResponse: SPIRefundResponse
         switch (txState.successState) {
@@ -158,10 +158,10 @@ extension MainViewController {
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
             break
-
+            
         }
     }
-
+    
     func handleFinishedCashout(txState: SPITransactionFlowState) {
         var cashoutResponse: SPICashoutOnlyResponse
         switch (txState.successState) {
@@ -195,34 +195,30 @@ extension MainViewController {
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
             break
-
+            
         }
     }
     func handleFinishedMoto(txState: SPITransactionFlowState) {
-        var motoResponse: SPIMotoPurchaseResponse
-        var purchaseResponse: SPIPurchaseResponse
         switch (txState.successState) {
         case .success:
             logMessage(String(format: "# WOOHOO - WE GOT MOTO-PAID!"))
-            motoResponse = SPIMotoPurchaseResponse(message: txState.response)
-            purchaseResponse = motoResponse.purchaseResponse
-            logMessage(String(format: "# Response: %@", purchaseResponse.getText()))
-            logMessage(String(format: "# RRN: %@", purchaseResponse.getRRN()))
-            logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
-            logMessage(String(format: "# Card Entry: %@", purchaseResponse.getCardEntry()))
-            logMessage(String(format: "# Customer Receipt:"))
-            logMessage((!purchaseResponse.wasCustomerReceiptPrinted() ? purchaseResponse.getCustomerReceipt() : "# PRINTED FROM EFTPOS"))
-            logMessage(String(format: "# PURCHASE: %@", purchaseResponse.getPurchaseAmount()))
-            logMessage(String(format: "# BANKED NON-CASH AMOUNT: %@", purchaseResponse.getBankNonCashAmount()))
-            logMessage(String(format: "# BANKED CASH AMOUNT: %@", purchaseResponse.getBankCashAmount()))
+            if let motoResponse = SPIMotoPurchaseResponse(message: txState.response),let purchaseResponse = motoResponse.purchaseResponse {
+                logMessage(String(format: "# Response: %@", purchaseResponse.getText()))
+                logMessage(String(format: "# RRN: %@", purchaseResponse.getRRN()))
+                logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
+                logMessage(String(format: "# Card Entry: %@", purchaseResponse.getCardEntry()))
+                logMessage(String(format: "# Customer Receipt:"))
+                logMessage((!purchaseResponse.wasCustomerReceiptPrinted() ? purchaseResponse.getCustomerReceipt() : "# PRINTED FROM EFTPOS"))
+                logMessage(String(format: "# PURCHASE: %.2f", purchaseResponse.getPurchaseAmount()))
+                logMessage(String(format: "# BANKED NON-CASH AMOUNT: %.2f", purchaseResponse.getBankNonCashAmount()))
+                logMessage(String(format: "# BANKED CASH AMOUNT: %.2f", purchaseResponse.getBankCashAmount()))
+            }
             break
         case .failed:
             logMessage(String(format: "# WE DID NOT GET MOTO-PAID :("))
             logMessage(String(format: "# Error: %@", txState.response.error))
             logMessage(String(format: "# Error Detail: %@", txState.response.errorDetail))
-            if (txState.response != nil) {
-                motoResponse = SPIMotoPurchaseResponse(message: txState.response)
-                purchaseResponse = motoResponse.purchaseResponse
+            if let response = txState.response , let motoResponse = SPIMotoPurchaseResponse(message: response),let purchaseResponse = motoResponse.purchaseResponse  {
                 logMessage(String(format: "# Response: %@", purchaseResponse.getText()))
                 logMessage(String(format: "# RRN: %@", purchaseResponse.getRRN()))
                 logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
@@ -237,11 +233,11 @@ extension MainViewController {
             break
         }
     }
-
+    
     func handleFinishedGetLastTransaction(txState: SPITransactionFlowState) {
         if (txState.response != nil) {
             let gltResponse = SPIGetLastTransactionResponse(message: txState.response)
-
+            
             if (_lastCmd.count > 1) {
                 // User specified that he intended to retrieve a specific tx by pos_ref_id
                 // This is how you can use a handy function to match it.
@@ -252,7 +248,7 @@ extension MainViewController {
                     logMessage(String(format: "# Tx Matched Expected Purchase Request."))
                 }
             }
-
+            
             if let purchaseResponse = SPIPurchaseResponse(message: txState.response) {
                 logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
                 logMessage(String(format: "# Response: %@", purchaseResponse.getText()))
@@ -266,7 +262,7 @@ extension MainViewController {
             logMessage(String(format: "# Could Not Retrieve Last Transaction."))
         }
     }
-
+    
     func HandleFinishedSettle(txState: SPITransactionFlowState) {
         switch (txState.successState) {
         case .success:
@@ -289,12 +285,12 @@ extension MainViewController {
                 for  s in schemes ?? [] {
                     logMessage(String(format: "# %@", s))
                 }
-
+                
             }
             break
         case .failed:
             logMessage(String(format: "# SETTLEMENT FAILED!"))
-            if let settleResponse =  SPISettlement(message: txState.response) {
+            if let response = txState.response, let settleResponse =  SPISettlement(message: response) {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Error: %@", txState.response.error))
                 logMessage(String(format: "# Merchant Receipt:"))
@@ -306,7 +302,7 @@ extension MainViewController {
             break
         }
     }
-
+    
     func handleFinishedSettlementEnquiry(txState: SPITransactionFlowState) {
         switch (txState.successState) {
         case .success:
@@ -333,7 +329,7 @@ extension MainViewController {
             break
         case .failed:
             logMessage(String(format: "# SETTLEMENT ENQUIRY FAILED!"))
-            if let settleResponse = SPISettlement(message: txState.response) {
+            if let response = txState.response, let settleResponse = SPISettlement(message: response) {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Error: %@", txState.response.error))
                 logMessage(String(format: "# Merchant Receipt:"))

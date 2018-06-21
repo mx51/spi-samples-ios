@@ -45,7 +45,9 @@ extension MainViewController {
 
         if client.state.flow == .idle {
             //clear UI
-            self.presentedViewController?.dismiss(animated: false, completion: nil)
+            if (self.navigationController?.topViewController == self){
+                self.presentedViewController?.dismiss(animated: false, completion: nil)
+            }
         }
         if (client.state.flow == .pairing) {
             if (client.state.pairingFlowState.isAwaitingCheckFromPos) {

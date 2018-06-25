@@ -22,6 +22,11 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
     }
     @IBAction func pairButtonClicked(_ sender: Any) {
+        if (KebabApp.current.client.state.status != .unpaired )
+        {
+            showAlert(title: "Can not start pairing", message: "SPI Client status: \(KebabApp.current.client.state.status.name)")
+            return
+        }
         KebabApp.current.settings.posId = txtPosId.text
         KebabApp.current.client.posId = txtPosId.text
 
@@ -71,6 +76,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
             switch state.flow {
             case .idle:
+                
                 break
             case .pairing:
                 KebabApp.current.client.ackFlowEndedAndBack { (alreadyInIdle, state) in
@@ -136,9 +142,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             // error
             alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         }
-        DispatchQueue.main.async {
-            self.showAlert(alertController: alertVC)
-        }
+        self.showAlert(alertController: alertVC)
 
     }
 

@@ -34,6 +34,15 @@ extension MainViewController {
         client.enablePayAtTable()
         client.initiatePurchaseTxV2(posRefId, purchaseAmount: amount, tipAmount: tipAmount, cashoutAmount: cashout, promptForCashout: promptCashout, completion: printResult)
     }
+    @IBAction func btnMotoClicked(_ sender: Any) {
+        let posRefId = "kebab-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { //Amount Cents
+            return
+        }
+        client.initiateMotoPurchaseTx(posRefId, amountCents: amount, completion: printResult)
+        
+    }
     @IBAction func btnRefundClicked(_ sender: Any) {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
 

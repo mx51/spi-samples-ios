@@ -28,3 +28,6 @@ xcuserdata/
 *.dSYM.zip
 *.dSYM
 
+#Cocoa Pods
+Podfile.lock
+Pods/

@@ -21,6 +21,18 @@ extension SPIMessageSuccessState {
         }
     }
 }
+extension SPIStatus {
+    var name:String {
+        switch self {
+        case .unpaired:
+            return "Unpaired"
+        case .pairedConnecting:
+            return "Connecting"
+        case .pairedConnected:
+            return "Connected"
+        }
+    }
+}
 extension SPIFlow {
     var name: String {
         switch self {

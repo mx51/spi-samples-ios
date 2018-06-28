@@ -12,6 +12,7 @@ import Foundation
 protocol NotificationListener {
     @objc func onNotificationArrived(notification: NSNotification)
 }
+
 extension NotificationListener {
     func registerForEvents(appEvents: [AppEvent]) {
         for event in appEvents {

@@ -9,6 +9,7 @@
 import Foundation
 
 extension Date {
+    
     func toString(includeTime: Bool = false) -> String {
         var format = ""
         if (includeTime) {
@@ -18,6 +19,7 @@ extension Date {
         }
         return toString(format: format)
     }
+    
     func toString(format: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
@@ -25,11 +27,11 @@ extension Date {
     }
 
 }
+
 extension Bool {
+    
     func toString() -> String {
-        if (self) {
-            return "true"
-        }
-        return "false"
+        return self ? "true" : "false"
     }
+    
 }

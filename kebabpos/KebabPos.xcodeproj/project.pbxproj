@@ -174,11 +174,11 @@
 		298DCCFC20BAF0CB0081940A /* Logics */ = {
 			isa = PBXGroup;
 			children = (
-				29534F5620BD62010048C0E0 /* Protocols */,
 				298DCD0020BAF20D0081940A /* KebabApp.swift */,
 				298DCD0220BAFBD10081940A /* KebabApp+SPIConnectionDelegate.swift */,
 				29534F4F20BC431C0048C0E0 /* Extensions */,
 				298DCD0420BAFDBF0081940A /* Enums */,
+				29534F5620BD62010048C0E0 /* Protocols */,
 				298DCCFD20BAF0DE0081940A /* Settings */,
 			);
 			path = Logics;

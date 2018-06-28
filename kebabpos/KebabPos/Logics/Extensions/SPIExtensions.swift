@@ -21,8 +21,9 @@ extension SPIMessageSuccessState {
         }
     }
 }
+
 extension SPIStatus {
-    var name:String {
+    var name: String {
         switch self {
         case .unpaired:
             return "Unpaired"
@@ -33,6 +34,7 @@ extension SPIStatus {
         }
     }
 }
+
 extension SPIFlow {
     var name: String {
         switch self {
@@ -45,6 +47,7 @@ extension SPIFlow {
         }
     }
 }
+
 extension SPITransactionType {
     var name: String {
         switch self {

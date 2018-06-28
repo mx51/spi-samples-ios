@@ -10,6 +10,7 @@ import UIKit
 import SPIClient_iOS
 
 class ConnectionViewController: UITableViewController, NotificationListener {
+    
     @IBOutlet weak var txtOutput: UITextView!
     @IBOutlet weak var txtPosId: UITextField!
     @IBOutlet weak var txtPosAddress: UITextField!
@@ -18,9 +19,9 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         super.viewDidLoad()
         registerForEvents(appEvents: [.connectionStatusChanged, .pairingFlowChanged, .transactionFlowStateChanged])
         txtPosId.text = KebabApp.current.settings.posId
-        txtPosAddress.text = KebabApp.current.settings.eftPosAddress
-
+        txtPosAddress.text = KebabApp.current.settings.eftposAddress
     }
+    
     @IBAction func pairButtonClicked(_ sender: Any) {
         if (KebabApp.current.client.state.status != .unpaired )
         {
@@ -30,7 +31,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         KebabApp.current.settings.posId = txtPosId.text
         KebabApp.current.client.posId = txtPosId.text
 
-        KebabApp.current.settings.eftPosAddress = txtPosAddress.text
+        KebabApp.current.settings.eftposAddress = txtPosAddress.text
         KebabApp.current.client.eftposAddress = txtPosAddress.text
 
         KebabApp.current.settings.encriptionKey = nil
@@ -38,9 +39,11 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
         KebabApp.current.client.pair()
     }
+    
     @IBAction func pairingCancel() {
         KebabApp.current.client.pairingCancel()
     }
+    
     @IBAction func unpair() {
         KebabApp.current.client.unpair()
     }
@@ -71,9 +74,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         guard let state = state else { return }
 
         switch state.status {
-
         case .unpaired:
-
             switch state.flow {
             case .idle:
                 
@@ -105,6 +106,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             }
         }
     }
+    
     func showPairing(_ state: SPIState) {
         SPILogMsg("showPairing")
 
@@ -142,8 +144,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             // error
             alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         }
+        
         self.showAlert(alertController: alertVC)
-
     }
 
     func acknowledge() {
@@ -157,8 +159,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     func showError(_ msg: String, completion: (() -> Swift.Void)? = nil) {
         SPILogMsg("ERROR: \(msg)")
         showAlert(title: "ERROR!", message: msg)
-
     }
+    
     func appendReceipt(_ msg: String?) {
         SPILogMsg("appendReceipt \(String(describing: msg))")
 
@@ -168,4 +170,5 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             self.txtOutput.text = msg + "\n================\n" + self.txtOutput.text
         }
     }
+    
 }

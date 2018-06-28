@@ -10,16 +10,17 @@ import Foundation
 import SPIClient_iOS
 
 extension MainViewController {
+    
     func logMessage(_ message: String) {
         txtOutput.text = message + "\r\n" + txtOutput.text
         print(message)
     }
+    
     func printFlowInfo(state: SPIState) {
         switch state.flow {
         case .pairing:
-            guard let pairingState = state.pairingFlowState else {
-                return
-            }
+            guard let pairingState = state.pairingFlowState else { return }
+            
             logMessage("### PAIRING PROCESS UPDATE ###")
             logMessage(String(format: "# %@", pairingState.message))
             logMessage(String(format: "# Finished? %@", NSNumber(booleanLiteral: pairingState.isFinished)))
@@ -28,9 +29,8 @@ extension MainViewController {
             logMessage(String(format: "# Waiting Confirm from Eftpos? %@", NSNumber(booleanLiteral: pairingState.isAwaitingCheckFromEftpos)))
             logMessage(String(format: "# Waiting Confirm from POS? %@", NSNumber(booleanLiteral: pairingState.isAwaitingCheckFromPos)))
         case .transaction:
-            guard let txState = state.txFlowState else {
-                return
-            }
+            guard let txState = state.txFlowState else { return }
+            
             logMessage("### TX PROCESS UPDATE ###")
             logMessage(String(format: "# %@", txState.displayMessage))
             logMessage(String(format: "# Id: %@", txState.posRefId))
@@ -84,9 +84,7 @@ extension MainViewController {
             }
         case .idle:
             break
-            
         }
-        
     }
     func handleFinishedPurchase(txState: SPITransactionFlowState) {
         let purchaseResponse: SPIPurchaseResponse
@@ -158,7 +156,6 @@ extension MainViewController {
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
             break
-            
         }
     }
     
@@ -195,7 +192,6 @@ extension MainViewController {
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
             break
-            
         }
     }
     func handleFinishedMoto(txState: SPITransactionFlowState) {
@@ -281,11 +277,11 @@ extension MainViewController {
                 logMessage(String(format: "# By Aquirer TX Count: %i", settleResponse.getSettleByAcquirerCount()))
                 logMessage(String(format: "# By Aquirer TX Value: %.2f", Float(settleResponse.getSettleByAcquirerValue()) / 100.0))
                 logMessage(String(format: "# SCHEME SETTLEMENTS:"))
+                
                 let schemes = settleResponse.getSchemeSettlementEntries()
                 for  s in schemes ?? [] {
                     logMessage(String(format: "# %@", s))
                 }
-                
             }
             break
         case .failed:
@@ -321,6 +317,7 @@ extension MainViewController {
                 logMessage(String(format: "# By Aquirer TX Count: %i", settleResponse.getSettleByAcquirerCount()))
                 logMessage(String(format: "# By Aquirere TX Value: %.2f", Float(settleResponse.getSettleByAcquirerValue()) / 100.0))
                 logMessage(String(format: "# SCHEME SETTLEMENTS:"))
+                
                 let schemes = settleResponse.getSchemeSettlementEntries()
                 for s in schemes ?? [] {
                     logMessage(String(format: "# %@", s))

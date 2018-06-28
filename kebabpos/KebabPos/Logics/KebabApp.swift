@@ -10,7 +10,9 @@ import Foundation
 import SPIClient_iOS
 
 class KebabApp: NSObject {
+    
     private static var _instance: KebabApp = KebabApp()
+    
     var settings = SettingsProvider()
     var client = SPIClient()
 
@@ -19,25 +21,23 @@ class KebabApp: NSObject {
     }
 
     func initialize() {
-        guard let eftPosAddress = settings.eftPosAddress else {
-            return
-        }
-        guard let eftPosId = settings.posId else {
-            return
-        }
+        guard let eftposAddress = settings.eftposAddress else { return }
+        guard let eftposId = settings.posId else { return }
+        
         if let encriptionKey = settings.encriptionKey, let hmacKey = settings.hmacKey {
             SPILogMsg("LOADED KEYS FROM USERDEFAULTS")
             SPILogMsg("KEYS \(encriptionKey):\(hmacKey)")
             client.setSecretEncKey(encriptionKey, hmacKey: hmacKey)
         }
-        client.eftposAddress = eftPosAddress
-        client.posId = eftPosId
+        client.eftposAddress = eftposAddress
+        client.posId = eftposId
         client.config.signatureFlowOnEftpos = settings.customerSignatureromEFTPos ?? false
         client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEFTPos ?? false
         client.delegate = self
-
     }
+    
     func start() {
         client.start()
     }
+    
 }

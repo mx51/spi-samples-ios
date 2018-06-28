@@ -18,6 +18,7 @@ extension UIViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         showAlert(alertController: alertController)
     }
+    
     func showAlert(alertController: UIAlertController) {
         func displayNext(){
             if remainingAlerts.count > 0 {
@@ -25,32 +26,30 @@ extension UIViewController {
                 self.showAlert(alertController: nextAlert)
             }
         }
+        
         func display() {
             DispatchQueue.main.async {
-                self.present(alertController, animated: true){
+                self.present(alertController, animated: true) {
                     displayNext()
                 }
             }
         }
-        if (presentedViewController == nil){
+        
+        if (presentedViewController == nil) {
             display()
-        }
-        else if let existingAlert = presentedViewController as? UIAlertController {
+        } else if let existingAlert = presentedViewController as? UIAlertController {
             if (!existingAlert.isBeingDismissed && !existingAlert.isBeingPresented){
                 existingAlert.dismiss(animated: false, completion: {
                     display()
                 })
-            }
-            else {
+            } else {
                 addToRemaining(alert: alertController)
             }
             return
         }
-        
-        
     }
     
-    //In case multiple alerts needs to be shown in a sequence, we keep them in an array to display later
+    // In case multiple alerts needs to be shown in a sequence, we keep them in an array to display later
     private func addToRemaining(alert:UIAlertController){
         if let existingAlert = presentedViewController as? UIAlertController , existingAlert.message == alert.message {
             return
@@ -61,7 +60,6 @@ extension UIViewController {
             //if not duplicated messages
             remainingAlerts.append(alert)
         }
-        
     }
     
 }

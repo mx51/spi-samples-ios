@@ -23,11 +23,15 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var segmentExtraAmount: UISegmentedControl!
     @IBOutlet weak var swchReceiptFromEFTPos: UISwitch!
     @IBOutlet weak var swchSignatureFromEFTPos: UISwitch!
-
+    @IBOutlet weak var lblFlowStatus: UILabel!
+    
     let indexPath_extraAmount = IndexPath(row: 2, section: 3)
     let _lastCmd: [String] = []
-
-    @IBOutlet weak var lbl_flowStatus: UILabel!
+    
+    var client: SPIClient {
+        return KebabApp.current.client
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         restoreConfig()
@@ -35,15 +39,10 @@ class MainViewController: UITableViewController, NotificationListener {
         registerForEvents(appEvents: [.connectionStatusChanged, .transactionFlowStateChanged])
         client.start()
     }
+    
     func restoreConfig() {
         swchReceiptFromEFTPos.isOn = KebabApp.current.settings.customerReceiptFromEFTPos ?? false
         swchSignatureFromEFTPos.isOn = KebabApp.current.settings.customerSignatureromEFTPos ?? false
-
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
@@ -54,11 +53,13 @@ class MainViewController: UITableViewController, NotificationListener {
         }
         return super.tableView(tableView, heightForRowAt: indexPath)
     }
+    
     @IBAction func segmentExtraAmountValueChanged(_ sender: UISegmentedControl) {
         tableView.beginUpdates()
         lblExtraOption.text = segmentExtraAmount.titleForSegment(at: segmentExtraAmount.selectedSegmentIndex)
         tableView.endUpdates()
     }
+    
     @IBAction func swchReceiptFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.promptForCustomerCopyOnEftpos = sender.isOn
         KebabApp.current.settings.customerReceiptFromEFTPos = sender.isOn
@@ -68,24 +69,17 @@ class MainViewController: UITableViewController, NotificationListener {
         client.config.signatureFlowOnEftpos = sender.isOn
         KebabApp.current.settings.customerSignatureromEFTPos = sender.isOn
     }
-
-    var client: SPIClient {
-        return KebabApp.current.client
-    }
+    
     @objc
     func onNotificationArrived(notification: NSNotification) {
         switch notification.name.rawValue {
         case AppEvent.connectionStatusChanged.rawValue:
-            guard let state = notification.object as? SPIState else {
-                return
-            }
+            guard let state = notification.object as? SPIState else { return }
             DispatchQueue.main.async {
                 self.stateChanged(state: state)
             }
         case AppEvent.transactionFlowStateChanged.rawValue:
-            guard let state = notification.object as? SPIState else {
-                return
-            }
+            guard let state = notification.object as? SPIState else { return }
             DispatchQueue.main.async {
                 self.stateChanged(state: state)
             }
@@ -93,16 +87,17 @@ class MainViewController: UITableViewController, NotificationListener {
             break
         }
     }
+    
     func printResult(result: SPIInitiateTxResult?) {
         DispatchQueue.main.async {
             SPILogMsg(result?.message)
             self.txtOutput.text =  result?.message ?? "" + self.txtOutput.text
         }
-
     }
+    
     func showError(_ msg: String, completion: (() -> Void)? = nil) {
         SPILogMsg("\r\nERROR: \(msg)")
-        showAlert(title: "ERROR!", message: msg)
-
+        showAlert(title: "Error", message: msg)
     }
+    
 }

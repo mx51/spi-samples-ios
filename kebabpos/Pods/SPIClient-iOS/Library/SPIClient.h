@@ -80,7 +80,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  * Returns the SDK version.
  */
-- (NSString *)getVersion;
++ (NSString *)getVersion;
 
 /**
  * Set the pairing secrets encKey and hmacKey
@@ -89,6 +89,17 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  * @param hmacKey String
  */
 - (void)setSecretEncKey:(NSString *)encKey hmacKey:(NSString *)hmacKey;
+
+/**
+ *
+ * Call this one when a flow is finished and you want to go back to idle state.
+ * Typically when your user clicks the "OK" bubtton to acknowldge that pairing
+ * is finished, or that transaction is finished. When true, you can dismiss the
+ * flow screen and show back the idle screen.
+ *
+ * @param completion completion handler
+ */
+- (void)ackFlowEndedAndBackToIdle:(SPICompletionState)completion;
 
 /**
  * This will connect to the EFTPOS and start the pairing process.
@@ -102,17 +113,6 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  * screen matches the one on the EFTPOS.
  */
 - (void)pairingConfirmCode;
-
-/**
- *
- * Call this one when a flow is finished and you want to go back to idle state.
- * Typically when your user clicks the "OK" bubtton to acknowldge that pairing
- * is finished, or that transaction is finished. When true, you can dismiss the
- * flow screen and show back the idle screen.
- *
- * @param completion completion handler
- */
-- (void)ackFlowEndedAndBackToIdle:(SPICompletionState)completion;
 
 /**
  * Call this if your user clicks CANCEL or NO during the pairing process.

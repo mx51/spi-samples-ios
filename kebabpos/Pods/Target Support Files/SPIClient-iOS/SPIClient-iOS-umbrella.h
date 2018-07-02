@@ -40,6 +40,7 @@
 #import "SPIClient+Internal.h"
 #import "SPIClient.h"
 #import "SPIClient_iOS.h"
+#import "SPIManifest+Internal.h"
 #import "SPIModels.h"
 #import "SPIGCDTimer.h"
 #import "SPILogger.h"

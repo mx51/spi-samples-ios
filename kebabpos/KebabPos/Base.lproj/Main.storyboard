@@ -562,10 +562,10 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="633.66666666666663"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Log" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="fat-dE-x2l">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="633.66666666666663"/>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="fat-dE-x2l">
+                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="634"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <fontDescription key="fontDescription" name="Courier" family="Courier" pointSize="12"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
                                             </subviews>
@@ -595,10 +595,10 @@
                     <connections>
                         <outlet property="btnConnection" destination="guJ-P5-LFD" id="FE9-Wc-iq9"/>
                         <outlet property="lblExtraOption" destination="ZfR-qu-WXC" id="MB8-ug-kGN"/>
+                        <outlet property="lblFlowStatus" destination="3jY-SR-5p4" id="uHY-CS-KYR"/>
                         <outlet property="lblPosAddress" destination="UhR-bd-bfC" id="6ac-D9-Whq"/>
                         <outlet property="lblPosId" destination="WQc-34-pqQ" id="c1t-XD-s61"/>
                         <outlet property="lblStatus" destination="gn2-HF-yej" id="fdZ-pT-g7T"/>
-                        <outlet property="lbl_flowStatus" destination="3jY-SR-5p4" id="KB9-kE-Psg"/>
                         <outlet property="segmentExtraAmount" destination="GLt-dz-UEd" id="CVj-33-eSY"/>
                         <outlet property="swchReceiptFromEFTPos" destination="9Qd-BI-WpA" id="MYj-wu-0y1"/>
                         <outlet property="swchSignatureFromEFTPos" destination="r2S-gH-L8p" id="Yx7-dd-Kd3"/>
@@ -639,7 +639,7 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter Pos ID" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hsd-rZ-tuO">
+                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="KEBABPOS1" textAlignment="right" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hsd-rZ-tuO">
                                                     <rect key="frame" x="187" y="7" width="207" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="30" id="N0k-ms-Iku"/>

@@ -17,17 +17,18 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         registerForEvents(appEvents: [.connectionStatusChanged, .pairingFlowChanged, .transactionFlowStateChanged])
         txtPosId.text = KebabApp.current.settings.posId
         txtPosAddress.text = KebabApp.current.settings.eftposAddress
     }
     
     @IBAction func pairButtonClicked(_ sender: Any) {
-        if (KebabApp.current.client.state.status != .unpaired )
-        {
-            showAlert(title: "Can not start pairing", message: "SPI Client status: \(KebabApp.current.client.state.status.name)")
+        if (KebabApp.current.client.state.status != .unpaired ) {
+            showAlert(title: "Cannot start pairing", message: "SPI Client status: \(KebabApp.current.client.state.status.name)")
             return
         }
+        
         KebabApp.current.settings.posId = txtPosId.text
         KebabApp.current.client.posId = txtPosId.text
 
@@ -50,60 +51,52 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
     @objc
     func onNotificationArrived(notification: NSNotification) {
-        switch notification.name.rawValue {
-        case AppEvent.connectionStatusChanged.rawValue:
-            if let state = notification.object as? SPIState {
-                printStatusAndAction(state)
+        DispatchQueue.main.async {
+            switch notification.name.rawValue {
+            case AppEvent.connectionStatusChanged.rawValue,
+                 AppEvent.pairingFlowChanged.rawValue,
+                 AppEvent.transactionFlowStateChanged.rawValue:
+                
+                if let state = notification.object as? SPIState {
+                    self.printStatusAndAction(state)
+                }
+            default:
+                return
             }
-        case AppEvent.pairingFlowChanged.rawValue:
-            if let state = notification.object as? SPIState {
-                printStatusAndAction(state)
-            }
-        case AppEvent.transactionFlowStateChanged.rawValue:
-            if let state = notification.object as? SPIState {
-                printStatusAndAction(state)
-            }
-        default:
-            return
         }
     }
 
     func printStatusAndAction(_ state: SPIState?) {
         SPILogMsg("printStatusAndAction \(String(describing: state))")
-
+        
         guard let state = state else { return }
-
+        
         switch state.status {
         case .unpaired:
             switch state.flow {
             case .idle:
-                
                 break
             case .pairing:
                 KebabApp.current.client.ackFlowEndedAndBack { (alreadyInIdle, state) in
-                    print("setting to idle :\(alreadyInIdle) state:\(String(describing: state))")
+                    print("Setting to idle=\(alreadyInIdle) state=\(String(describing: state))")
                     if let state = state {
                         self.showPairing(state)
                     }
                 }
-
             default:
-                showError("# .. Unexpected Flow .. \(KebabApp.current.client.state.flow.rawValue)")
+                showError("Unexpected flow: \(KebabApp.current.client.state.flow.rawValue)")
             }
-
+            
         case .pairedConnecting, .pairedConnected:
-            SPILogMsg("status .connected, flow=\(state.flow.rawValue)")
-
+            SPILogMsg("Status .connected, flow=\(state.flow.rawValue)")
+            
             switch state.flow {
-            case .idle:
-                break
-
-            case .transaction:
-                //No transaction will be in this screen
+            case .idle, .transaction:
                 break
             case .pairing: // Paired, Pairing - we have just finished the pairing flow. OK to ack.
                 showPairing(KebabApp.current.client.state)
             }
+            
         }
     }
     
@@ -113,23 +106,24 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         guard let pairingFlowState = state.pairingFlowState else {
             return showError("Missing pairingFlowState \(state)")
         }
-        let alertVC = UIAlertController(title: "EFTPOS PAIRING PROCESS", message: pairingFlowState.message, preferredStyle: .alert)
+        
+        let alertVC = UIAlertController(title: "EFTPOS Pairing Process", message: pairingFlowState.message, preferredStyle: .alert)
 
         if pairingFlowState.isAwaitingCheckFromPos {
             SPILogMsg("# [pair_confirm] - confirm the code matches")
 
-            alertVC.addAction(UIAlertAction(title: "NO", style: .cancel, handler: { (_) in
+            alertVC.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (_) in
                 self.pairingCancel()
             }))
 
-            alertVC.addAction(UIAlertAction(title: "YES", style: .default, handler: { _ in
+            alertVC.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
                 KebabApp.current.client.pairingConfirmCode()
             }))
 
         } else if !pairingFlowState.isFinished {
             SPILogMsg("# [pair_cancel] - cancel pairing process")
 
-            alertVC.addAction(UIAlertAction(title: "CANCEL", style: .cancel, handler: { _ in
+            alertVC.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
                 self.pairingCancel()
             }))
 
@@ -158,7 +152,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
     func showError(_ msg: String, completion: (() -> Swift.Void)? = nil) {
         SPILogMsg("ERROR: \(msg)")
-        showAlert(title: "ERROR!", message: msg)
+        showAlert(title: "Error", message: msg)
     }
     
     func appendReceipt(_ msg: String?) {

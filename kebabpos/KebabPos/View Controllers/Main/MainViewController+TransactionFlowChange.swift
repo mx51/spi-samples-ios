@@ -11,10 +11,18 @@ import SPIClient_iOS
 
 extension MainViewController {
     
+    func stateChanged(state: SPIState? = nil) {
+        guard let state = state ?? KebabApp.current.client.state else { return }
+        
+        updateUIFlowInfo(state: state)
+        printFlowInfo(state: state)
+        selectActions(state: state)
+    }
+    
     func updateUIFlowInfo(state: SPIState) {
         lblStatus.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
         lblStatus.textColor = UIColor.darkGray
-
+        
         btnConnection.title = "Pair"
         switch state.status {
         case .pairedConnected:
@@ -29,52 +37,41 @@ extension MainViewController {
             lblStatus.text = "Not Connected"
             break
         }
+        
         lblPosId.text = KebabApp.current.settings.posId
         lblPosAddress.text = KebabApp.current.settings.eftposAddress
-        lbl_flowStatus.text = state.flow.name
+        lblFlowStatus.text = state.flow.name
         self.title = lblStatus.text
     }
     
-    func stateChanged(state: SPIState? = nil) {
-        guard let state = state ?? KebabApp.current.client.state else { return }
-        updateUIFlowInfo(state: state)
-        printFlowInfo(state: state)
-        selectActions(state: state)
+    func selectActions(state: SPIState) {
+        switch state.flow {
+        case .idle:
+            clear()
+        case .pairing:
+            if (state.pairingFlowState.isAwaitingCheckFromPos) {
+                client.pairingConfirmCode()
+            } else if (!state.pairingFlowState.isFinished) {
+                pairCancel()
+            } else if (state.pairingFlowState.isFinished) {
+                ok()
+            }
+        case .transaction:
+            if (state.txFlowState.isAwaitingSignatureCheck) {
+                txSignature()
+            } else if (state.txFlowState.isAwaitingPhoneForAuth) {
+                txAuthCode()
+            } else if (!state.txFlowState.isFinished && !state.txFlowState.isAttemptingToCancel) {
+                txCancel()
+            } else if (state.txFlowState.isFinished) {
+                ok()
+            }
+        }
     }
     
-    func selectActions(state: SPIState) {
-        if client.state.flow == .idle {
-            //clear UI
-            if (self.navigationController?.topViewController == self) {
-                self.presentedViewController?.dismiss(animated: false, completion: nil)
-            }
-        }
-        if (client.state.flow == .pairing) {
-            if (client.state.pairingFlowState.isAwaitingCheckFromPos) {
-                client.pairingConfirmCode()
-            }
-            if (!client.state.pairingFlowState.isFinished) {
-                pairCancel()
-            }
-            if (client.state.pairingFlowState.isFinished) {
-                ok()
-            }
-        }
-        if client.state.flow == .transaction, let txState = client.state.txFlowState {
-            if (txState.isAwaitingSignatureCheck) {
-               txSignature()
-            }
-            if (txState.isAwaitingPhoneForAuth) {
-                txAuthCode()
-            }
-        }
-        if (client.state.flow == .transaction) {
-            if (!client.state.txFlowState.isFinished && !client.state.txFlowState.isAttemptingToCancel) {
-               txCancel()
-            }
-            if (client.state.txFlowState.isFinished) {
-                ok()
-            }
+    func clear() {
+        if (self.navigationController?.topViewController == self) {
+            self.presentedViewController?.dismiss(animated: false, completion: nil)
         }
     }
     
@@ -86,17 +83,8 @@ extension MainViewController {
         }
     }
     
-    func txCancel() {
-        let alertVC = UIAlertController(title: "Message", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
-        let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
-            self.client.cancelTransaction()
-        }
-        alertVC.addAction(cancelBtn)
-        showAlert(alertController: alertVC)
-    }
-    
     func pairCancel() {
-        let alertVC = UIAlertController(title: "Message", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
+        let alertVC = UIAlertController(title: "Pairing", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
         let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
             self.client.pairingCancel()
         }
@@ -104,9 +92,18 @@ extension MainViewController {
         showAlert(alertController: alertVC)
     }
     
+    func txCancel() {
+        let alertVC = UIAlertController(title: "Transaction", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
+        let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
+            self.client.cancelTransaction()
+        }
+        alertVC.addAction(cancelBtn)
+        showAlert(alertController: alertVC)
+    }
+    
     func txAuthCode() {
         var txtAuthCode: UITextField?
-        let alertVC = UIAlertController(title: "Message", message: "Submit Phone for Auth Code", preferredStyle: .alert)
+        let alertVC = UIAlertController(title: "Auth Code", message: "Submit Phone for Auth Code", preferredStyle: .alert)
         _ = alertVC.addTextField { (txt) in
             txtAuthCode = txt
             txt.text = "Enter code"
@@ -122,14 +119,13 @@ extension MainViewController {
     }
     
     func txSignature() {
-        let alertVC = UIAlertController(title: "Message", message: "Select Action", preferredStyle: .alert)
+        let alertVC = UIAlertController(title: "Signature", message: "Select Action", preferredStyle: .alert)
         alertVC.addAction(UIAlertAction(title: "Accept Signature", style: .default, handler: { _ in
-        KebabApp.current.client.acceptSignature(true)
-                                }))
-
+            KebabApp.current.client.acceptSignature(true)
+        }))
         alertVC.addAction(UIAlertAction(title: "Decline Signature", style: .default, handler: { _ in
-                                    KebabApp.current.client.acceptSignature(false)
-                                }))
+            KebabApp.current.client.acceptSignature(false)
+        }))
         showAlert(alertController: alertVC)
     }
     

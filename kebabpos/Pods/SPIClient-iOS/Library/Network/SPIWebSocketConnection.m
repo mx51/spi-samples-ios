@@ -61,7 +61,6 @@
     });
     
     [self.delegate onSpiConnectionStatusChanged:SPIConnectionStateConnecting];
-    
 }
 
 - (void)disconnect {

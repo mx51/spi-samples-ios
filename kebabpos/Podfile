@@ -6,7 +6,7 @@ target 'KebabPos' do
   use_frameworks!
 
   # Pods for KebabPos
-  pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios.git', :branch => 'spi-2.1'
+  pod 'SPIClient-iOS', '~> 2.1.0'
 
   target 'KebabPosTests' do
     inherit! :search_paths

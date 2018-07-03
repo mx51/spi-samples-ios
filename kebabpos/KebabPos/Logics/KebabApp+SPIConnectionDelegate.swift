@@ -29,7 +29,8 @@ extension KebabApp: SPIDelegate {
     func spi(_ spi: SPIClient!, secretsChanged secrets: SPISecrets?, state: SPIState!) {
         SPILogMsg("secrets \(state)")
         if let secrets = secrets {
-            SPILogMsg("\n\n\n# --------- I GOT NEW SECRETS -----------")
+            SPILogMsg("\n\n")
+            SPILogMsg("# ----------- I GOT NEW SECRETS -----------")
             SPILogMsg("# ---------- PERSIST THEM SAFELY ----------")
             SPILogMsg("# \(secrets.encKey):\(secrets.hmacKey)")
             SPILogMsg("# -----------------------------------------")
@@ -38,8 +39,9 @@ extension KebabApp: SPIDelegate {
             settings.encriptionKey = secrets.encKey!
             settings.hmacKey = secrets.hmacKey!
         } else {
-            SPILogMsg("\n\n\n# --------- THE SECRETS HAVE BEEN VOIDED -----------")
-            SPILogMsg("# ---------- CONSIDER ME UNPAIRED ----------")
+            SPILogMsg("\n\n")
+            SPILogMsg("# ------ THE SECRETS HAVE BEEN VOIDED -----")
+            SPILogMsg("# ---------- CONSIDER ME UNPAIRED ---------")
             SPILogMsg("# -----------------------------------------")
 
             settings.encriptionKey = ""

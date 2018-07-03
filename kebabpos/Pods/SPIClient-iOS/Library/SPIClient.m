@@ -286,12 +286,9 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 }
 
 - (BOOL)unpair {
-    if (_state.status == SPIStatusUnpaired || _state.flow != SPIFlowIdle) return false;
+    if (self.state.status == SPIStatusUnpaired || self.state.flow != SPIFlowIdle) return false;
     
-    dispatch_async(self.queue, ^{
-        [self send:[[[SPIDropKeysRequest alloc] init] toMessage]];
-    });
-    
+    [self send:[[[SPIDropKeysRequest alloc] init] toMessage]];
     [self doUnpair];
     
     return true;

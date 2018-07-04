@@ -12,4 +12,5 @@ enum AppEvent: String {
     case connectionStatusChanged
     case pairingFlowChanged
     case transactionFlowStateChanged
+    case secretsDropped
 }

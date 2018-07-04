@@ -1,5 +1,5 @@
 //
-//  SPIPurchase.h
+//  SPITransaction.h
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-29.
@@ -11,17 +11,20 @@
 
 @class SPIMessage;
 @class SPIConfig;
+@class SPITransactionOptions;
 
 @interface SPIPurchaseRequest : NSObject
 
-@property (nonatomic, readonly, copy) NSString *purchaseId DEPRECATED_MSG_ATTRIBUTE("Id is deprecated. Use PosRefId instead.");
+@property (nonatomic, readonly, copy) NSString *purchaseId DEPRECATED_MSG_ATTRIBUTE("Use posRefId instead.");
 @property (nonatomic, readonly, copy) NSString *posRefId;
-@property (nonatomic, readonly) NSInteger amountCents DEPRECATED_MSG_ATTRIBUTE("AmountCents is deprecated. Use PurchaseAmount instead.");
+@property (nonatomic, readonly) NSInteger amountCents DEPRECATED_MSG_ATTRIBUTE("Use purchaseAmount instead.");
 @property (nonatomic, readonly) NSInteger purchaseAmount;
 @property (nonatomic) NSInteger tipAmount;
 @property (nonatomic) NSInteger cashoutAmount;
 @property (nonatomic) BOOL promptForCashout;
+
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithAmountCents:(NSInteger)amountCents
                            posRefId:(NSString *)posRefId;
@@ -95,6 +98,22 @@
 
 @end
 
+@interface SPICancelTransactionResponse : NSObject
+
+@property (nonatomic, readonly, strong) SPIMessage *message;
+@property (nonatomic, readonly, copy) NSString *posRefId;
+@property (nonatomic, readonly) BOOL isSuccess;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
+
+- (NSString *)getErrorReason;
+
+- (NSString *)getErrorDetail;
+
+- (NSString *)getResponseValueWithAttribute:(NSString *)attribute;
+
+@end
+
 @interface SPIGetLastTransactionRequest : NSObject
 
 - (SPIMessage *)toMessage;
@@ -127,17 +146,17 @@
 
 - (NSString *)getPosRefId;
 
-- (NSString *)getSchemeApp DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT Response");
+- (NSString *)getSchemeApp DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
-- (NSString *)getSchemeName DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT Response");
+- (NSString *)getSchemeName DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
-- (NSInteger)getAmount DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT Response");
+- (NSInteger)getAmount DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
-- (NSInteger)getTransactionAmount DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT Response");
+- (NSInteger)getTransactionAmount DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
-- (NSString *)getBankDateTimeString DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT Response");
+- (NSString *)getBankDateTimeString DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
-- (NSString *)getRRN DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT Response");
+- (NSString *)getRRN DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
 - (NSString *)getResponseText;
 
@@ -149,7 +168,7 @@
 
 @interface SPIRefundRequest : NSObject
 
-@property (nonatomic, readonly, copy) NSString *refundId DEPRECATED_MSG_ATTRIBUTE("Id is deprecated. Use PosRefId instead.");
+@property (nonatomic, readonly, copy) NSString *refundId DEPRECATED_MSG_ATTRIBUTE("Use posRefId instead.");
 @property (nonatomic, readonly) NSInteger amountCents;
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, retain) SPIConfig *config;

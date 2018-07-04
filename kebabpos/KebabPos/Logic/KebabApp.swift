@@ -21,19 +21,21 @@ class KebabApp: NSObject {
     }
 
     func initialize() {
-        guard let eftposAddress = settings.eftposAddress else { return }
-        guard let eftposId = settings.posId else { return }
+        client.eftposAddress = settings.eftposAddress
+        client.posId = settings.posId
+        client.config.signatureFlowOnEftpos = settings.customerSignatureromEftpos ?? false
+        client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEftpos ?? false
+        
+        client.posVendorId = "assembly"
+        client.posVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        
+        client.delegate = self
         
         if let encriptionKey = settings.encriptionKey, let hmacKey = settings.hmacKey {
-            SPILogMsg("LOADED KEYS FROM USERDEFAULTS")
-            SPILogMsg("KEYS \(encriptionKey):\(hmacKey)")
+            SPILogMsg("Secrets loaded from defaults: \(encriptionKey):\(hmacKey)")
+            
             client.setSecretEncKey(encriptionKey, hmacKey: hmacKey)
         }
-        client.eftposAddress = eftposAddress
-        client.posId = eftposId
-        client.config.signatureFlowOnEftpos = settings.customerSignatureromEFTPos ?? false
-        client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEFTPos ?? false
-        client.delegate = self
     }
     
     func start() {

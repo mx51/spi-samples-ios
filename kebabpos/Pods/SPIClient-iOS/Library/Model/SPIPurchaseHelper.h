@@ -6,7 +6,7 @@
 //  Copyright © 2018 Assembly Payments. All rights reserved.
 //
 
-#import "SPIPurchase.h"
+#import "SPITransaction.h"
 #import <Foundation/Foundation.h>
 
 @interface SPIPurchaseHelper : NSObject

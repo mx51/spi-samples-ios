@@ -28,6 +28,7 @@ extension KebabApp: SPIDelegate {
 
     func spi(_ spi: SPIClient!, secretsChanged secrets: SPISecrets?, state: SPIState!) {
         SPILogMsg("secrets \(state)")
+        
         if let secrets = secrets {
             SPILogMsg("\n\n")
             SPILogMsg("# ----------- I GOT NEW SECRETS -----------")
@@ -46,6 +47,8 @@ extension KebabApp: SPIDelegate {
 
             settings.encriptionKey = ""
             settings.hmacKey = ""
+            
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.secretsDropped.rawValue), object: state)
         }
     }
 

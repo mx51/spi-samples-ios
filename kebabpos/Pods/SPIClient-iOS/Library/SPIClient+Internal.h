@@ -11,6 +11,10 @@
 
 @interface SPIClient ()
 
+@property (nonatomic, strong) SPISecrets *secrets;
+
+@property (nonatomic, assign) BOOL hasSetPosInfo;
+
 - (BOOL)send:(SPIMessage *)message;
 
 - (void)onSpiMessageReceived:(NSString *)message;

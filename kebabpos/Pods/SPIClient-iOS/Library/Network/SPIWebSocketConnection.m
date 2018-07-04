@@ -33,16 +33,16 @@
 
 - (void)connect {
     if (self.state == SPIConnectionStateConnected || self.state == SPIConnectionStateConnecting) {
-        NSLog(@"socket not connecting because connected or connecting");
+        NSLog(@"Socket not connecting because connected or connecting");
         return;
     }
     
-    NSLog(@"socket trying to connect to %@", self.url);
+    NSLog(@"Socket trying to connect to %@", self.url);
     self.state = SPIConnectionStateConnecting;
     
     // Create a new socket instance specifying the url, SPI protocol and Websocket to use.
     // The will create a TCP/IP socket connection to the provided URL and perform HTTP websocket negotiation
-    self.webSocket          = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:8.0] protocols:@[@"spi.2.1.0"]];
+    self.webSocket          = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:8.0] protocols:@[@"spi.2.3.0"]];
     self.webSocket.delegate = self;
     
     // Let's let our users know that we are now connecting...
@@ -55,7 +55,7 @@
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         sleep(8);
         if (weakSelf.state == SPIConnectionStateConnecting) {
-            SPILog(@"Did not respond, disconnecting....");
+            SPILog(@"Socket did not respond, disconnecting...");
             [self disconnect];
         }
     });
@@ -64,9 +64,9 @@
 }
 
 - (void)disconnect {
-    NSLog(@"socket disconnect. state before close: %ld", (long)self.webSocket.readyState);
+    NSLog(@"Socket disconnect, state before close: %ld", (long)self.webSocket.readyState);
     [self.webSocket close];
-    NSLog(@"socket disconnect. state after close: %ld",  (long)self.webSocket.readyState);
+    NSLog(@"Socket disconnect, state after close: %ld",  (long)self.webSocket.readyState);
     [self didClose];
 }
 
@@ -78,11 +78,6 @@
     [self.delegate onSpiMessageReceived:message];
 }
 
-/**
- * key_request
- *
- **/
-
 // Return YES to convert messages sent as Text to an NSString. Return NO to skip NSData -> NSString conversion for Text messages. Defaults to YES.
 - (BOOL)webSocketShouldConvertTextFrameToString:(SRWebSocket *)webSocket {
     return YES;
@@ -93,19 +88,19 @@
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
-    SPILog(@"WS Error '%@'. Disconnecting.", error.localizedDescription);
+    SPILog(@"WebSocket error '%@', disconnecting...", error.localizedDescription);
     
     [self.delegate didReceiveError:error];
     [self disconnect];
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceiveMessageWithString:(nonnull NSString *)string {
-    NSLog(@"socket WS didReceiveMessageWithString '%@'", string);
+    NSLog(@"WebSocket didReceiveMessageWithString '%@'", string);
     [self.delegate onSpiMessageReceived:string];
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    NSLog(@"socket Websocket Connected");
+    NSLog(@"WebSocket connected");
     self.isConnected = YES;
     self.state       = SPIConnectionStateConnected;
     [self.delegate onSpiConnectionStatusChanged:SPIConnectionStateConnected];
@@ -114,7 +109,7 @@
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
     // This will not be called if disconnection is initiated on our side,
     // because we would have called didClose already which unregisters the delegate.
-    NSLog(@"socket WebSocket closed [%ld], %@, wasClean=%@", (long)code, reason, @(wasClean));
+    NSLog(@"WebSocket closed [%ld], %@, wasClean=%@", (long)code, reason, @(wasClean));
     [self didClose];
 }
 

@@ -30,7 +30,27 @@ extension MainViewController {
         let promptCashout = false
 
         client.enablePayAtTable()
-        client.initiatePurchaseTx(posRefId, purchaseAmount: amount, tipAmount: tipAmount, cashoutAmount: cashout, promptForCashout: promptCashout, completion: printResult)
+
+        let settings = KebabApp.current.settings
+        
+        // Receipt header/footer
+        let options = SPITransactionOptions()
+        if let receiptHeader = settings.receiptHeader, receiptHeader.count > 0 {
+            options.customerReceiptHeader = receiptHeader
+            options.merchantReceiptHeader = receiptHeader
+        }
+        if let receiptFooter = settings.receiptFooter, receiptFooter.count > 0 {
+            options.customerReceiptFooter = receiptFooter
+            options.merchantReceiptFooter = receiptFooter
+        }
+
+        client.initiatePurchaseTx(posRefId,
+                                  purchaseAmount: amount,
+                                  tipAmount: tipAmount,
+                                  cashoutAmount: cashout,
+                                  promptForCashout: promptCashout,
+                                  options:options,
+                                  completion: printResult)
     }
     
     @IBAction func btnMotoClicked(_ sender: Any) {

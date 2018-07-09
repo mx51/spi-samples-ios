@@ -7,7 +7,7 @@
 //
 
 #import "SPIMessage.h"
-#import "SPIPurchase.h"
+#import "SPITransaction.h"
 #import <Foundation/Foundation.h>
 
 @class SPIClient;

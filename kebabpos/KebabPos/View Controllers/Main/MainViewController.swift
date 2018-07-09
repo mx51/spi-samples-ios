@@ -21,9 +21,12 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var txtReferenceId: UITextField!
     @IBOutlet weak var txtOutput: UITextView!
     @IBOutlet weak var segmentExtraAmount: UISegmentedControl!
-    @IBOutlet weak var swchReceiptFromEFTPos: UISwitch!
-    @IBOutlet weak var swchSignatureFromEFTPos: UISwitch!
+    @IBOutlet weak var swchReceiptFromEftpos: UISwitch!
+    @IBOutlet weak var swchSignatureFromEftpos: UISwitch!
+    @IBOutlet weak var swchPrintMerchantCopy: UISwitch!
     @IBOutlet weak var lblFlowStatus: UILabel!
+    @IBOutlet weak var txtHeader: UITextField!
+    @IBOutlet weak var txtFooter: UITextField!
     
     let indexPath_extraAmount = IndexPath(row: 2, section: 3)
     let _lastCmd: [String] = []
@@ -41,8 +44,13 @@ class MainViewController: UITableViewController, NotificationListener {
     }
     
     func restoreConfig() {
-        swchReceiptFromEFTPos.isOn = KebabApp.current.settings.customerReceiptFromEFTPos ?? false
-        swchSignatureFromEFTPos.isOn = KebabApp.current.settings.customerSignatureromEFTPos ?? false
+        let settings = KebabApp.current.settings
+        
+        swchReceiptFromEftpos.isOn = settings.customerReceiptFromEftpos ?? false
+        swchSignatureFromEftpos.isOn = settings.customerSignatureromEftpos ?? false
+        swchPrintMerchantCopy.isOn = settings.printMerchantCopy ?? false
+        txtHeader.text = settings.receiptHeader
+        txtFooter.text = settings.receiptFooter
     }
 
     // MARK: - Table view data source
@@ -62,12 +70,29 @@ class MainViewController: UITableViewController, NotificationListener {
     
     @IBAction func swchReceiptFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.promptForCustomerCopyOnEftpos = sender.isOn
-        KebabApp.current.settings.customerReceiptFromEFTPos = sender.isOn
+        KebabApp.current.settings.customerReceiptFromEftpos = sender.isOn
     }
 
     @IBAction func swchSignatureFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.signatureFlowOnEftpos = sender.isOn
-        KebabApp.current.settings.customerSignatureromEFTPos = sender.isOn
+        KebabApp.current.settings.customerSignatureromEftpos = sender.isOn
+    }
+    
+    @IBAction func swchPrintMerchantCopyValueChanged(_ sender: UISwitch) {
+        client.config.printMerchantCopy = sender.isOn
+        KebabApp.current.settings.printMerchantCopy = sender.isOn
+    }
+    
+    @IBAction func txtHeaderEditingDidEnd(_ sender: UITextField) {
+        KebabApp.current.settings.receiptHeader = sanitizeHeaderFooter(sender.text)
+    }
+    
+    @IBAction func txtFooterEditingDidEnd(_ sender: UITextField) {
+        KebabApp.current.settings.receiptFooter = sanitizeHeaderFooter(sender.text)
+    }
+    
+    private func sanitizeHeaderFooter(_ text: String?) -> String? {
+        return text?.replacingOccurrences(of: "\\r\\n", with: "\r\n")
     }
     
     @objc

@@ -171,7 +171,7 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		298DCCFC20BAF0CB0081940A /* Logics */ = {
+		298DCCFC20BAF0CB0081940A /* Logic */ = {
 			isa = PBXGroup;
 			children = (
 				298DCD0020BAF20D0081940A /* KebabApp.swift */,
@@ -181,7 +181,7 @@
 				29534F5620BD62010048C0E0 /* Protocols */,
 				298DCCFD20BAF0DE0081940A /* Settings */,
 			);
-			path = Logics;
+			path = Logic;
 			sourceTree = "<group>";
 		};
 		298DCCFD20BAF0DE0081940A /* Settings */ = {
@@ -225,7 +225,7 @@
 		29B013A220BAB40C00F93AAF /* KebabPos */ = {
 			isa = PBXGroup;
 			children = (
-				298DCCFC20BAF0CB0081940A /* Logics */,
+				298DCCFC20BAF0CB0081940A /* Logic */,
 				298DCCF020BAED190081940A /* View Controllers */,
 				29B013A920BAB40C00F93AAF /* Main.storyboard */,
 				298DCCFB20BAEF4D0081940A /* Resources */,

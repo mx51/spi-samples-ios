@@ -28,7 +28,10 @@ NSString *const SPIPongKey = @"pong";
 
 NSString *const SPIPurchaseRequestKey = @"purchase";
 NSString *const SPIPurchaseResponseKey = @"purchase_response";
+
 NSString *const SPICancelTransactionRequestKey = @"cancel_transaction";
+NSString *const SPICancelTransactionResponseKey = @"cancel_response";
+
 NSString *const SPIGetLastTransactionRequestKey = @"get_last_transaction";
 NSString *const SPIGetLastTransactionResponseKey = @"last_transaction";
 
@@ -51,6 +54,9 @@ NSString *const SPISettleRequestKey = @"settle";
 NSString *const SPISettleResponseKey = @"settle_response";
 NSString *const SPISettlementEnquiryRequestKey = @"settlement_enquiry";
 NSString *const SPISettlementEnquiryResponseKey = @"settlement_enquiry_response";
+
+NSString *const SPISetPosInfoRequestKey = @"set_pos_info";
+NSString *const SPISetPosInfoResponseKey = @"set_pos_info_response";
 
 NSString *const SPIKeyRollRequestKey = @"request_use_next_keys";
 NSString *const SPIKeyRollResponseKey = @"response_use_next_keys";
@@ -234,8 +240,6 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
 }
 
 + (SPIMessage *)fromJson:(NSString *)msgJson secrets:(SPISecrets *)secrets {
-    NSLog(@"\nSPIMessage fromJson: %@", msgJson);
-    
     NSError *error = nil;
     NSData *mJsonData = [msgJson dataUsingEncoding:NSUTF8StringEncoding];
     NSDictionary *json = [NSJSONSerialization JSONObjectWithData:mJsonData options:0 error:&error];
@@ -285,7 +289,7 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
     return m;
 }
 
-- (NSString *)toJson {
+- (NSDictionary *)toJson {
     NSMutableDictionary *dict = [NSMutableDictionary new];
     
     if (self.mid) {

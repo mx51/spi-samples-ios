@@ -6,7 +6,7 @@ target 'KebabPos' do
   use_frameworks!
 
   # Pods for KebabPos
-  pod 'SPIClient-iOS', '~> 2.1.0'
+  pod 'SPIClient-iOS', '~> 2.3.0'
 
   target 'KebabPosTests' do
     inherit! :search_paths

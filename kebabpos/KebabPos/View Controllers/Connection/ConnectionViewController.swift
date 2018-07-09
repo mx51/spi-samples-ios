@@ -18,27 +18,29 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        registerForEvents(appEvents: [.connectionStatusChanged, .pairingFlowChanged, .transactionFlowStateChanged])
+        registerForEvents(appEvents: [.connectionStatusChanged, .pairingFlowChanged, .transactionFlowStateChanged, .secretsDropped])
+        
         txtPosId.text = KebabApp.current.settings.posId
         txtPosAddress.text = KebabApp.current.settings.eftposAddress
     }
     
     @IBAction func pairButtonClicked(_ sender: Any) {
-        if (KebabApp.current.client.state.status != .unpaired ) {
+        let client = KebabApp.current.client
+        
+        if (client.state.status != .unpaired ) {
             showAlert(title: "Cannot start pairing", message: "SPI Client status: \(KebabApp.current.client.state.status.name)")
             return
         }
         
-        KebabApp.current.settings.posId = txtPosId.text
-        KebabApp.current.client.posId = txtPosId.text
-
-        KebabApp.current.settings.eftposAddress = txtPosAddress.text
-        KebabApp.current.client.eftposAddress = txtPosAddress.text
-
-        KebabApp.current.settings.encriptionKey = nil
-        KebabApp.current.settings.hmacKey = nil
-
-        KebabApp.current.client.pair()
+        let settings = KebabApp.current.settings
+        settings.posId = txtPosId.text
+        settings.eftposAddress = txtPosAddress.text
+        settings.encriptionKey = nil
+        settings.hmacKey = nil
+        
+        client.posId = txtPosId.text
+        client.eftposAddress = txtPosAddress.text
+        client.pair()
     }
     
     @IBAction func pairingCancel() {
@@ -60,6 +62,10 @@ class ConnectionViewController: UITableViewController, NotificationListener {
                 if let state = notification.object as? SPIState {
                     self.printStatusAndAction(state)
                 }
+                
+            case AppEvent.secretsDropped.rawValue:
+                self.showAlert(title: "Pairing", message: "Secrets have been dropped")
+                
             default:
                 return
             }
@@ -110,27 +116,29 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         let alertVC = UIAlertController(title: "EFTPOS Pairing Process", message: pairingFlowState.message, preferredStyle: .alert)
 
         if pairingFlowState.isAwaitingCheckFromPos {
-            SPILogMsg("# [pair_confirm] - confirm the code matches")
-
             alertVC.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (_) in
+                SPILogMsg("# [pair_cancel] - cancel pairing process")
+                
                 self.pairingCancel()
             }))
 
             alertVC.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
+                SPILogMsg("# [pair_confirm] - confirm the code matches")
+                
                 KebabApp.current.client.pairingConfirmCode()
             }))
 
         } else if !pairingFlowState.isFinished {
-            SPILogMsg("# [pair_cancel] - cancel pairing process")
-
             alertVC.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                SPILogMsg("# [pair_cancel] - cancel pairing process")
+                
                 self.pairingCancel()
             }))
 
         } else if pairingFlowState.isSuccessful {
-            SPILogMsg("# [ok] - acknowledge pairing")
-
             alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                SPILogMsg("# [ok] - acknowledge pairing")
+                
                 self.acknowledge()
             }))
 
@@ -152,6 +160,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
     func showError(_ msg: String, completion: (() -> Swift.Void)? = nil) {
         SPILogMsg("ERROR: \(msg)")
+        
         showAlert(title: "Error", message: msg)
     }
     

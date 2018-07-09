@@ -153,11 +153,6 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     
     NSLog(@"start");
     
-    if (self.posId) {
-        // Our stamp for signing outgoing messages
-        self.spiMessageStamp =  [[SPIMessageStamp alloc] initWithPosId:self.posId secrets:self.secrets serverTimeDelta:0];
-    }
-    
     if (self.posVendorId.length == 0 || self.posVersion.length == 0) {
         // POS information is now required to be set
         [NSException raise:@"Missing POS vendor ID and version" format:@"posVendorId and posVersion are required before starting"];
@@ -754,7 +749,6 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     }
     
     _eftposAddress = [url copy];
-    
     NSLog(@"setUrl: %@", _eftposAddress);
     
     [self.connection setUrl:url.copy];
@@ -764,11 +758,10 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     _posId = posId.copy;
     NSLog(@"setPosId: %@ and set spiMessageStamp", _posId);
     
-    if (_posId.length == 0) return;
-    
-    self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:posId secrets:nil serverTimeDelta:0];
-    
-    // FIXME(mike) is this needed? doubling up the work in start
+    if (_posId.length > 0) {
+        // Our stamp for signing outgoing messages
+        self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:posId secrets:nil serverTimeDelta:0];
+    }
 }
 
 /**

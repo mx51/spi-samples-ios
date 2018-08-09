@@ -100,6 +100,7 @@ extension MainViewController {
             logMessage((!purchaseResponse.wasCustomerReceiptPrinted()) ? purchaseResponse.getCustomerReceipt() : "# PRINTED FROM EFTPOS")
             logMessage(String(format: "# PURCHASE: %i", purchaseResponse.getPurchaseAmount()))
             logMessage(String(format: "# TIP: %i", purchaseResponse.getTipAmount()))
+            logMessage(String(format: "# SURCHARGE: %i", purchaseResponse.getSurchargeAmount()))
             logMessage(String(format: "# CASHOUT: %i", purchaseResponse.getCashoutAmount()))
             logMessage(String(format: "# BANKED NON-CASH AMOUNT: %i", purchaseResponse.getBankNonCashAmount()))
             logMessage(String(format: "# BANKED CASH AMOUNT: %i", purchaseResponse.getBankCashAmount()))
@@ -207,6 +208,7 @@ extension MainViewController {
                 logMessage(String(format: "# Customer receipt:"))
                 logMessage((!purchaseResponse.wasCustomerReceiptPrinted() ? purchaseResponse.getCustomerReceipt() : "# PRINTED FROM EFTPOS"))
                 logMessage(String(format: "# PURCHASE: %.2f", purchaseResponse.getPurchaseAmount()))
+                logMessage(String(format: "# SURCHARGE: %i", purchaseResponse.getSurchargeAmount()))
                 logMessage(String(format: "# BANKED NON-CASH AMOUNT: %.2f", purchaseResponse.getBankNonCashAmount()))
                 logMessage(String(format: "# BANKED CASH AMOUNT: %.2f", purchaseResponse.getBankCashAmount()))
             }

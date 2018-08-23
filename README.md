@@ -1,4 +1,4 @@
-# SPI Samples iOS
+# SPI Samples iOS [![Build Status](https://travis-ci.org/AssemblyPayments/spi-samples-ios.svg?branch=master)](https://travis-ci.org/AssemblyPayments/spi-samples-ios)
 
 This is a set of SPI client samples for iOS.
 

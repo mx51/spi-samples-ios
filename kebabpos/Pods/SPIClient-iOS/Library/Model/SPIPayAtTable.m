@@ -22,13 +22,13 @@
     
     NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:_billData options:0];
     NSString *decodedString = [[NSString alloc] initWithData:decodedData encoding:NSUTF8StringEncoding];
-    NSLog(@"%@", decodedString);
+    SPILog(@"Decoded payment history: %@", decodedString);
    
     NSError *jsonError = nil;
     NSData *jsonData  = [NSJSONSerialization dataWithJSONObject:decodedString options:0 error:&jsonError];
     
     if (jsonError) {
-        NSLog(@"jsonError: %@", jsonError);
+        SPILog(@"ERROR: Payment history decoding error: %@", jsonError);
         return [[NSArray alloc] init];
     }
     
@@ -199,7 +199,7 @@
     SPIBillStatusResponse *billStatus = [_delegate payAtTableGetBillStatus:nil tableId:tableId operatorId:operatorId];
     billStatus.tableId = tableId;
     if (billStatus.totalAmount <= 0) {
-        SPILog(@"Table has 0 total amount. not sending it to eftpos.");
+        SPILog(@"Table has 0 total amount. Not sending it to EFTPOS.");
         billStatus.result = BillRetrievalResultInvalidTableId;
     }
     [_spi send:[billStatus toMessage:message.mid]];
@@ -211,7 +211,7 @@
     // Ask POS for Bill Details, inluding encoded PaymentData
     SPIBillStatusResponse *existingBillStatus = [_delegate payAtTableGetBillStatus:billPayment.billId tableId:billPayment.tableId operatorId:billPayment.operatorId];
     if (existingBillStatus.result != BillRetrievalResultSuccess) {
-        SPILog(@"Could not retrieve Bill Status for Payment Advice. Sending Error to Eftpos.");
+        SPILog(@"Could not retrieve bill status for payment advice. Sending error to EFTPOS.");
         [_spi send:[existingBillStatus toMessage:message.mid]];
     }
     NSArray *existingHistory = existingBillStatus.getBillPaymentHistory;
@@ -220,7 +220,7 @@
             // We have already processed this payment
             // Perhaps EFTPOS did get our acknowledgement.
             // Let's update EFTPOS.
-            SPILog(@"Had already received this bill_paymemnt advice from eftpos. Ignoring.");
+            SPILog(@"Had already received this bill paymemnt advice from EFTPOS. Ignoring.");
             [_spi send:[existingBillStatus toMessage:message.mid]];
             return;
         }
@@ -242,7 +242,7 @@
     updatedBillStatus.tableId = billPayment.tableId;
     
     if (updatedBillStatus.result != BillRetrievalResultSuccess) {
-        SPILog(@"POS Errored when being Advised of Payment. Letting EFTPOS know, and sending existing bill data.");
+        SPILog(@"POS errored when being advised of payment. Letting EFTPOS know, and sending existing bill data.");
         updatedBillStatus.billData = existingBillStatus.billData;
     }else{
         updatedBillStatus.billData = updatedBillData;

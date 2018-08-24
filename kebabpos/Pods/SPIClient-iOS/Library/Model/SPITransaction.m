@@ -167,6 +167,10 @@
     return [self.message getDataIntegerValue:@"bank_cash_amount"];
 }
 
+- (NSInteger)getSurchargeAmount {
+    return [self.message getDataIntegerValue:@"surcharge_amount"];
+}
+
 - (NSDictionary *)toPaymentSummary {
     return @{
              @"account_type": [self getAccountType],
@@ -181,7 +185,8 @@
              @"scheme_name": _schemeName,
              @"terminal_id": [self getTerminalId],
              @"terminal_ref_id": [self getTerminalReferenceId],
-             @"tip_amount": [NSNumber numberWithInteger:[self getTipAmount]]
+             @"tip_amount": [NSNumber numberWithInteger:[self getTipAmount]],
+             @"surcharge_amount": [NSNumber numberWithInteger:[self getSurchargeAmount]]
              };
 }
 

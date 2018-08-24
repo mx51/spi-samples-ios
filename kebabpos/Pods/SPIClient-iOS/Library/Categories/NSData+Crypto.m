@@ -11,6 +11,7 @@
 #import <CommonCrypto/CommonCryptor.h>
 #include <CommonCrypto/CommonDigest.h>
 #include <CommonCrypto/CommonHMAC.h>
+#include "SPILogger.h"
 
 @implementation NSData (Crypto)
 
@@ -59,7 +60,7 @@
         result = [NSData dataWithBytesNoCopy:buffer length:decryptedSize];
     } else {
         free(buffer);
-        NSLog(@"[ERROR] failed to decrypt| CCCryptoStatus: %d", cryptStatus);
+        SPILog(@"ERROR: Failed to decrypt: CCCryptoStatus=%d", cryptStatus);
     }
     
     return result;

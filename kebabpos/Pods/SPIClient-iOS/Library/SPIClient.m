@@ -1172,9 +1172,10 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                     [txState completed:successState response:m msg:@"Transaction ended"];
                 }
             }
-            [self transactionFlowStateChanged];
         }
     }
+    
+    [self transactionFlowStateChanged];
 }
 
 - (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse

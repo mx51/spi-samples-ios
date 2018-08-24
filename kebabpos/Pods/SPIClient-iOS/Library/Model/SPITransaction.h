@@ -50,6 +50,8 @@
 
 - (NSInteger)getTipAmount;
 
+- (NSInteger)getSurchargeAmount;
+
 - (NSInteger)getCashoutAmount;
 
 - (NSInteger)getBankNonCashAmount;

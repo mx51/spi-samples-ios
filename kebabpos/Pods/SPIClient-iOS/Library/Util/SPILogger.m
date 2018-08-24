@@ -12,7 +12,7 @@
 NSString *const SPILogNotificationKey = @"SPILogNotificationKey";
 
 void SPILogMsg(NSString *message) {
-    NSLog(@"%@", message);
+    [[SPILogger sharedInstance] log:message];
 }
 
 void SPILog(NSString *format, ...) {
@@ -22,3 +22,23 @@ void SPILog(NSString *format, ...) {
     SPILogMsg(message);
     va_end(args);
 }
+
+@implementation SPILogger
+
++ (instancetype)sharedInstance {
+    static SPILogger *sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [SPILogger new];
+    });
+    return sharedInstance;
+}
+
+- (void)log:(NSString *)message {
+    if (_delegate) {
+        [_delegate log:message];
+    }
+    NSLog(@"%@", message);
+}
+
+@end

@@ -10,7 +10,24 @@
 
 extern NSString * const SPILogNotificationKey;
 
-// Swift cannot call Variadic function
+// Swift cannot call variadic functions
 void SPILogMsg(NSString *format);
 
 void SPILog(NSString *format, ...);
+
+// Delegate for logging actions.
+@protocol SPILogDelegate <NSObject>
+- (void)log:(NSString *)message;
+@end
+
+// Container for logging actions.
+@interface SPILogger : NSObject
+
+// Optional delegate for observing all log messages.
+@property (nonatomic, weak) id<SPILogDelegate> delegate;
+
+- (void)log:(NSString *)message;
+
++ (instancetype)sharedInstance;
+
+@end

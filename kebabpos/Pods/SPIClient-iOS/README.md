@@ -1,4 +1,4 @@
-# SPI Client iOS
+# SPI Client iOS [![Build Status](https://travis-ci.org/AssemblyPayments/spi-client-ios.svg?branch=master)](https://travis-ci.org/AssemblyPayments/spi-client-ios)
 
 This is the iOS client library for Assembly Payments in-store integration.
 

@@ -172,7 +172,7 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
                                                          error:&jsonError];
     
     if (jsonError) {
-        NSLog(@"toJson jsonError: %@", jsonError);
+        SPILog(@"ERROR: Message serialization error: %@", jsonError);
         return nil;
     }
     
@@ -192,7 +192,7 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
     jsonData = [NSJSONSerialization dataWithJSONObject:encrMessageEnvelopeJson options:0 error:&jsonError];
     
     if (jsonError) {
-        NSLog(@"jsonError: %@", jsonError);
+        SPILog(@"ERROR: Envelope serialization error: %@", jsonError);
         return nil;
     }
     
@@ -274,8 +274,7 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
                                                                   error:&error];
         
         if (error) {
-            NSLog(@"ERROR!!~ =%@", error);
-            NSLog(@"%@", [[NSString alloc] initWithData:decryptedJsonData encoding:NSUTF8StringEncoding]);
+            SPILog(@"ERROR: AES decryption error: %@", [[NSString alloc] initWithData:decryptedJsonData encoding:NSUTF8StringEncoding]);
         }
         
         NSDictionary *msgDecryptedJson = (NSDictionary *)newJson[@"message"];

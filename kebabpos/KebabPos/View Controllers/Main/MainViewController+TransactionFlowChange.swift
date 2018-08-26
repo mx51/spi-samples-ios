@@ -84,12 +84,14 @@ extension MainViewController {
     }
     
     func pairCancel() {
-        let alertVC = UIAlertController(title: "Pairing", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
-        let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
-            self.client.pairingCancel()
+        if client.state.txFlowState != nil {
+            let alertVC = UIAlertController(title: "Pairing", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
+            let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
+                self.client.pairingCancel()
+            }
+            alertVC.addAction(cancelBtn)
+            showAlert(alertController: alertVC)
         }
-        alertVC.addAction(cancelBtn)
-        showAlert(alertController: alertVC)
     }
     
     func txCancel() {

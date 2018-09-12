@@ -1297,7 +1297,7 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                 break;
                 
             case SPIConnectionStateConnected:
-                if (weakSelf.state.flow == SPIFlowPairing) {
+                if (weakSelf.state.flow == SPIFlowPairing && weakSelf.state.status == SPIStatusUnpaired) {
                     weakSelf.state.pairingFlowState.message = @"Requesting to pair...";
                     [weakSelf pairingFlowStateChanged];
                     

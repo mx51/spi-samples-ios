@@ -1,0 +1,6 @@
+framework module Pods_MotelPosUITests {
+  umbrella header "Pods-MotelPosUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

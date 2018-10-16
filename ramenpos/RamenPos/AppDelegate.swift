@@ -1,0 +1,32 @@
+//
+//  AppDelegate.swift
+//  RamenPos
+//
+//  Created by Amir Kamali on 29/5/18.
+//  Copyright © 2018 Assembly Payments. All rights reserved.
+//
+
+import UIKit
+import SPIClient_iOS
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate, SPILogDelegate {
+
+    var window: UIWindow?
+    
+    private var lastLogMessage: String?
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        RamenApp.current.initialize()
+        
+        // Observe SPI logs from the library
+        SPILogger.sharedInstance().delegate = self
+        
+        return true
+    }
+
+    func log(_ message: String!) {
+        lastLogMessage = message
+    }
+    
+}

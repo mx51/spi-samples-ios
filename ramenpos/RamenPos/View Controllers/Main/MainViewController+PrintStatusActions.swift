@@ -357,9 +357,11 @@ extension MainViewController {
         if (terminalStatusResponse.isSuccess) {
             lblCharging.text = terminalStatusResponse.getCharging().toString()
             lblEftposStatus.text = terminalStatusResponse.getStatus()
-            lblBatteryLevel.text = "%" + terminalStatusResponse.getBatteryLevel()
             
-            if Int(terminalStatusResponse.getBatteryLevel())! >= 50 {
+            let batterLevel: String = terminalStatusResponse.getBatteryLevel().replacingOccurrences(of: "d", with: "");
+            lblBatteryLevel.text = "%" + batterLevel;
+            
+            if Int(batterLevel)! >= 50 {
                 lblBatteryLevel.textColor = UIColor.green
             } else {
                 lblBatteryLevel.textColor = UIColor.red

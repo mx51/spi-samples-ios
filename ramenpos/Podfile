@@ -2,21 +2,21 @@
 platform :ios, '8.0'
 
 target 'RamenPos' do
-  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
-  use_frameworks!
-
-  # Pods for RamenPos
-  #pod 'SPIClient-iOS', '~> 2.4.0'
-  pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios.git', :branch => 'feature/v2.4.0'
-
-  target 'RamenPosTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-  target 'RamenPosUITests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
+    # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
+    use_frameworks!
+    
+    # Pods for RamenPos
+    #pod 'SPIClient-iOS', '~> 2.4.0'
+    pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios.git', :branch => 'feature/v2.4.0'
+    
+    target 'RamenPosTests' do
+        inherit! :search_paths
+        # Pods for testing
+    end
+    
+    target 'RamenPosUITests' do
+        inherit! :search_paths
+        # Pods for testing
+    end
+    
 end

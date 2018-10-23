@@ -75,6 +75,9 @@ extern NSString *const SPIPrintingResponseKey;
 extern NSString *const SPITerminalStatusRequestKey;
 extern NSString *const SPITerminalStatusResponseKey;
 
+extern NSString *const SPITerminalConfigurationRequestKey;
+extern NSString *const SPITerminalConfigurationResponseKey;
+
 extern NSString *const SPIBatteryLevelChangedKey;
 
 typedef NS_ENUM(NSInteger, SPIMessageSuccessState) {

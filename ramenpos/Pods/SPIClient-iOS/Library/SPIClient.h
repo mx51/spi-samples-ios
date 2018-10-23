@@ -61,9 +61,14 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 - (void)printingResponse:(SPIMessage *)message;
 
 /**
- Subscribe to this event to know when the Printing response,
+ Subscribe to this event to know when the Terminal Status response,
  */
 - (void)terminalStatusResponse:(SPIMessage *)message;
+
+/**
+ Subscribe to this event to know when the Terminal Configuration response,
+ */
+- (void)terminalConfigurationResponse:(SPIMessage *)message;
 
 /**
  Subscribe to this event to know when the Battery Level changed,
@@ -386,5 +391,10 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  Get Terminal Status, Charging, Battery Level
  */
 - (void)getTerminalStatus;
+
+/**
+ Get Terminal Configuration - Comms Selected, Merchant Id, PA Version, Payment Interface Version, Plugin Version, Serial Number, Terminal Id, Terminal Model
+ */
+- (void)getTerminalConfiguration;
 
 @end

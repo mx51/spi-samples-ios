@@ -27,13 +27,13 @@ extension RamenApp: SPIDelegate {
     }
     
     func spi(_ spi: SPIClient!, secretsChanged secrets: SPISecrets?, state: SPIState!) {
-        SPILogMsg("secrets \(state)")
+        SPILogMsg("secrets \(String(describing: state))")
         
         if let secrets = secrets {
             SPILogMsg("\n\n")
             SPILogMsg("# ----------- I GOT NEW SECRETS -----------")
             SPILogMsg("# ---------- PERSIST THEM SAFELY ----------")
-            SPILogMsg("# \(secrets.encKey):\(secrets.hmacKey)")
+            SPILogMsg("# \(String(describing: secrets.encKey)):\(String(describing: secrets.hmacKey))")
             SPILogMsg("# -----------------------------------------")
             
             // In prod store them in the key chain
@@ -73,6 +73,13 @@ extension RamenApp: SPIDelegate {
         
         // Let's show the user what options he has at this stage.
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.terminalStatusResponse.rawValue), object: message)
+    }
+    
+    func terminalConfigurationResponse(_ message: SPIMessage!) {
+        SPILogMsg("terminalStatusResponse")
+        
+        // Let's show the user what options he has at this stage.
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.terminalConfigurationResponse.rawValue), object: message)
     }
     
     func batteryLevelChanged(_ message: SPIMessage!) {

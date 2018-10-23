@@ -29,9 +29,17 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var txtFooter: UITextField!
     @IBOutlet weak var txtPosVendorKey: UITextField!
     @IBOutlet weak var txtPrintText: UITextField!
-    @IBOutlet weak var lblEftposStatus: UILabel!
+    @IBOutlet weak var lblTerminalStatus: UILabel!
     @IBOutlet weak var lblBatteryLevel: UILabel!
     @IBOutlet weak var lblCharging: UILabel!
+    @IBOutlet weak var lblCommsSelected: UILabel!
+    @IBOutlet weak var lblMerchantId: UILabel!
+    @IBOutlet weak var lblPAVersion: UILabel!
+    @IBOutlet weak var lblPaymentInterfaceVersion: UILabel!
+    @IBOutlet weak var lblPluginVersion: UILabel!
+    @IBOutlet weak var lblSerialNumber: UILabel!
+    @IBOutlet weak var lblTerminalId: UILabel!
+    @IBOutlet weak var lblTerminalModel: UILabel!
     
     let indexPath_extraAmount = IndexPath(row: 2, section: 3)
     let _lastCmd: [String] = []
@@ -44,7 +52,7 @@ class MainViewController: UITableViewController, NotificationListener {
         super.viewDidLoad()
         restoreConfig()
         
-        registerForEvents(appEvents: [.connectionStatusChanged, .transactionFlowStateChanged, .printingResponse, .terminalStatusResponse, .batteryLevelChanged])
+        registerForEvents(appEvents: [.connectionStatusChanged, .transactionFlowStateChanged, .printingResponse, .terminalStatusResponse, .terminalConfigurationResponse, .batteryLevelChanged])
         client.start()
     }
     
@@ -122,6 +130,11 @@ class MainViewController: UITableViewController, NotificationListener {
             guard let message = notification.object as? SPIMessage else { return }
             DispatchQueue.main.async {
                 self.handleTerminalStatusResponse(message: message)
+            }
+        case AppEvent.terminalConfigurationResponse.rawValue:
+            guard let message = notification.object as? SPIMessage else { return }
+            DispatchQueue.main.async {
+                self.handleTerminalConfigurationResponse(message: message)
             }
         case AppEvent.batteryLevelChanged.rawValue:
             guard let message = notification.object as? SPIMessage else { return }

@@ -15,5 +15,6 @@ enum AppEvent: String {
     case secretsDropped
     case printingResponse
     case terminalStatusResponse
+    case terminalConfigurationResponse
     case batteryLevelChanged
 }

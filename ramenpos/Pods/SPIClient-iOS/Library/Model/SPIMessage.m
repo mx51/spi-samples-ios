@@ -77,6 +77,9 @@ NSString *const SPIPrintingResponseKey = @"print_response";
 NSString *const SPITerminalStatusRequestKey = @"get_terminal_status";
 NSString *const SPITerminalStatusResponseKey = @"terminal_status";
 
+NSString *const SPITerminalConfigurationRequestKey = @"get_terminal_configuration";
+NSString *const SPITerminalConfigurationResponseKey = @"terminal_configuration";
+
 NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
 
 @implementation SPIMessageStamp

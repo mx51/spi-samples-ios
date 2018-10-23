@@ -93,8 +93,12 @@ extension MainViewController {
         RamenApp.current.client.initiateRecovery(referenceId, transactionType: .getLastTransaction, completion: printResult)
     }
     
-    @IBAction func btnRetrieveClicked(_ sender: UIButton) {
+    @IBAction func btnTerminalStatusRetrieveClicked(_ sender: UIButton) {
         client.getTerminalStatus()
+    }
+    
+    @IBAction func btnTerminalConfigRetrieveClicked(_ sender: UIButton) {
+        client.getTerminalConfiguration()
     }
     
     @IBAction func btnPrintClicked(_ sender: UIButton) {

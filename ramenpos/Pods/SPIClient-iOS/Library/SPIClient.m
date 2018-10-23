@@ -32,7 +32,7 @@
 #import "SPIManifest+Internal.h"
 #import "SPIRepeatingTimer.h"
 #import "SPIPrinting.h"
-#import "SPITerminalStatus.h"
+#import "SPITerminal.h"
 
 @interface SPIClient () <SPIConnectionDelegate>
 
@@ -753,6 +753,10 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     [self send:[[[SPITerminalStatusRequest alloc] init] toMessage]];
 }
 
+- (void)getTerminalConfiguration {
+    [self send:[[[SPITerminalConfigurationRequest alloc] init] toMessage]];
+}
+
 #pragma mark -
 #pragma mark - Connection
 
@@ -1315,6 +1319,10 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     [_delegate terminalStatusResponse:m];
 }
 
+- (void)handleTerminalConfigurationResponse:(SPIMessage *)m {
+    [_delegate terminalConfigurationResponse:m];
+}
+
 - (void)handleBatteryLevelChanged:(SPIMessage *)m {
     [_delegate batteryLevelChanged:m];
 }
@@ -1660,6 +1668,9 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
             
         } else if ([eventName isEqualToString:SPITerminalStatusResponseKey]) {
             [weakSelf handleTerminalStatusResponse:m];
+
+        } else if ([eventName isEqualToString:SPITerminalConfigurationResponseKey]) {
+            [weakSelf handleTerminalConfigurationResponse:m];
             
         } else if ([eventName isEqualToString:SPIBatteryLevelChangedKey]) {
             [weakSelf handleBatteryLevelChanged:m];

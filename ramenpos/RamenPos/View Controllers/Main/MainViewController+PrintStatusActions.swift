@@ -356,7 +356,7 @@ extension MainViewController {
         let terminalStatusResponse: SPITerminalStatusResponse = SPITerminalStatusResponse(message: message)
         if (terminalStatusResponse.isSuccess) {
             lblCharging.text = terminalStatusResponse.getCharging().toString()
-            lblEftposStatus.text = terminalStatusResponse.getStatus()
+            lblTerminalStatus.text = terminalStatusResponse.getStatus()
             
             let batterLevel: String = terminalStatusResponse.getBatteryLevel().replacingOccurrences(of: "d", with: "");
             lblBatteryLevel.text = "%" + batterLevel;
@@ -371,6 +371,25 @@ extension MainViewController {
             return
         } else {
             showMessage(title: "Terminal Status", msg: "ERROR: Terminal Status retrieving failed", type: "ERROR", isShow: true)
+        }
+    }
+    
+    func handleTerminalConfigurationResponse(message: SPIMessage) {
+        let terminalConfigResponse: SPITerminalConfigurationResponse = SPITerminalConfigurationResponse(message: message)
+        if (terminalConfigResponse.isSuccess) {
+            lblCommsSelected.text = terminalConfigResponse.getCommsSelected()
+            lblMerchantId.text = terminalConfigResponse.getMerchantId()
+            lblPAVersion.text = terminalConfigResponse.getPAVersion()
+            lblPaymentInterfaceVersion.text = terminalConfigResponse.getPaymentInterfaceVersion()
+            lblPluginVersion.text = terminalConfigResponse.getPluginVersion()
+            lblSerialNumber.text = terminalConfigResponse.getSerialNumber()
+            lblTerminalId.text = terminalConfigResponse.getTerminalId()
+            lblTerminalModel.text = terminalConfigResponse.getTerminalModel()
+            
+            showMessage(title: "Terminal Configuration", msg: "Terminal Configuration retrieving successful", type: "INFO", isShow: true)
+            return
+        } else {
+            showMessage(title: "Terminal Configuration", msg: "ERROR: Terminal Configuration retrieving failed", type: "ERROR", isShow: true)
         }
     }
     

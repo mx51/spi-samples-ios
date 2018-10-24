@@ -1668,7 +1668,7 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
             
         } else if ([eventName isEqualToString:SPITerminalStatusResponseKey]) {
             [weakSelf handleTerminalStatusResponse:m];
-
+            
         } else if ([eventName isEqualToString:SPITerminalConfigurationResponseKey]) {
             [weakSelf handleTerminalConfigurationResponse:m];
             

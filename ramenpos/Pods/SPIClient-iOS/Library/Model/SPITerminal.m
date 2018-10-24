@@ -47,9 +47,7 @@
 @implementation SPITerminalStatusResponse : NSObject
 
 - (instancetype)initWithMessage:(SPIMessage *)message {
-    self = [super init];
-    
-    if (self) {
+    if (self = [super init]) {
         _message = message;
         _isSuccess = [message isSuccess];
     }

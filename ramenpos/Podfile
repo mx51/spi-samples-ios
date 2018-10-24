@@ -6,8 +6,7 @@ target 'RamenPos' do
     use_frameworks!
     
     # Pods for RamenPos
-    #pod 'SPIClient-iOS', '~> 2.4.0'
-    pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios.git', :branch => 'feature/v2.4.0'
+    pod 'SPIClient-iOS', '~> 2.4.0'
     
     target 'RamenPosTests' do
         inherit! :search_paths

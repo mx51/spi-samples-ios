@@ -10,7 +10,7 @@
 
 @interface SPITerminalBattery : NSObject
 
-@property (nonatomic, readonly, strong) NSString *batteryLevel;
+@property (readonly) NSString *batteryLevel;
 
 - (instancetype)initWithMessage:(SPIMessage *)message;
 

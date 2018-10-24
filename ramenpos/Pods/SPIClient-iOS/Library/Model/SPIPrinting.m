@@ -18,7 +18,7 @@
     
     if (self) {
         _infoId = [SPIRequestIdHelper idForString:@"print"];
-        _key = key;
+        _key = [key copy];
         _payload = payload;
     }
     

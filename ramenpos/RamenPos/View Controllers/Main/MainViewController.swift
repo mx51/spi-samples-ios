@@ -60,7 +60,7 @@ class MainViewController: UITableViewController, NotificationListener {
         let settings = RamenApp.current.settings
         
         swchReceiptFromEftpos.isOn = settings.customerReceiptFromEftpos ?? false
-        swchSignatureFromEftpos.isOn = settings.customerSignatureromEftpos ?? false
+        swchSignatureFromEftpos.isOn = settings.customerSignatureFromEftpos ?? false
         swchPrintMerchantCopy.isOn = settings.printMerchantCopy ?? false
         txtHeader.text = settings.receiptHeader
         txtFooter.text = settings.receiptFooter
@@ -88,7 +88,7 @@ class MainViewController: UITableViewController, NotificationListener {
     
     @IBAction func swchSignatureFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.signatureFlowOnEftpos = sender.isOn
-        RamenApp.current.settings.customerSignatureromEftpos = sender.isOn
+        RamenApp.current.settings.customerSignatureFromEftpos = sender.isOn
     }
     
     @IBAction func swchPrintMerchantCopyValueChanged(_ sender: UISwitch) {

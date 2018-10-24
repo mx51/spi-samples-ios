@@ -69,7 +69,7 @@ class SettingsProvider {
         set { setSettingsForKey(key: .customerReceipt, value: newValue) }
     }
     
-    var customerSignatureromEftpos: Bool? {
+    var customerSignatureFromEftpos: Bool? {
         get { return readSettingsFrom(key: .customerSignature) as? Bool }
         set { setSettingsForKey(key: .customerSignature, value: newValue) }
     }

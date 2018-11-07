@@ -42,7 +42,6 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var lblTerminalModel: UILabel!
     
     let indexPath_extraAmount = IndexPath(row: 2, section: 3)
-    let _lastCmd: [String] = []
     
     var client: SPIClient {
         return RamenApp.current.client

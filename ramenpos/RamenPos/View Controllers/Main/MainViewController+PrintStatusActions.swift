@@ -237,10 +237,10 @@ extension MainViewController {
         if (txState.response != nil) {
             let gltResponse = SPIGetLastTransactionResponse(message: txState.response)
             
-            if (_lastCmd.count > 1) {
+            if (txtReferenceId.text != "") {
                 // User specified that he intended to retrieve a specific tx by pos_ref_id
                 // This is how you can use a handy function to match it.
-                let success = client.gltMatch(gltResponse, posRefId: _lastCmd[1])
+                let success = client.gltMatch(gltResponse, posRefId: txtReferenceId.text)
                 if (success == .unknown) {
                     logMessage(String(format: "# Did not retrieve expected transaction. Here is what we got:"))
                 } else {

@@ -7,7 +7,7 @@ target 'TablePos' do
 
   # Pods for TablePos
   #pod 'SPIClient-iOS', '~> 2.3.0'
-  #pod 'SPIClient-iOS', :path => '~/Documents/GitHub/spi-client-ios-fork'
+  #pod 'SPIClient-iOS', :path => '~/Documents/GitHub/spi-client-ios/feature-payattable-preauth-trans'
   pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios', :branch => 'feature/payattable-preauth-trans'
 
   target 'TablePosTests' do

@@ -249,7 +249,7 @@
     }
 
     SPIPaymentHistoryEntry *newPaymentEntry = [[SPIPaymentHistoryEntry alloc] init];
-    newPaymentEntry.paymentType = [SPIBillPayment paymentTypeString:billPayment.paymentType];
+    newPaymentEntry.paymentType = [SPIBillPayment paymentTypeString:billPayment.paymentType].lowercaseString;
     newPaymentEntry.paymentSummary = [billPayment.purchaseResponse toPaymentSummary];
     [updatedHistoryEntries addObjectsFromArray:[NSArray arrayWithObject:newPaymentEntry.toJsonObject]];
 

@@ -236,27 +236,20 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 #pragma mark - Transaction Management
 
 - (void)_handlePreauthMessage:(SPIMessage *)m {
-    __weak __typeof(&*self) weakSelf = self;
+    NSString *eventName = m.eventName;
     
-    dispatch_async(_queue, ^{
-        
-        NSString *eventName = m.eventName;
-        
-        if ([eventName isEqualToString:SPIAccountVerifyResponseKey]) {
-            [weakSelf _handleAccountVerifyResponse:m];
-            
-        } else if ([eventName isEqualToString:SPIPreauthOpenResponseKey] ||
-                   [eventName isEqualToString:SPIPreauthTopupResponseKey] ||
-                   [eventName isEqualToString:SPIPreauthPartialCancellationResponseKey] ||
-                   [eventName isEqualToString:SPIPreauthExtendResponseKey] ||
-                   [eventName isEqualToString:SPIPreauthCompleteResponseKey] ||
-                   [eventName isEqualToString:SPIPreauthCancellationResponseKey]) {
-            [weakSelf _handlePreauthResponse:m];
-            
-        } else {
-            SPILog(@"I don't understand Presuth event:'%@', %@. Perhaps I have not implemented it yet.", eventName, m.data);
-        }
-    });
+    if ([eventName isEqualToString:SPIAccountVerifyResponseKey]) {
+        [self _handleAccountVerifyResponse:m];
+    } else if ([eventName isEqualToString:SPIPreauthOpenResponseKey] ||
+               [eventName isEqualToString:SPIPreauthTopupResponseKey] ||
+               [eventName isEqualToString:SPIPreauthPartialCancellationResponseKey] ||
+               [eventName isEqualToString:SPIPreauthExtendResponseKey] ||
+               [eventName isEqualToString:SPIPreauthCompleteResponseKey] ||
+               [eventName isEqualToString:SPIPreauthCancellationResponseKey]) {
+        [self _handlePreauthResponse:m];
+    } else {
+        SPILog(@"I don't understand Preauth event:'%@', %@. Perhaps I have not implemented it yet.", eventName, m.data);
+    }
 }
 
 -(void)_handleAccountVerifyResponse:(SPIMessage *)m {

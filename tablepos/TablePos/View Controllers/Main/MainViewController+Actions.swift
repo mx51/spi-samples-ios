@@ -33,7 +33,7 @@ extension MainViewController {
         TableApp.current.billsStore[newBill.billId!] = newBill
         TableApp.current.tableToBillMapping[newBill.tableId!] = newBill.billId
         
-        showMessage(title: "Open Table", msg: "Opened: \(newBill.toString())", type: "INFO", isShow: false)
+        showMessage(title: "Open Table", msg: "Opened: \(newBill.toString())", type: "INFO", isShow: true)
     }
     
     @IBAction func btnAddTableClicked(_ sender: Any) {
@@ -50,7 +50,7 @@ extension MainViewController {
         bill.totalAmount! += amount
         bill.outstandingAmount! += amount
         
-        showMessage(title: "Add Table", msg: "Updated: \(bill.toString()))", type: "INFO", isShow: false)
+        showMessage(title: "Add Table", msg: "Updated: \(bill.toString()))", type: "INFO", isShow: true)
     }
     
     @IBAction func btnCloseTableClicked(_ sender: Any) {
@@ -69,7 +69,7 @@ extension MainViewController {
         
         TableApp.current.tableToBillMapping.removeValue(forKey: tableId!)
         TableApp.current.assemblyBillDataStore.removeValue(forKey: (bill.billId)!)
-        showMessage(title: "Close Table", msg: "Closed: \(bill.toString())", type: "INFO", isShow: false)
+        showMessage(title: "Close Table", msg: "Closed: \(bill.toString())", type: "INFO", isShow: true)
     }
     
     @IBAction func btnListTablesClicked(_ sender: Any) {
@@ -83,9 +83,9 @@ extension MainViewController {
                 openTables += key
             }
             
-            showMessage(title: "List Tables", msg: "#    Open Tables: \(openTables)", type: "INFO", isShow: false)
+            showMessage(title: "List Tables", msg: "#    Open Tables: \(openTables)", type: "INFO", isShow: true)
         } else {
-            showMessage(title: "List Tables", msg: "# No Open Tables.", type: "INFO", isShow: false)
+            showMessage(title: "List Tables", msg: "# No Open Tables.", type: "INFO", isShow: true)
         }
         
         if TableApp.current.tableToBillMapping.count > 0 {
@@ -98,7 +98,7 @@ extension MainViewController {
                 openBills += key
             }
             
-            showMessage(title: "List Tables", msg: "# My Bills Store: \(openBills)", type: "INFO", isShow: false)
+            showMessage(title: "List Tables", msg: "# My Bills Store: \(openBills)", type: "INFO", isShow: true)
         }
         
         if TableApp.current.assemblyBillDataStore.count > 0 {
@@ -111,7 +111,7 @@ extension MainViewController {
                 openAssemblyBills += key
             }
             
-            showMessage(title: "List Tables", msg: "# My Bills Store: \(openAssemblyBills)", type: "INFO", isShow: false)
+            showMessage(title: "List Tables", msg: "# My Bills Store: \(openAssemblyBills)", type: "INFO", isShow: true)
         }
     }
     
@@ -188,7 +188,7 @@ extension MainViewController {
         }
         
         let bill: Bill = TableApp.current.billsStore[billId]! 
-        showMessage(title: title, msg: "Bill: \(bill.toString())", type: "INFO", isShow: false)
+        showMessage(title: title, msg: "Bill: \(bill.toString())", type: "INFO", isShow: true)
     }
     
     func showMessage(title: String, msg: String, type: String, isShow: Bool, completion: (() -> Swift.Void)? = nil) {

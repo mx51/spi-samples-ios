@@ -8,7 +8,8 @@ target 'MotelPos' do
   # Pods for MotelPos
   #pod 'SPIClient-iOS', '~> 2.4.0'
   pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios', :branch => 'feature/payattable-preauth-trans'
-
+  #pod 'SPIClient-iOS', :path => '~/Documents/GitHub/spi-client-ios/feature-payattable-preauth-trans'
+  
   target 'MotelPosTests' do
     inherit! :search_paths
     # Pods for testing

@@ -122,11 +122,15 @@
 
 
     NSString *paymentType = [_incomingAdvice getDataStringValue:@"payment_type"];
-    if ([paymentType isEqualToString:[SPIBillPayment paymentTypeString:SPIPaymentTypeCard]]) {
+    NSString *cardPaymentType = [SPIBillPayment paymentTypeString:SPIPaymentTypeCard].lowercaseString;
+    NSString *cashPaymentType = [SPIBillPayment paymentTypeString:SPIPaymentTypeCash].lowercaseString;
+    
+    if ([paymentType isEqualToString:cardPaymentType]) {
         _paymentType = SPIPaymentTypeCard;
-    } else if ([paymentType isEqualToString:[SPIBillPayment paymentTypeString:SPIPaymentTypeCash]]) {
+    } else if ([paymentType isEqualToString:cashPaymentType]) {
         _paymentType = SPIPaymentTypeCash;
     }
+    
     NSDictionary<NSString *,NSObject *> *data = (NSDictionary *)[message.data valueForKey:@"payment_details"];
 
     // this is when we ply the sub object "payment_details" into a purchase response for convenience.
@@ -140,14 +144,20 @@
 }
 
 + (NSString *)paymentTypeString:(SPIPaymentType)ptype {
+    NSString *result = nil;
     switch (ptype) {
         case SPIPaymentTypeCard:
-            return @"CARD";
+            result = @"CARD";
+            break;
         case SPIPaymentTypeCash:
-            return @"CASH";
+            result =  @"CASH";
+            break;
         default:
-            return nil;
+            result =  nil;
+            break;
     }
+    
+    return result;
 }
 
 @end

@@ -175,6 +175,7 @@ extension MainViewController {
             logMessage(String(format: "# CASHOUT: %.2f", Float(cashoutResponse.getCashoutAmount()) / 100.0))
             logMessage(String(format: "# BANKED NON-CASH AMOUNT: %.2f", Float(cashoutResponse.getBankNonCashAmount()) / 100.0))
             logMessage(String(format: "# BANKED CASH AMOUNT: %.2f", Float(cashoutResponse.getBankCashAmount()) / 100.0))
+            logMessage(String(format: "# SURCHARGE: %.2f", Float(cashoutResponse.getSurchargeAmount()) / 100.0))
             break
         case .failed:
             logMessage(String(format: "# CASHOUT FAILED!"))
@@ -196,6 +197,7 @@ extension MainViewController {
             break
         }
     }
+    
     func handleFinishedMoto(txState: SPITransactionFlowState) {
         switch (txState.successState) {
         case .success:

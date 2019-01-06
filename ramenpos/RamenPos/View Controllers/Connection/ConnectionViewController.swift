@@ -34,6 +34,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
         txtSerialNumber.text = RamenApp.current.settings.serialNumber
+        RamenApp.current.settings.autoResolution = swchAutoResolution.isOn
+        RamenApp.current.settings.testMode = swchAutoResolution.isOn
     }
     
     @IBAction func pairButtonClicked(_ sender: Any) {

@@ -40,6 +40,7 @@
 #import "SPIPingHelper.h"
 #import "SPIRequestIdHelper.h"
 #import "SPIWebSocketConnection.h"
+#import "SPIDeviceService.h"
 #import "SPIClient+Internal.h"
 #import "SPIClient.h"
 #import "SPIClient_iOS.h"

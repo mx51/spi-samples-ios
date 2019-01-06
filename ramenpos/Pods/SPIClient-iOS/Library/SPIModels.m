@@ -140,9 +140,10 @@
     self.displayMessage = msg;
 }
 
-- (void)callingGlt {
+- (void)callingGlt:(NSString *)gltRequestId {
     self.isAwaitingGltResponse = YES;
     self.lastStateRequestTime = [NSDate date];
+    self.lastGltRequestId = gltRequestId;
 }
 
 - (void)gotGltResponse {
@@ -212,6 +213,7 @@
     state.request = self.request;
     state.isAwaitingGltResponse = self.isAwaitingGltResponse;
     state.gltResponsePosRefId = self.gltResponsePosRefId;
+    state.lastGltRequestId = self.lastGltRequestId;
     
     return state;
 }
@@ -255,6 +257,7 @@
     state.flow = self.flow;
     state.pairingFlowState = self.pairingFlowState.copy;
     state.txFlowState = self.txFlowState.copy;
+    state.deviceAddressStatus = self.deviceAddressStatus.copy;
     return state;
 }
 

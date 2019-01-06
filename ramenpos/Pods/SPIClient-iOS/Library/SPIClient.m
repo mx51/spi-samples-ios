@@ -33,6 +33,7 @@
 #import "SPIRepeatingTimer.h"
 #import "SPIPrinting.h"
 #import "SPITerminal.h"
+#import "SPIDeviceService.h"
 
 @interface SPIClient () <SPIConnectionDelegate>
 
@@ -52,6 +53,7 @@
 @property (nonatomic) NSTimeInterval mostRecentPingSentTime;
 @property (nonatomic, strong) SPIMessage *mostRecentPongReceived;
 @property (nonatomic, assign) NSInteger missedPongsCount;
+@property (nonatomic, assign) NSInteger retriesSinceLastDeviceAddressResolution;
 
 @property (nonatomic, strong) SPISignatureRequired *mostRecentSignatureRequiredReceived;
 
@@ -71,6 +73,7 @@ static NSTimeInterval maxWaitForCancelTx = 10;  // How long do we wait for cance
 static NSTimeInterval pongTimeout = 5; // How long do we wait for a pong to come back
 static NSTimeInterval pingFrequency = 18; // How often we send pings
 static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before disconnecting
+static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries before resolving Device Address
 
 @implementation SPIClient
 
@@ -138,6 +141,12 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 - (void)secretsChanged:(SPISecrets *)secrets {
     [self callDelegate:^(id<SPIDelegate> delegate) {
         [delegate spi:self secretsChanged:secrets state:self.state.copy];
+    }];
+}
+
+- (void)deviceAddressChanged {
+    [self callDelegate:^(id<SPIDelegate> delegate) {
+        [delegate spi:self deviceAddressChanged:self.state.copy];
     }];
 }
 
@@ -323,6 +332,24 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
           promptForCashout:(BOOL)promptForCashout
                    options:(SPITransactionOptions *)options
                 completion:(SPICompletionTxResult)completion {
+    [self initiatePurchaseTx:posRefId
+              purchaseAmount:purchaseAmount
+                   tipAmount:tipAmount
+               cashoutAmount:cashoutAmount
+            promptForCashout:promptForCashout
+                     options:nil
+             surchargeAmount:0
+                  completion:completion];
+}
+
+- (void)initiatePurchaseTx:(NSString *)posRefId
+            purchaseAmount:(NSInteger)purchaseAmount
+                 tipAmount:(NSInteger)tipAmount
+             cashoutAmount:(NSInteger)cashoutAmount
+          promptForCashout:(BOOL)promptForCashout
+                   options:(SPITransactionOptions *)options
+           surchargeAmount:(NSInteger)surchargeAmount
+                completion:(SPICompletionTxResult)completion {
     
     if (tipAmount > 0 && (cashoutAmount > 0 || promptForCashout)) {
         completion([[SPIInitiateTxResult alloc] initWithTxResult:NO message:@"Cannot accept tips and cashout at the same time."]);
@@ -351,7 +378,8 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                                                                      purchaseAmount:purchaseAmount
                                                                           tipAmount:tipAmount
                                                                          cashAmount:cashoutAmount
-                                                                   promptForCashout:promptForCashout];
+                                                                   promptForCashout:promptForCashout
+                                                                    surchargeAmount:surchargeAmount];
             purchase.config = weakSelf.config;
             purchase.options = options;
             
@@ -378,6 +406,16 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 - (void)initiateRefundTx:(NSString *)posRefId
              amountCents:(NSInteger)amountCents
               completion:(SPICompletionTxResult)completion {
+    [self initiateRefundTx:posRefId
+               amountCents:amountCents
+isSuppressMerchantPassword:false
+                completion:completion];
+}
+
+- (void)initiateRefundTx:(NSString *)posRefId
+             amountCents:(NSInteger)amountCents
+isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
+              completion:(SPICompletionTxResult)completion {
     
     if (self.state.status == SPIStatusUnpaired) {
         completion([[SPIInitiateTxResult alloc] initWithTxResult:NO message:@"Not paired"]);
@@ -395,7 +433,9 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
             
             weakSelf.state.flow = SPIFlowTransaction;
             
-            SPIRefundRequest *refund = [[SPIRefundRequest alloc] initWithPosRefId:posRefId amountCents:amountCents];
+            SPIRefundRequest *refund = [[SPIRefundRequest alloc] initWithPosRefId:posRefId
+                                                                      amountCents:amountCents];
+            refund.isSuppressMerchantPassword = isSuppressMerchantPassword;
             refund.config = weakSelf.config;
             
             SPIMessage *refundMsg = [refund toMessage];
@@ -449,6 +489,16 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 - (void)initiateCashoutOnlyTx:(NSString *)posRefId
                   amountCents:(NSInteger)amountCents
                    completion:(SPICompletionTxResult)completion {
+    [self initiateCashoutOnlyTx:posRefId
+                    amountCents:amountCents
+                surchargeAmount:0
+                     completion:completion];
+}
+
+- (void)initiateCashoutOnlyTx:(NSString *)posRefId
+                  amountCents:(NSInteger)amountCents
+              surchargeAmount:(NSInteger)surchargeAmount
+                   completion:(SPICompletionTxResult)completion {
     
     if (self.state.status == SPIStatusUnpaired) {
         completion([[SPIInitiateTxResult alloc] initWithTxResult:NO message:@"Not paired"]);
@@ -466,7 +516,9 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
             
             weakSelf.state.flow = SPIFlowTransaction;
             
-            SPICashoutOnlyRequest *cashoutOnlyRequest = [[SPICashoutOnlyRequest alloc] initWithAmountCents:amountCents posRefId:posRefId];
+            SPICashoutOnlyRequest *cashoutOnlyRequest = [[SPICashoutOnlyRequest alloc] initWithAmountCents:amountCents
+                                                                                                  posRefId:posRefId];
+            cashoutOnlyRequest.surchargeAmount = surchargeAmount;
             cashoutOnlyRequest.config = weakSelf.config;
             
             SPIMessage *cashoutMsg = [cashoutOnlyRequest toMessage];
@@ -475,11 +527,10 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                                                                              type:SPITransactionTypeCashoutOnly
                                                                       amountCents:amountCents
                                                                           message:cashoutMsg
-                                                                              msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to send cashout request for $%.2f",
-                                                                                   ((float)amountCents / 100.0)]];
+                                                                              msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to send cashout request for $%.2f Surcharge: $%.2f", ((float)amountCents / 100.0), ((float)surchargeAmount / 100.0)]];
             
             if ([weakSelf send:cashoutMsg]) {
-                [weakSelf.state.txFlowState sent:[NSString stringWithFormat:@"Asked EFTPOS to do cashout for $%.2f", ((float)amountCents / 100.0)]];
+                [weakSelf.state.txFlowState sent:[NSString stringWithFormat:@"Asked EFTPOS to do cashout for $%.2f Surcharge: $%.2f", ((float)amountCents / 100.0), ((float)surchargeAmount / 100.0)]];
             }
         }
         
@@ -490,6 +541,16 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 
 - (void)initiateMotoPurchaseTx:(NSString *)posRefId
                    amountCents:(NSInteger)amountCents
+                    completion:(SPICompletionTxResult)completion {
+    [self initiateMotoPurchaseTx:posRefId
+                     amountCents:amountCents
+                 surchargeAmount:0
+                      completion:completion];
+}
+
+- (void)initiateMotoPurchaseTx:(NSString *)posRefId
+                   amountCents:(NSInteger)amountCents
+               surchargeAmount:(NSInteger)surchargeAmount
                     completion:(SPICompletionTxResult)completion {
     
     if (self.state.status == SPIStatusUnpaired) {
@@ -508,7 +569,9 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
             
             weakSelf.state.flow = SPIFlowTransaction;
             
-            SPIMotoPurchaseRequest *motoPurchaseRequest = [[SPIMotoPurchaseRequest alloc] initWithAmountCents:amountCents posRefId:posRefId];
+            SPIMotoPurchaseRequest *motoPurchaseRequest = [[SPIMotoPurchaseRequest alloc] initWithAmountCents:amountCents
+                                                                                                     posRefId:posRefId];
+            motoPurchaseRequest.surchargeAmount = surchargeAmount;
             motoPurchaseRequest.config = weakSelf.config;
             
             SPIMessage *cashoutMsg = [motoPurchaseRequest toMessage];
@@ -517,11 +580,10 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                                                                                  type:SPITransactionTypeMOTO
                                                                           amountCents:amountCents
                                                                               message:cashoutMsg
-                                                                                  msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to send MOTO request for %.2f",
-                                                                                       ((float)amountCents) / 100]];
+                                                                                  msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to send MOTO request for $%.2f Surcharge: $%.2f", ((float)amountCents / 100), ((float)surchargeAmount / 100.0)]];
             
             if ([weakSelf send:cashoutMsg]) {
-                [weakSelf.state.txFlowState sent:[NSString stringWithFormat:@"Asked EFTPOS do MOTO for  %.2f", ((float)amountCents) / 100]];
+                [weakSelf.state.txFlowState sent:[NSString stringWithFormat:@"Asked EFTPOS do MOTO for $%.2f Surcharge: $%.2f", ((float)amountCents / 100), ((float)surchargeAmount / 100.0)]];
             }
         }
         
@@ -690,6 +752,8 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                                                                               message:gltMessage
                                                                                   msg:@"Waiting for EFTPOS connection to make a get last transaction request"];
             
+            [weakSelf.state.txFlowState callingGlt:gltMessage.mid];
+            
             if ([weakSelf send:gltMessage]) {
                 [weakSelf.state.txFlowState sent:@"Asked EFTPOS to get last transaction"];
             }
@@ -744,8 +808,8 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     });
 }
 
-- (void)printReceipt:(NSString *)key
-             payload:(NSString *)payload {
+- (void)printReport:(NSString *)key
+            payload:(NSString *)payload {
     [self send:[[[SPIPrintingRequest alloc] initWithKey:key payload:payload] toMessage]];
 }
 
@@ -763,6 +827,10 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 - (void)setEftposAddress:(NSString *)url {
     if (url.length == 0) {
         [self.connection setUrl:nil];
+        return;
+    }
+    
+    if (self.state.status == SPIStatusPairedConnected || _autoAddressResolutionEnable) {
         return;
     }
     
@@ -819,6 +887,134 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
         SPILog(@"ERROR: Asked to send, but not connected: %@", message.decryptedJson);
         return NO;
     }
+}
+
+#pragma mark - Device Management
+
+/**
+ Set the acquirer code of your bank, please contact Assembly's Integration Engineers for acquirer code.
+ */
+- (void)setAcquirerCode:(NSString *)acquirerCode {
+    _acquirerCode = acquirerCode.copy;
+}
+
+/**
+ Set the api key used for auto address discovery feature, please contact Assembly's Integration Engineers for Api key.
+ */
+- (void)setDeviceApiKey:(NSString *)deviceApiKey {
+    _deviceApiKey = deviceApiKey.copy;
+}
+
+/**
+ Allows you to set the serial number of the Eftpos
+ */
+- (void)setSerialNumber:(NSString *)serialNumber {
+    if (self.state.status != SPIStatusUnpaired) {
+        return;
+    }
+    
+    NSString *was = _serialNumber;
+    _serialNumber = serialNumber.copy;
+    
+    if (_autoAddressResolutionEnable && [self hasSerialNumberChanged:was]) {
+        __weak __typeof(&*self) weakSelf = self;
+        
+        dispatch_async(self.queue, ^{
+            // we're turning it on
+            [weakSelf autoResolveEftposAddress];
+        });
+    }
+}
+
+/**
+ Allows you to set the auto address discovery feature.
+ */
+- (void)setAutoAddressResolutionEnable:(BOOL)autoAddressResolutionEnable {
+    if (self.state.status == SPIStatusPairedConnected) {
+        return;
+    }
+    
+    BOOL was = _autoAddressResolutionEnable;
+    _autoAddressResolutionEnable = autoAddressResolutionEnable;
+    
+    if (_autoAddressResolutionEnable && !was) {
+        __weak __typeof(&*self) weakSelf = self;
+        
+        dispatch_async(self.queue, ^{
+            // we're turning it on
+            [weakSelf autoResolveEftposAddress];
+        });
+    }
+}
+
+/**
+ Allows you to set the auto address discovery feature.
+ */
+- (void)setTestMode:(BOOL)testMode {
+    if (self.state.status != SPIStatusUnpaired) {
+        return;
+    }
+    
+    if (testMode == _testMode) {
+        return;
+    }
+    
+    // we're changing mode
+    _testMode = testMode;
+    
+    __weak __typeof(&*self) weakSelf = self;
+    
+    dispatch_async(self.queue, ^{
+        // we're turning it on
+        [weakSelf autoResolveEftposAddress];
+    });
+}
+
+- (BOOL)hasSerialNumberChanged:(NSString *)updatedSerialNumber {
+    if ([_serialNumber isEqualToString:updatedSerialNumber])
+        return false;
+    
+    return true;
+}
+
+- (BOOL)hasEftposAddressChanged:(NSString *)updatedEftposAddress {
+    if ([_eftposAddress isEqualToString:updatedEftposAddress])
+        return false;
+    
+    return true;
+}
+
+- (void)autoResolveEftposAddress {
+    if (!_autoAddressResolutionEnable) {
+        return;
+    }
+    
+    if (_serialNumber.length == 0) {
+        return;
+    }
+    
+    SPIDeviceAddressStatus *addressResponse = [[SPIDeviceService alloc] retrieveServiceWithSerialNumber:_serialNumber
+                                                                                                 apiKey:_deviceApiKey
+                                                                                           acquirerCode:_acquirerCode
+                                                                                             isTestMode:_testMode];
+    
+    if (addressResponse.address.length == 0) {
+        return;
+    }
+    
+    if (![self hasEftposAddressChanged:addressResponse.address]) {
+        return;
+    }
+    
+    // update device and connection address
+    _eftposAddress = [NSString stringWithFormat:@"ws://%@", addressResponse.address];
+    [_connection setUrl:_eftposAddress];
+    
+    SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+    currentDeviceAddressStatus.address = addressResponse.address;
+    currentDeviceAddressStatus.lastUpdated = addressResponse.lastUpdated;
+    self.state.deviceAddressStatus = currentDeviceAddressStatus;
+    [self deviceAddressChanged];
 }
 
 #pragma mark - Events
@@ -1144,7 +1340,17 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
         SPITransactionFlowState *txState = self.state.txFlowState;
         
         if (self.state.flow != SPIFlowTransaction || txState.isFinished) {
-            // We were not in the middle of a transaction, who cares?
+            SPILog(@"Received glt response but we were not in the middle of a tx. ignoring.");
+            return;
+        }
+        
+        if (!txState.isAwaitingGltResponse) {
+            SPILog(@"received a glt response but we had not asked for one within this transaction. Perhaps leftover from previous one. ignoring.");
+            return;
+        }
+        
+        if (txState.lastGltRequestId != m.mid) {
+            SPILog(@"received a glt response but the message id does not match the glt request that we sent. strange. ignoring.");
             return;
         }
         
@@ -1299,7 +1505,6 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                 } else if (state.isRequestSent && [now compare:[state.lastStateRequestTime dateByAddingTimeInterval: checkOnTxFrequency]] ==  NSOrderedDescending) {
                     // TH-1T, TH-4T - It's been a while since we received an update, let's call a GLT
                     SPILog(@"Checking on our transaction. Last we asked was at %@...", [state.lastStateRequestTime toString]);
-                    [txState callingGlt];
                     [weakSelf callGetLastTransaction];
                 }
             }
@@ -1355,6 +1560,8 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                 break;
                 
             case SPIConnectionStateConnected:
+                self->_retriesSinceLastDeviceAddressResolution = 0;
+                
                 if (weakSelf.state.flow == SPIFlowPairing && weakSelf.state.status == SPIStatusUnpaired) {
                     weakSelf.state.pairingFlowState.message = @"Requesting to pair...";
                     [weakSelf pairingFlowStateChanged];
@@ -1388,6 +1595,15 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                     
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                         if (weakSelf.connection == nil) return;
+                        
+                        if (self->_autoAddressResolutionEnable) {
+                            if (self->_retriesSinceLastDeviceAddressResolution >= retriesBeforeResolvingDeviceAddress) {
+                                [self autoResolveEftposAddress];
+                                self->_retriesSinceLastDeviceAddressResolution = 0;
+                            } else {
+                                self->_retriesSinceLastDeviceAddressResolution += 1;
+                            }
+                        }
                         
                         SPILog(@"Will try to reconnect in 3s...");
                         sleep(3);
@@ -1475,8 +1691,6 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
                 // TH-3A - We've just reconnected and were in the middle of Tx.
                 // Let's get the last transaction to check what we might have
                 // missed out on.
-                
-                [self.state.txFlowState callingGlt];
                 
                 dispatch_async(self.queue, ^{
                     [weakSelf callGetLastTransaction];
@@ -1576,7 +1790,9 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
  * Ask the PIN pad to tell us what the Most Recent Transaction was
  */
 - (void)callGetLastTransaction {
-    [self send:[[SPIGetLastTransactionRequest new] toMessage]];
+    SPIMessage *gltMessage = [[SPIGetLastTransactionRequest new] toMessage];
+    [self.state.txFlowState callingGlt:gltMessage.mid];
+    [self send:gltMessage];
 }
 
 /**

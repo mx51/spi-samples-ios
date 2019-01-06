@@ -22,6 +22,10 @@ class SettingsProvider {
         case receiptFooter
         case printText
         case posVendorKey
+        case testMode
+        case autoResolution
+        case suppressMerchantPassword
+        case serialNumber
     }
     
     init() {
@@ -97,5 +101,25 @@ class SettingsProvider {
     var posVendorKey: String? {
         get { return readSettingsFrom(key: .posVendorKey) as? String }
         set { setSettingsForKey(key: .posVendorKey, value: newValue) }
+    }
+    
+    var testMode: Bool? {
+        get { return readSettingsFrom(key: .testMode) as? Bool }
+        set { setSettingsForKey(key: .testMode, value: newValue) }
+    }
+    
+    var autoResolution: Bool? {
+        get { return readSettingsFrom(key: .autoResolution) as? Bool }
+        set { setSettingsForKey(key: .autoResolution, value: newValue) }
+    }
+    
+    var suppressMerchantPassword: Bool? {
+        get { return readSettingsFrom(key: .suppressMerchantPassword) as? Bool }
+        set { setSettingsForKey(key: .suppressMerchantPassword, value: newValue) }
+    }
+    
+    var serialNumber: String? {
+        get { return readSettingsFrom(key: .serialNumber) as? String }
+        set { setSettingsForKey(key: .serialNumber, value: newValue) }
     }
 }

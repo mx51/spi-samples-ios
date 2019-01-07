@@ -106,10 +106,10 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 @property (nonatomic) BOOL equalSplitEnabled;
 @property (nonatomic) BOOL tippingEnabled;
 @property (nonatomic) BOOL summaryReportEnabled;
-@property (nonatomic) NSString *labelPayButton;
-@property (nonatomic) NSString *labelOperatorId;
-@property (nonatomic) NSString *labelTableId;
-@property (nonatomic) NSArray<NSString *> *allowedOperatorIds;
+@property (nonatomic, copy) NSString *labelPayButton;
+@property (nonatomic, copy) NSString *labelOperatorId;
+@property (nonatomic, copy) NSString *labelTableId;
+@property (nonatomic, copy) NSArray<NSString *> *allowedOperatorIds;
 
 - (SPIMessage *)toMessage:(NSString *)messageId;
 

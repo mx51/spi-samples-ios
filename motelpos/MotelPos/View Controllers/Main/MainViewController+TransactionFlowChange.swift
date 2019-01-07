@@ -84,7 +84,7 @@ extension MainViewController {
     }
     
     func pairCancel() {
-        let alertVC = UIAlertController(title: "Pairing", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
+        let alertVC = UIAlertController(title: "Pairing", message: client.state.pairingFlowState.message, preferredStyle: .alert)
         let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
             self.client.pairingCancel()
         }

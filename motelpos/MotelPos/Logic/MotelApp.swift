@@ -33,7 +33,7 @@ class MotelApp: NSObject {
         client.delegate = self
         spiPreauth = client.enablePreauth()
         
-        if let encriptionKey = settings.encriptionKey, let hmacKey = settings.hmacKey {
+        if let encriptionKey = settings.encriptionKey, let hmacKey = settings.hmacKey, encriptionKey != "", hmacKey != "" {
             SPILogMsg("Secrets loaded from defaults: \(encriptionKey):\(hmacKey)")
             
             client.setSecretEncKey(encriptionKey, hmacKey: hmacKey)

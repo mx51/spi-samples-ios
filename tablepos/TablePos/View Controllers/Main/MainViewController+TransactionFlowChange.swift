@@ -27,7 +27,7 @@ extension MainViewController {
         switch state.status {
         case .pairedConnected:
             lblStatus.text = "Connected"
-            lblStatus.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightSemibold)
+            lblStatus.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.semibold)
             lblStatus.textColor = UIColor(red: 23.0/256, green: 156.0/255, blue: 63.0/255, alpha: 1.0)
             btnConnection.title = "Connection"
         case .pairedConnecting:
@@ -84,7 +84,7 @@ extension MainViewController {
     }
     
     func pairCancel() {
-        let alertVC = UIAlertController(title: "Pairing", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
+        let alertVC = UIAlertController(title: "Pairing", message: client.state.pairingFlowState.message, preferredStyle: .alert)
         let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
             self.client.pairingCancel()
         }

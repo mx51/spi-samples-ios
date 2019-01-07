@@ -61,6 +61,12 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
                  amountCents:(NSInteger)amountCents
                   completion:(SPICompletionTxResult)completion;
 
+- (void)initiateCompletionTx:(NSString *)posRefId
+                   preauthId:(NSString *)preauthId
+                 amountCents:(NSInteger)amountCents
+             surchargeAmount:(NSInteger)surchargeAmount
+                  completion:(SPICompletionTxResult)completion;
+
 - (void)initiateCancelTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
               completion:(SPICompletionTxResult)completion;
@@ -159,6 +165,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 @property (nonatomic, readonly, copy) NSString *preauthId;
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, readonly) NSInteger completionAmount;
+@property (nonatomic) NSInteger surchargeAmount;
 @property (nonatomic, retain) SPIConfig *config;
 
 - (instancetype)initWithPreauthID:(NSString *)preauthID completionAmount:(NSInteger)completionAmount posRefId:(NSString *)posRefId;
@@ -181,5 +188,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 - (NSInteger)getPreviousBalanceAmount;
 
 - (NSInteger)getCompletionAmount;
+
+- (NSInteger)getSurchargeAmountForPreauthCompletion;
 
 @end

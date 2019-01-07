@@ -103,6 +103,12 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
     return _spiPat;
 }
 
+- (SPIPayAtTable *)disablePayAtTable {
+    _spiPat = [[SPIPayAtTable alloc] initWithClient:self];
+    _spiPat.config.payAtTableEnabled = true;
+    return _spiPat;
+}
+
 #pragma mark - Delegate
 
 - (void)callDelegate:(void (^)(id<SPIDelegate>))block {

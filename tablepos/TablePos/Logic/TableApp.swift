@@ -39,7 +39,7 @@ class TableApp: NSObject {
         spiPat.config.labelTableId = "Table Number"
         spiPat.delegate = self
         
-        if let encriptionKey = settings.encriptionKey, let hmacKey = settings.hmacKey {
+        if let encriptionKey = settings.encriptionKey, let hmacKey = settings.hmacKey, encriptionKey != "", hmacKey != "" {
             SPILogMsg("Secrets loaded from defaults: \(encriptionKey):\(hmacKey)")
             
             client.setSecretEncKey(encriptionKey, hmacKey: hmacKey)
@@ -54,25 +54,9 @@ class TableApp: NSObject {
         let fileManager = FileManager.default       
         
         if fileManager.fileExists(atPath: filePath) {
-            //            tableToBillMapping =  NSDictionary(contentsOf: tableToBillMappingUrl) as! [String : String]
-            //            billsStore =  NSDictionary(contentsOf: billsStoreUrl) as! [String : Bill]
-            //            assemblyBillDataStore =  NSDictionary(contentsOf: assemblyBillDataStoreUrl) as! [String : String]
-            
             tableToBillMapping = NSKeyedUnarchiver.unarchiveObject(withFile: tableToBillMappingUrl.path) as! [String : String]
             billsStore = (NSKeyedUnarchiver.unarchiveObject(withFile: billsStoreUrl.path) as? [String : Bill])!
             assemblyBillDataStore = NSKeyedUnarchiver.unarchiveObject(withFile: assemblyBillDataStoreUrl.path) as! [String : String]
-            
-            //            var jsonString = try? String(contentsOf: tableToBillMappingUrl, encoding: .utf8)
-            //            var jsonData = jsonString?.data(using: .utf8)
-            //            tableToBillMapping = try! JSONSerialization.jsonObject(with: jsonData!, options: .mutableLeaves) as! [String : String]
-            //
-            //            jsonString = try? String(contentsOf: billsStoreUrl, encoding: .utf8)
-            //            jsonData = jsonString?.data(using: .utf8)
-            //            billsStore = try! JSONSerialization.jsonObject(with: jsonData!, options: .mutableLeaves) as! [String : AnyObject]
-            //
-            //            jsonString = try? String(contentsOf: assemblyBillDataStoreUrl, encoding: .utf8)
-            //            jsonData = jsonString?.data(using: .utf8)
-            //            assemblyBillDataStore = try! JSONSerialization.jsonObject(with: jsonData!, options: .mutableLeaves) as! [String : String]
         }
     } 
     
@@ -86,25 +70,9 @@ class TableApp: NSObject {
         let billsStoreUrl = docsBaseURL.appendingPathComponent("billsStore.bin")
         let assemblyBillDataStoreUrl = docsBaseURL.appendingPathComponent("assemblyBillDataStore.bin")
         
-        //        writeToFile(fileUrl: tableToBillMappingUrl, dict: tableToBillMapping as NSDictionary)
-        //        writeToFile(fileUrl: billsStoreUrl, dict: billsStore as NSDictionary)
-        //        writeToFile(fileUrl: assemblyBillDataStoreUrl, dict: assemblyBillDataStore as NSDictionary)
-        
-        //        let tableToBillMappingData:NSData = NSKeyedArchiver.archivedData(withRootObject: tableToBillMapping) as NSData
-        //        let billsStoreData:NSData = NSKeyedArchiver.archivedData(withRootObject: billsStore) as NSData
-        //        let assemblyBillDataStoreData:NSData = NSKeyedArchiver.archivedData(withRootObject: assemblyBillDataStore) as NSData
-        
         NSKeyedArchiver.archiveRootObject(tableToBillMapping as NSDictionary, toFile: tableToBillMappingUrl.path)
         NSKeyedArchiver.archiveRootObject(billsStore as NSDictionary, toFile: billsStoreUrl.path)
         NSKeyedArchiver.archiveRootObject(assemblyBillDataStore as NSDictionary, toFile: assemblyBillDataStoreUrl.path)
-        
-        //        (tableToBillMapping as NSDictionary).write(toFile: tableToBillMappingUrl.path, atomically: true)
-        //        (billsStore as NSDictionary).write(toFile: billsStoreUrl.path, atomically: true)
-        //        (assemblyBillDataStore as NSDictionary).write(toFile: assemblyBillDataStoreUrl.path, atomically: true)
-        
-        //        NSDictionary(dictionary: tableToBillMapping).write(to: tableToBillMappingUrl, atomically: true)
-        //        NSDictionary(dictionary: billsStore).write(to: billsStoreUrl, atomically: true)
-        //        NSDictionary(dictionary: assemblyBillDataStore).write(to: assemblyBillDataStoreUrl, atomically: true)
     }
     
     func writeToFile(fileUrl: URL, dict: NSDictionary) {

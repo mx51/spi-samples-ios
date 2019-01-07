@@ -1,7 +1,7 @@
 PODS:
   - RNCryptor-objc (3.0.6)
   - SocketRocket (0.5.1)
-  - SPIClient-iOS (2.3.11):
+  - SPIClient-iOS (2.4.4):
     - RNCryptor-objc
     - SocketRocket
 
@@ -20,13 +20,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   SPIClient-iOS:
-    :commit: 53a392831d27ec370b5f6eadb27dcb58c622b3ff
+    :commit: 2de08ae1399ddadb9d127ca3b6c4d940c55598eb
     :git: https://github.com/AssemblyPayments/spi-client-ios
 
 SPEC CHECKSUMS:
   RNCryptor-objc: d1b228f9c02e2173df063f0617684c134aed890e
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
-  SPIClient-iOS: 835e8e5034cdeb5692e1fabda1208b2d5f361e76
+  SPIClient-iOS: 99502a1ee85291a80b46fc4b078aaa2bcd483563
 
 PODFILE CHECKSUM: 7db5d30b19063bea05974e41fd85819f105d1a55
 

@@ -55,7 +55,7 @@
 - (SPIMessage *)toMessage:(NSString *)messageId {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     BOOL success = _result == BillRetrievalResultSuccess;
-    [data setValue:[NSNumber numberWithBool:success] forKey:@"success"];
+    [data setValue:@(success) forKey:@"success"];
     if (_billId.length > 0) {
         [data setValue:_billId forKey:@"bill_id"];
     }
@@ -63,8 +63,8 @@
         [data setValue:_tableId forKey:@"table_id"];
     }
     if (_result == BillRetrievalResultSuccess) {
-        [data setValue:[NSNumber numberWithInteger:_totalAmount] forKey:@"bill_total_amount"];
-        [data setValue:[NSNumber numberWithInteger:_outstandingAmount] forKey:@"bill_outstanding_amount"];
+        [data setValue:@(_totalAmount) forKey:@"bill_total_amount"];
+        [data setValue:@(_outstandingAmount) forKey:@"bill_outstanding_amount"];
 
         NSMutableArray<SPIPaymentHistoryEntry*> *existingHistoryJson = [[NSMutableArray alloc] init];
         for (SPIPaymentHistoryEntry *response in self.getBillPaymentHistory) {

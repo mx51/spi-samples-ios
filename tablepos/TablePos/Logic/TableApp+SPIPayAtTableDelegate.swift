@@ -47,7 +47,7 @@ extension TableApp: SPIPayAtTableDelegate {
             return response
         }
         
-        SPILogMsg("# Got a \(billPayment!.paymentType) Payment against bill \(billPayment!.billId) for table \(billPayment!.tableId)")
+        SPILogMsg("# Got a \(billPayment!.paymentType) Payment against bill \(String(describing: billPayment!.billId)) for table \(String(describing: billPayment!.tableId))")
         
         let bill: Bill = billsStore[billPayment.billId]!
         bill.outstandingAmount! -= billPayment.purchaseAmount

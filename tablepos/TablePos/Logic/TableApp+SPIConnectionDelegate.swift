@@ -27,13 +27,13 @@ extension TableApp: SPIDelegate {
     }
 
     func spi(_ spi: SPIClient!, secretsChanged secrets: SPISecrets?, state: SPIState!) {
-        SPILogMsg("secrets \(state)")
+        SPILogMsg("secrets \(String(describing: state))")
         
         if let secrets = secrets {
             SPILogMsg("\n\n")
             SPILogMsg("# ----------- I GOT NEW SECRETS -----------")
             SPILogMsg("# ---------- PERSIST THEM SAFELY ----------")
-            SPILogMsg("# \(secrets.encKey):\(secrets.hmacKey)")
+            SPILogMsg("# \(String(describing: secrets.encKey)):\(String(describing: secrets.hmacKey))")
             SPILogMsg("# -----------------------------------------")
 
             // In prod store them in the key chain

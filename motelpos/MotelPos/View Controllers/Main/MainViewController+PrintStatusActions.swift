@@ -66,9 +66,10 @@ extension MainViewController {
                             logMessage(String(format: "# PREAUTH-ID: %i", preauthId))
                         }
                         
-                        logMessage(String(format: "# NEW BALANCE AMOUNT: %i", preauthResponse.getBalanceAmount()))
-                        logMessage(String(format: "# PREV BALANCE AMOUNT: %i", preauthResponse.getPreviousBalanceAmount()))
-                        logMessage(String(format: "# COMPLETION AMOUNT: %i", preauthResponse.getCompletionAmount()))
+                        logMessage(String(format: "# NEW BALANCE AMOUNT: $%.2f", Float(preauthResponse.getBalanceAmount()) / 100.0))
+                        logMessage(String(format: "# PREV BALANCE AMOUNT: $%.2f", Float(preauthResponse.getPreviousBalanceAmount()) / 100.0))
+                        logMessage(String(format: "# COMPLETION AMOUNT: $%.2f", Float(preauthResponse.getCompletionAmount()) / 100.0))
+                        logMessage(String(format: "# SURCHARGE AMOUNT: $%.2f", Float(preauthResponse.getSurchargeAmountForPreauthCompletion()) / 100.0))
                         
                         let details: SPIPurchaseResponse = preauthResponse.details
                         logMessage(String(format: "# Response: %@", details.getText()))

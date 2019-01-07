@@ -88,8 +88,10 @@ extension MainViewController {
             return
         }
         
+        let surchargeAmount = Int(txtSurchargeAmount.text ?? "")
+        
         let posRefId = "prcomplete-" + preauthId + "-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
-        spiPreauth.initiateCompletionTx(posRefId, preauthId: preauthId, amountCents: amount, completion: printResult)
+        spiPreauth.initiateCompletionTx(posRefId, preauthId: preauthId, amountCents: amount, surchargeAmount: surchargeAmount ?? 0, completion: printResult)
     }
     
     @IBAction func btnRecoverClicked(_ sender: UIButton) {

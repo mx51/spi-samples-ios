@@ -167,8 +167,17 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                    preauthId:(NSString *)preauthId
                  amountCents:(NSInteger)amountCents
                   completion:(SPICompletionTxResult)completion {
+    [self initiateCompletionTx:posRefId preauthId:preauthId amountCents:amountCents surchargeAmount:0 completion:completion];
+}
+
+- (void)initiateCompletionTx:(NSString *)posRefId
+                   preauthId:(NSString *)preauthId
+                 amountCents:(NSInteger)amountCents
+             surchargeAmount:(NSInteger)surchargeAmount
+                  completion:(SPICompletionTxResult)completion {
     SPIPreauthCompletionRequest *preauthRequest = [[SPIPreauthCompletionRequest alloc] initWithPreauthID:preauthId completionAmount:amountCents posRefId:posRefId];
     
+    preauthRequest.surchargeAmount = surchargeAmount;
     preauthRequest.config = _client.config;
     
     SPIMessage *preauthMsg = [preauthRequest toMessage];
@@ -177,9 +186,9 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                                                                            type:SPITransactionTypePreAuth
                                                                     amountCents:amountCents
                                                                         message:preauthMsg
-                                                                            msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to make preauth completion request for %.2f", ((float)amountCents / 100.0)]];
+                                                                            msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to make preauth completion request for $%.2f surcharge amount: $%.2f", ((float)amountCents / 100.0), ((float)surchargeAmount / 100.0)]];
     
-    NSString *message = [NSString stringWithFormat:@"Asked EFTPOS to make preauth completion for %.2f", ((float)amountCents / 100.0)];
+    NSString *message = [NSString stringWithFormat:@"Asked EFTPOS to make preauth completion for %.2f surcharge amount: $%.2f", ((float)amountCents / 100.0), ((float)surchargeAmount / 100.0)];
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
 
@@ -509,6 +518,7 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:_preauthId forKey:@"preauth_id"];
     [data setValue:[NSNumber numberWithInteger:_completionAmount] forKey:@"completion_amount"];
+    [data setValue:[NSNumber numberWithInteger:_surchargeAmount] forKey:@"surcharge_amount"];
     [_config addReceiptConfig:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prac"]
@@ -579,6 +589,15 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     NSString *txType = [_message getDataStringValue:@"transaction_type"];
     if ([txType  isEqual: @"PCOMP"]) {
         return [_message getDataIntegerValue:@"completion_amount"];
+    } else {
+        return 0;
+    }
+}
+
+- (NSInteger)getSurchargeAmountForPreauthCompletion {
+    NSString *txType = [_message getDataStringValue:@"transaction_type"];
+    if ([txType  isEqual: @"PCOMP"]) {
+        return [_message getDataIntegerValue:@"surcharge_amount"];
     } else {
         return 0;
     }

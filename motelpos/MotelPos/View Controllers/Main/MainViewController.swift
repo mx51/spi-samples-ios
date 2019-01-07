@@ -26,6 +26,7 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var lblFlowStatus: UILabel!
     @IBOutlet weak var txtHeader: UITextField!
     @IBOutlet weak var txtFooter: UITextField!
+    @IBOutlet weak var txtSurchargeAmount: UITextField!
     
     let _lastCmd: [String] = []
     

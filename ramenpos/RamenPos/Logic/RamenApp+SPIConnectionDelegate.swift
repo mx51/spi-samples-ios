@@ -45,8 +45,8 @@ extension RamenApp: SPIDelegate {
             SPILogMsg("# ---------- CONSIDER ME UNPAIRED ---------")
             SPILogMsg("# -----------------------------------------")
             
-            settings.encriptionKey = ""
-            settings.hmacKey = ""
+            settings.encriptionKey = nil
+            settings.hmacKey = nil
             
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.secretsDropped.rawValue), object: state)
         }

@@ -34,6 +34,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
         txtSerialNumber.text = RamenApp.current.settings.serialNumber
+        txtPosAddress.isEnabled = false
         RamenApp.current.settings.autoResolution = swchAutoResolution.isOn
         RamenApp.current.settings.testMode = swchAutoResolution.isOn
     }
@@ -83,10 +84,12 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             swchTestModeValue.isOn = false
             swchTestModeValue.isEnabled = false
             btnSave.isEnabled = false
+            txtPosAddress.isEnabled = true
         } else {
             swchTestModeValue.isOn = true
             swchTestModeValue.isEnabled = true
             btnSave.isEnabled = true
+            txtPosAddress.isEnabled = false
         }
         
         RamenApp.current.settings.autoResolution = sender.isOn
@@ -159,7 +162,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         
         if (state.deviceAddressStatus.address != nil) {
             txtPosAddress.text = state.deviceAddressStatus.address! as String
-            let alertVC = UIAlertController(title: "Device Address Status", message: "- Device Address has been updated to\(String(describing: state.deviceAddressStatus.address))", preferredStyle: .alert)
+            let alertVC = UIAlertController(title: "Device Address Status", message: "- Device Address has been updated to \(state.deviceAddressStatus.address ?? "")", preferredStyle: .alert)
             alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                 SPILogMsg("# [ok] ")
             }))

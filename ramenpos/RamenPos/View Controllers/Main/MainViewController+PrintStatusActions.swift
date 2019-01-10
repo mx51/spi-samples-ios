@@ -397,7 +397,7 @@ extension MainViewController {
     
     func handleBatteryLevelChanged(message: SPIMessage) {
         let terminalBatteryResponse: SPITerminalBattery = SPITerminalBattery(message: message)
-        lblBatteryLevel.text = "%" + terminalBatteryResponse.batteryLevel
+        lblBatteryLevel.text = terminalBatteryResponse.batteryLevel + "%"
         if Int(terminalBatteryResponse.batteryLevel)! >= 50 {
             lblBatteryLevel.textColor = UIColor.green
         } else {

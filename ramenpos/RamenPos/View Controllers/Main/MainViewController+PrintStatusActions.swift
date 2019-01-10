@@ -361,7 +361,7 @@ extension MainViewController {
             lblTerminalStatus.text = terminalStatusResponse.getStatus()
             
             let batterLevel: String = terminalStatusResponse.getBatteryLevel().replacingOccurrences(of: "d", with: "");
-            lblBatteryLevel.text = "%" + batterLevel;
+            lblBatteryLevel.text = batterLevel + "%";
             
             if Int(batterLevel)! >= 50 {
                 lblBatteryLevel.textColor = UIColor.green

@@ -1587,7 +1587,7 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
                     weakSelf.state.status = SPIStatusPairedConnecting;
                     [weakSelf statusChanged];
                     
-                    if (weakSelf.state.flow == SPIFlowTransaction && !weakSelf.state.pairingFlowState.isFinished) {
+                    if (weakSelf.state.flow == SPIFlowTransaction && !weakSelf.state.txFlowState.isFinished) {
                         // we're in the middle of a transaction, just so you know!
                         // TH-1D
                         SPILog(@"Lost connection in the middle of a transaction...");

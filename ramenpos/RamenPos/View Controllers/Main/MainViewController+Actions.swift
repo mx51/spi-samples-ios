@@ -76,10 +76,10 @@ extension MainViewController {
     
     @IBAction func btnRefundClicked(_ sender: Any) {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
-        let promptCashout =  RamenApp.current.settings.suppressMerchantPassword ?? false
+        let isSuppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateRefundTx(posRefId, amountCents: amount, isSuppressMerchantPassword: promptCashout, completion: printResult)
+        client.initiateRefundTx(posRefId, amountCents: amount, isSuppressMerchantPassword: isSuppressMerchantPassword, completion: printResult)
     }
     
     @IBAction func btnCashOutClicked(_ sender: Any) {

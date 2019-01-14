@@ -62,6 +62,8 @@ class MainViewController: UITableViewController, NotificationListener {
         swchReceiptFromEftpos.isOn = settings.customerReceiptFromEftpos ?? false
         swchSignatureFromEftpos.isOn = settings.customerSignatureFromEftpos ?? false
         swchPrintMerchantCopy.isOn = settings.printMerchantCopy ?? false
+        swchSuppressMerchantPassword.isOn = settings.suppressMerchantPassword ?? false
+        
         txtHeader.text = settings.receiptHeader
         txtFooter.text = settings.receiptFooter
     }

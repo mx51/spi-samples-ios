@@ -17,11 +17,14 @@
 
 @end
 
+typedef void(^DeviceAddressStatusResult)(SPIDeviceAddressStatus *);
+
 @interface SPIDeviceService : NSObject
 
-- (SPIDeviceAddressStatus *) retrieveServiceWithSerialNumber:(NSString *)serialNumber
-                                                      apiKey:(NSString *)apiKey
-                                                acquirerCode:(NSString *)acquirerCode
-                                                  isTestMode:(BOOL)isTestMode;
+- (void)retrieveServiceWithSerialNumber:(NSString *)serialNumber
+                                 apiKey:(NSString *)apiKey
+                           acquirerCode:(NSString *)acquirerCode
+                             isTestMode:(BOOL)isTestMode
+                             completion:(DeviceAddressStatusResult)completion;
 
 @end

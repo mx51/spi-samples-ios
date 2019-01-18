@@ -112,7 +112,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  is displayed on the EFTPOS screen. Can only be called set in the Unpaired
  state.
  */
-@property (nonatomic, retain) NSString *serialNumber;
+@property (nonatomic, copy) NSString *serialNumber;
 
 /**
  Set the acquirer code of your bank, please contact Assembly's Integration

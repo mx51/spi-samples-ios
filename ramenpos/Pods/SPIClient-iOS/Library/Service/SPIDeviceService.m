@@ -30,13 +30,8 @@
         NSDictionary *JSONDictionary = [NSJSONSerialization JSONObjectWithData:JSONData options:0 error:&error];
         
         if (!error && JSONDictionary) {
-            for (NSString* key in JSONDictionary) {
-                if ([key  isEqual: @"ip"]) {
-                    _address = [JSONDictionary valueForKey:key];
-                } else if ([key  isEqual: @"last_updated"]) {
-                    _lastUpdated = [JSONDictionary valueForKey:key];
-                }
-            }
+            _address = JSONDictionary[@"ip"];
+            _lastUpdated = JSONDictionary[@"last_updated"];
         }
     }
     return self;
@@ -53,10 +48,11 @@
 
 @implementation SPIDeviceService : NSObject
 
-- (SPIDeviceAddressStatus *) retrieveServiceWithSerialNumber:(NSString *)serialNumber
-                                                      apiKey:(NSString *)apiKey
-                                                acquirerCode:(NSString *)acquirerCode
-                                                  isTestMode:(BOOL)isTestMode {
+- (void)retrieveServiceWithSerialNumber:(NSString *)serialNumber
+                                 apiKey:(NSString *)apiKey
+                           acquirerCode:(NSString *)acquirerCode
+                             isTestMode:(BOOL)isTestMode
+                             completion:(DeviceAddressStatusResult)completion {
     NSString *deviceAddressUrl;
     
     if (isTestMode) {
@@ -70,17 +66,22 @@
     [request setValue:apiKey forHTTPHeaderField:@"ASM-MSP-DEVICE-ADDRESS-API-KEY"];
     [request setURL:[NSURL URLWithString:deviceAddressUrl]];
     
-    NSError *error = nil;
-    NSHTTPURLResponse *responseCode = nil;
-    
-    NSData *oResponseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&responseCode error:&error];
-    
-    if([responseCode statusCode] != 200){
-        NSLog(@"Error getting %@, HTTP status code %li", deviceAddressUrl, (long)[responseCode statusCode]);
-        return nil;
-    }
-    
-    return [[SPIDeviceAddressStatus alloc] initWithJSONString:[[NSString alloc] initWithData:oResponseData encoding:NSUTF8StringEncoding]] ;
+    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"Error getting %@: %@", deviceAddressUrl, error);
+            completion(nil);
+            return;
+        }
+        NSHTTPURLResponse *responseCode = (NSHTTPURLResponse *)response;
+        if ([responseCode statusCode] != 200){
+            NSLog(@"Error getting %@, HTTP status code %li", deviceAddressUrl, (long)[responseCode statusCode]);
+            completion(nil);
+            return;
+        }
+        
+        completion([[SPIDeviceAddressStatus alloc] initWithJSONString:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]);
+    }];
+    [task resume];
 }
 
 @end

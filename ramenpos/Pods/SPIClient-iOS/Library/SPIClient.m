@@ -993,28 +993,25 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
         return;
     }
     
-    SPIDeviceAddressStatus *addressResponse = [[SPIDeviceService alloc] retrieveServiceWithSerialNumber:_serialNumber
-                                                                                                 apiKey:_deviceApiKey
-                                                                                           acquirerCode:_acquirerCode
-                                                                                             isTestMode:_testMode];
-    
-    if (addressResponse.address.length == 0) {
-        return;
-    }
-    
-    if (![self hasEftposAddressChanged:addressResponse.address]) {
-        return;
-    }
-    
-    // update device and connection address
-    _eftposAddress = [NSString stringWithFormat:@"ws://%@", addressResponse.address];
-    [_connection setUrl:_eftposAddress];
-    
-    SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
-    currentDeviceAddressStatus.address = addressResponse.address;
-    currentDeviceAddressStatus.lastUpdated = addressResponse.lastUpdated;
-    self.state.deviceAddressStatus = currentDeviceAddressStatus;
-    [self deviceAddressChanged];
+    [[SPIDeviceService alloc] retrieveServiceWithSerialNumber:_serialNumber apiKey:_deviceApiKey acquirerCode:_acquirerCode isTestMode:_testMode completion:^(SPIDeviceAddressStatus *addressResponse) {
+        if (addressResponse.address.length == 0) {
+            return;
+        }
+        
+        if (![self hasEftposAddressChanged:addressResponse.address]) {
+            return;
+        }
+        
+        // update device and connection address
+        self->_eftposAddress = [NSString stringWithFormat:@"ws://%@", addressResponse.address];
+        [self->_connection setUrl:self->_eftposAddress];
+        
+        SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+        currentDeviceAddressStatus.address = addressResponse.address;
+        currentDeviceAddressStatus.lastUpdated = addressResponse.lastUpdated;
+        self.state.deviceAddressStatus = currentDeviceAddressStatus;
+        [self deviceAddressChanged];
+    }];
 }
 
 #pragma mark - Events

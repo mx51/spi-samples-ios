@@ -1391,8 +1391,8 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
                 return;
             } else {
                 // TH-4X - Unexpected Error when recovering
-                SPILog(@"Unexpected response in get last transaction during - received posRefId:%@ error: %@", [gltResponse getPosRefId], m.error);
-                [txState unknownCompleted:@"Unexpected error when recovering transaction status. Check EFTPOS."];
+                SPILog(@"Unexpected response in get last transaction during - received posRefId:%@ error: %@. Ignoring.", [gltResponse getPosRefId], m.error);
+                return;
             }
         } else {
             if (txState.type == SPITransactionTypeGetLastTransaction) {

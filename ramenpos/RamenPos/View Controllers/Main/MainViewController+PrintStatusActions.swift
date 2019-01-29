@@ -175,6 +175,7 @@ extension MainViewController {
             logMessage(String(format: "# CASHOUT: %.2f", Float(cashoutResponse.getCashoutAmount()) / 100.0))
             logMessage(String(format: "# BANKED NON-CASH AMOUNT: %.2f", Float(cashoutResponse.getBankNonCashAmount()) / 100.0))
             logMessage(String(format: "# BANKED CASH AMOUNT: %.2f", Float(cashoutResponse.getBankCashAmount()) / 100.0))
+            logMessage(String(format: "# SURCHARGE: %.2f", Float(cashoutResponse.getSurchargeAmount()) / 100.0))
             break
         case .failed:
             logMessage(String(format: "# CASHOUT FAILED!"))
@@ -196,6 +197,7 @@ extension MainViewController {
             break
         }
     }
+    
     func handleFinishedMoto(txState: SPITransactionFlowState) {
         switch (txState.successState) {
         case .success:
@@ -276,14 +278,14 @@ extension MainViewController {
                 logMessage(String(format: "# Transaction range: %@", settleResponse.getTransactionRange()))
                 logMessage(String(format: "# Terminal ID: %i", settleResponse.getTerminalId()))
                 logMessage(String(format: "# Total tx count: %i", settleResponse.getTotalCount()))
-                logMessage(String(format: "# Total tx value: {settleResponse.getTotalValue() / 100.0}"))
+                logMessage(String(format: "# Total tx value: %.2f", Float(settleResponse.getTotalValue()) / 100.0))
                 logMessage(String(format: "# By acquirer tx count: %i", settleResponse.getSettleByAcquirerCount()))
                 logMessage(String(format: "# By acquirer tx value: %.2f", Float(settleResponse.getSettleByAcquirerValue()) / 100.0))
                 logMessage(String(format: "# SCHEME SETTLEMENTS:"))
                 
                 let schemes = settleResponse.getSchemeSettlementEntries()
                 for  s in schemes ?? [] {
-                    logMessage(String(format: "# %@", s))
+                    logMessage(String(format: "Scheme Name: %@, SettleByAcquirer: %@, TotalCount: %i, TotalValue: %.2f", s.schemeName, String(s.settleByAcquirer), s.totalCount, Float(s.totalValue) / 100.0))
                 }
             }
             break
@@ -323,7 +325,7 @@ extension MainViewController {
                 
                 let schemes = settleResponse.getSchemeSettlementEntries()
                 for s in schemes ?? [] {
-                    logMessage(String(format: "# %@", s))
+                    logMessage(String(format: "Scheme Name: %@, SettleByAcquirer: %@, TotalCount: %i, TotalValue: %.2f", s.schemeName, String(s.settleByAcquirer), s.totalCount, Float(s.totalValue) / 100.0))
                 }
             }
             break
@@ -359,7 +361,7 @@ extension MainViewController {
             lblTerminalStatus.text = terminalStatusResponse.getStatus()
             
             let batterLevel: String = terminalStatusResponse.getBatteryLevel().replacingOccurrences(of: "d", with: "");
-            lblBatteryLevel.text = "%" + batterLevel;
+            lblBatteryLevel.text = batterLevel + "%";
             
             if Int(batterLevel)! >= 50 {
                 lblBatteryLevel.textColor = UIColor.green
@@ -395,7 +397,7 @@ extension MainViewController {
     
     func handleBatteryLevelChanged(message: SPIMessage) {
         let terminalBatteryResponse: SPITerminalBattery = SPITerminalBattery(message: message)
-        lblBatteryLevel.text = "%" + terminalBatteryResponse.batteryLevel
+        lblBatteryLevel.text = terminalBatteryResponse.batteryLevel + "%"
         if Int(terminalBatteryResponse.batteryLevel)! >= 50 {
             lblBatteryLevel.textColor = UIColor.green
         } else {

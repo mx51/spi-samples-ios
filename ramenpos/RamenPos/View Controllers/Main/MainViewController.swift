@@ -40,6 +40,7 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var lblSerialNumber: UILabel!
     @IBOutlet weak var lblTerminalId: UILabel!
     @IBOutlet weak var lblTerminalModel: UILabel!
+    @IBOutlet weak var swchSuppressMerchantPassword: UISwitch!
     
     let indexPath_extraAmount = IndexPath(row: 2, section: 3)
     
@@ -61,6 +62,8 @@ class MainViewController: UITableViewController, NotificationListener {
         swchReceiptFromEftpos.isOn = settings.customerReceiptFromEftpos ?? false
         swchSignatureFromEftpos.isOn = settings.customerSignatureFromEftpos ?? false
         swchPrintMerchantCopy.isOn = settings.printMerchantCopy ?? false
+        swchSuppressMerchantPassword.isOn = settings.suppressMerchantPassword ?? false
+        
         txtHeader.text = settings.receiptHeader
         txtFooter.text = settings.receiptFooter
     }
@@ -101,6 +104,10 @@ class MainViewController: UITableViewController, NotificationListener {
     
     @IBAction func txtFooterEditingDidEnd(_ sender: UITextField) {
         RamenApp.current.settings.receiptFooter = sanitizeHeaderFooter(sender.text)
+    }
+    
+    @IBAction func swchSuppressMerchantPasswordValueChanged(_ sender: UISwitch) {
+        RamenApp.current.settings.suppressMerchantPassword = sender.isOn
     }
     
     private func sanitizeHeaderFooter(_ text: String?) -> String? {

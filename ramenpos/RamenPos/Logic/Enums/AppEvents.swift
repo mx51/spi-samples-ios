@@ -17,4 +17,5 @@ enum AppEvent: String {
     case terminalStatusResponse
     case terminalConfigurationResponse
     case batteryLevelChanged
+    case deviceAddressChanged
 }

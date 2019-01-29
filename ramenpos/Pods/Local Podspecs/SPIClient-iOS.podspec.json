@@ -1,6 +1,6 @@
 {
   "name": "SPIClient-iOS",
-  "version": "2.3.11",
+  "version": "2.4.2",
   "summary": "SPI Client iOS",
   "authors": [
     "Yoo-Jin Lee",
@@ -14,7 +14,7 @@
   "homepage": "https://github.com/AssemblyPayments/spi-client-ios",
   "source": {
     "git": "https://github.com/AssemblyPayments/spi-client-ios.git",
-    "tag": "2.3.11"
+    "tag": "2.4.2"
   },
   "source_files": "Library/**/*.{h,m,c}",
   "requires_arc": true,

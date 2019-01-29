@@ -20,7 +20,18 @@
                                    cashAmount:(NSInteger)cashAmount
                              promptForCashout:(BOOL)promptForCashout;
 
++ (SPIPurchaseRequest *)createPurchaseRequest:(NSString *)posRefId
+                               purchaseAmount:(NSInteger)purchaseAmount
+                                    tipAmount:(NSInteger)tipAmount
+                                   cashAmount:(NSInteger)cashAmount
+                             promptForCashout:(BOOL)promptForCashout
+                              surchargeAmount:(NSInteger)surchargeAmount;
+
 + (SPIRefundRequest *)createRefundRequest:(NSInteger)amountCents
                                purchaseId:(NSString *)purchaseId;
+
++ (SPIRefundRequest *)createRefundRequest:(NSInteger)amountCents
+                               purchaseId:(NSString *)purchaseId
+               isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword;
 
 @end

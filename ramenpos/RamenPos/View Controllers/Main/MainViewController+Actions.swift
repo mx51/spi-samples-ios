@@ -17,6 +17,7 @@ extension MainViewController {
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
         var tipAmount = 0
         var cashout = 0
+        var surchargeAmount = 0
         
         if segmentExtraAmount.selectedSegmentIndex > 0, let extraAmount = Int(txtExtraAmount.text ?? "") {
             if (segmentExtraAmount.selectedSegmentIndex == 1) {
@@ -25,6 +26,9 @@ extension MainViewController {
             } else if (segmentExtraAmount.selectedSegmentIndex == 2) {
                 // Extra option is cashout
                 cashout = extraAmount
+            } else if (segmentExtraAmount.selectedSegmentIndex == 3) {
+                // Extra option is surcharge
+                surchargeAmount = extraAmount
             }
         }
         let promptCashout = false
@@ -50,6 +54,7 @@ extension MainViewController {
                                   cashoutAmount: cashout,
                                   promptForCashout: promptCashout,
                                   options:options,
+                                  surchargeAmount: surchargeAmount,
                                   completion: printResult)
     }
     
@@ -57,21 +62,39 @@ extension MainViewController {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateMotoPurchaseTx(posRefId, amountCents: amount, completion: printResult)
+        var surchargeAmount = 0
+        
+        if segmentExtraAmount.selectedSegmentIndex > 0, let extraAmount = Int(txtExtraAmount.text ?? "") {
+            if (segmentExtraAmount.selectedSegmentIndex == 3) {
+                // Extra option is surcharge
+                surchargeAmount = extraAmount
+            }
+        }
+        
+        client.initiateMotoPurchaseTx(posRefId, amountCents: amount, surchargeAmount: surchargeAmount, completion: printResult)
     }
     
     @IBAction func btnRefundClicked(_ sender: Any) {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        let isSuppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateRefundTx(posRefId, amountCents: amount, completion: printResult)
+        client.initiateRefundTx(posRefId, amountCents: amount, isSuppressMerchantPassword: isSuppressMerchantPassword, completion: printResult)
     }
     
     @IBAction func btnCashOutClicked(_ sender: Any) {
         let posRefId = "launder-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        var surchargeAmount = 0
+        
+        if segmentExtraAmount.selectedSegmentIndex > 0, let extraAmount = Int(txtExtraAmount.text ?? "") {
+            if (segmentExtraAmount.selectedSegmentIndex == 3) {
+                // Extra option is surcharge
+                surchargeAmount = extraAmount
+            }
+        }
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateCashoutOnlyTx(posRefId, amountCents: amount, completion: printResult)
+        client.initiateCashoutOnlyTx(posRefId, amountCents: amount, surchargeAmount: surchargeAmount, completion: printResult)
     }
     
     @IBAction func btnSettleClicked(_ sender: Any) {
@@ -113,7 +136,7 @@ extension MainViewController {
         
         if let posVendorKey = settings.posVendorKey, posVendorKey.count > 0,
             let printText = settings.printText, printText.count > 0 {
-            client.printReceipt(posVendorKey, payload: printText)
+            client.printReport(posVendorKey, payload: printText)
         } else {
             showMessage(title: "Print Receipt", msg: "Please fill the parameters", type: "INFO", isShow: true)
             return

@@ -45,8 +45,8 @@ extension RamenApp: SPIDelegate {
             SPILogMsg("# ---------- CONSIDER ME UNPAIRED ---------")
             SPILogMsg("# -----------------------------------------")
             
-            settings.encriptionKey = ""
-            settings.hmacKey = ""
+            settings.encriptionKey = nil
+            settings.hmacKey = nil
             
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.secretsDropped.rawValue), object: state)
         }
@@ -59,6 +59,13 @@ extension RamenApp: SPIDelegate {
         
         // Let's show the user what options he has at this stage.
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.transactionFlowStateChanged.rawValue), object: state)
+    }
+    
+    func spi(_ spi: SPIClient, deviceAddressChanged state: SPIState) {
+        SPILogMsg("deviceAddressChanged \(state)")
+        
+        // Let's show the user what options he has at this stage.
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.deviceAddressChanged.rawValue), object: state)
     }
     
     func printingResponse(_ message: SPIMessage!) {

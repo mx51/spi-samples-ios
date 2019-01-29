@@ -71,6 +71,17 @@ NSString *const SPIPayAtTableGetBillDetailsKey = @"get_bill_details"; // incomin
 NSString *const SPIPayAtTableBillDetailsKey = @"bill_details";        // outgoing. We reply with this when eftpos requests to us get_bill_details.
 NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incoming. When the eftpos advices
 
+NSString *const SPIPrintingRequestKey = @"print";
+NSString *const SPIPrintingResponseKey = @"print_response";
+
+NSString *const SPITerminalStatusRequestKey = @"get_terminal_status";
+NSString *const SPITerminalStatusResponseKey = @"terminal_status";
+
+NSString *const SPITerminalConfigurationRequestKey = @"get_terminal_configuration";
+NSString *const SPITerminalConfigurationResponseKey = @"terminal_configuration";
+
+NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
+
 @implementation SPIMessageStamp
 
 - (instancetype)initWithPosId:(NSString *)posId

@@ -10,6 +10,7 @@
 
 #import "SPIMessage.h"
 #import "SPITransaction.h"
+#import "SPIDeviceService.h"
 
 /**
  Represents the 3 pairing statuses that the SPI instance can be in.
@@ -182,6 +183,11 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 @property (nonatomic, strong) NSDate *lastStateRequestTime;
 
 /**
+ The id of the last glt request message that was sent. used to match with the response.
+ */
+@property (nonatomic, copy) NSString *lastGltRequestId;
+
+/**
  Whether we're currently attempting to cancel the transaction.
  */
 @property (nonatomic, assign) BOOL isAttemptingToCancel;
@@ -256,7 +262,7 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 
 - (void)cancelFailed:(NSString *)msg;
 
-- (void)callingGlt;
+- (void)callingGlt:(NSString *)gltRequestId;
 
 - (void)gotGltResponse;
 
@@ -302,6 +308,11 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
  When flow is Transaction, this represents the state of the transaction process.
  */
 @property (nonatomic, strong) SPITransactionFlowState *txFlowState;
+
+/**
+ When flow is AutoIP, this represents the state of the device service.
+ */
+@property (nonatomic, strong) SPIDeviceAddressStatus *deviceAddressStatus;
 
 + (NSString *)flowString:(SPIFlow)flow;
 

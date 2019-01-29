@@ -37,7 +37,8 @@
                                    @"purchase_amount" : @(self.purchaseAmount),
                                    @"tip_amount" : @(self.tipAmount),
                                    @"cash_amount" : @(self.cashoutAmount),
-                                   @"prompt_for_cashout" : @(self.promptForCashout)
+                                   @"prompt_for_cashout" : @(self.promptForCashout),
+                                   @"surcharge_amount" : @(self.surchargeAmount),
                                    };
     
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
@@ -51,10 +52,11 @@
 }
 
 - (NSString *)amountSummary {
-    return [NSString stringWithFormat:@"Purchase: %.2f; Tip: %.2f; Cashout: %.2f;",
+    return [NSString stringWithFormat:@"Purchase: %.2f; Tip: %.2f; Cashout: %.2f; Surcharge: %.2f;",
             ((float)_purchaseAmount / 100.0),
             ((float)_tipAmount / 100.0),
-            ((float)_cashoutAmount / 100.0)];
+            ((float)_cashoutAmount / 100.0),
+            ((float)_surchargeAmount / 100.0)];
 }
 
 @end
@@ -368,12 +370,18 @@
 }
 
 - (SPIMessage *)toMessage {
+    NSDictionary *originalData = @{
+                                   @"refund_amount": @(self.amountCents),
+                                   @"pos_ref_id": self.posRefId,
+                                   @"suppress_merchant_password":@(self.isSuppressMerchantPassword)
+                                   };
+    
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
+    [_config addReceiptConfig:data];
+    
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"refund"]
                                        eventName:SPIRefundRequestKey
-                                            data:@{
-                                                   @"refund_amount": @(self.amountCents),
-                                                   @"pos_ref_id": self.posRefId
-                                                   }
+                                            data:data
                                  needsEncryption:true];
 }
 
@@ -578,6 +586,7 @@
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:[NSNumber numberWithInteger:_purchaseAmount] forKey:@"purchase_amount"];
+    [data setValue:[NSNumber numberWithInteger:_surchargeAmount] forKey:@"surcharge_amount"];
     [_config addReceiptConfig:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"moto"]

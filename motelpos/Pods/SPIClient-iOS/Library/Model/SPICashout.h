@@ -14,10 +14,12 @@
 @property (nonatomic, readonly) NSInteger cashoutAmount;
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic) NSInteger surchargeAmount;
 
 - (SPIMessage *)toMessage;
 
-- (instancetype)initWithAmountCents:(NSInteger)amountCents posRefId:(NSString *)posRefId;
+- (instancetype)initWithAmountCents:(NSInteger)amountCents
+                           posRefId:(NSString *)posRefId;
 
 @end
 
@@ -64,6 +66,8 @@
 - (BOOL)wasMerchantReceiptPrinted;
 
 - (BOOL)wasCustomerReceiptPrinted;
+
+- (NSInteger)getSurchargeAmount;
 
 - (NSString *)getResponseValue:(NSString *)attribute;
 

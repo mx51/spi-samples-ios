@@ -57,9 +57,9 @@
     
     if (self) {
         _schemeName = [dictionary valueForKey:@"scheme_name"];
-        _settleByAcquirer = [[[dictionary valueForKey:@"scheme_name"] lowercaseString] isEqualToString:@"yes"];
-        _totalValue = [NSNumber numberWithInteger:(int)[dictionary valueForKey:@"total_value"]].integerValue;
-        _totalCount = [NSNumber numberWithInteger:(int)[dictionary valueForKey:@"total_count"]].integerValue;
+        _settleByAcquirer = [[[dictionary valueForKey:@"settle_by_acquirer"] lowercaseString] isEqualToString:@"yes"];
+        _totalValue = [[dictionary valueForKey:@"total_value"] integerValue];
+        _totalCount = [[dictionary valueForKey:@"total_count"] integerValue];
     }
     
     return self;

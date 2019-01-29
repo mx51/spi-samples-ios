@@ -23,7 +23,7 @@
 @interface SPISchemeSettlementEntry : NSObject
 
 @property (nonatomic, readonly, copy) NSString *schemeName;
-@property (nonatomic) bool settleByAcquirer;
+@property (nonatomic) BOOL settleByAcquirer;
 @property (nonatomic) NSInteger totalCount;
 @property (nonatomic) NSInteger totalValue;
 

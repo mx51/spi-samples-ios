@@ -131,7 +131,7 @@
         _paymentType = SPIPaymentTypeCash;
     }
     
-    NSDictionary<NSString *,NSObject *> *data = (NSDictionary *)[message.data valueForKey:@"payment_details"];
+    NSDictionary<NSString *,NSObject *> *data = (NSDictionary *)message.data[@"payment_details"];
 
     // this is when we ply the sub object "payment_details" into a purchase response for convenience.
     SPIMessage *purchaseMsg = [[SPIMessage alloc] initWithMessageId:message.mid eventName:@"payment_details" data:data needsEncryption:false];
@@ -201,7 +201,7 @@
 
 - (instancetype)initWithClient:(SPIClient *)spi {
     _spi = spi;
-    _config = [SPIPayAtTableConfig alloc];
+    _config = [[SPIPayAtTableConfig alloc] init];
     _config.payAtTableEnabled = true;
     _config.operatorIdEnabled = true;
     _config.allowedOperatorIds = [NSArray array];

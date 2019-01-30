@@ -36,7 +36,7 @@ extension MainViewController {
             logMessage(String(format: "# %@", txState.displayMessage))
             logMessage(String(format: "# ID: %@", txState.posRefId))
             logMessage(String(format: "# Type: %@", txState.type.name))
-            logMessage(String(format: "# Amount: %.2f", Float(txState.amountCents) / 100.0))
+            logMessage(String(format: "# Amount: $%.2f", Double(txState.amountCents) / 100.0))
             logMessage(String(format: "# Waiting for signature: %@", String(txState.isAwaitingSignatureCheck)))
             logMessage(String(format: "# Attempting to cancel : %@", String(txState.isAttemptingToCancel)))
             logMessage(String(format: "# Finished: %@", String(txState.isFinished)))
@@ -66,10 +66,10 @@ extension MainViewController {
                             logMessage(String(format: "# PREAUTH-ID: %i", preauthId))
                         }
                         
-                        logMessage(String(format: "# NEW BALANCE AMOUNT: $%.2f", Float(preauthResponse.getBalanceAmount()) / 100.0))
-                        logMessage(String(format: "# PREV BALANCE AMOUNT: $%.2f", Float(preauthResponse.getPreviousBalanceAmount()) / 100.0))
-                        logMessage(String(format: "# COMPLETION AMOUNT: $%.2f", Float(preauthResponse.getCompletionAmount()) / 100.0))
-                        logMessage(String(format: "# SURCHARGE AMOUNT: $%.2f", Float(preauthResponse.getSurchargeAmountForPreauthCompletion()) / 100.0))
+                        logMessage(String(format: "# NEW BALANCE AMOUNT: $%.2f", Double(preauthResponse.getBalanceAmount()) / 100.0))
+                        logMessage(String(format: "# PREV BALANCE AMOUNT: $%.2f", Double(preauthResponse.getPreviousBalanceAmount()) / 100.0))
+                        logMessage(String(format: "# COMPLETION AMOUNT: $%.2f", Double(preauthResponse.getCompletionAmount()) / 100.0))
+                        logMessage(String(format: "# SURCHARGE AMOUNT: $%.2f", Double(preauthResponse.getSurchargeAmountForPreauthCompletion()) / 100.0))
                         
                         let details: SPIPurchaseResponse = preauthResponse.details
                         logMessage(String(format: "# Response: %@", details.getText()))

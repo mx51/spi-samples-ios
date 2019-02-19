@@ -300,12 +300,12 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  
  @param posRefId The unique identifier for the transaction.
  @param amountCents The refund amount in cents.
- @param isSuppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
 - (void)initiateRefundTx:(NSString *)posRefId
              amountCents:(NSInteger)amountCents
-isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
+suppressMerchantPassword:(BOOL)suppressMerchantPassword
               completion:(SPICompletionTxResult)completion;
 
 /**
@@ -338,13 +338,13 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
  @param posRefId The unique identifier for the transaction.
  @param amountCents The purchase amount in cents.
  @param surchargeAmount The surcharge amount in cents
- @param isSuppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
 - (void)initiateMotoPurchaseTx:(NSString *)posRefId
                    amountCents:(NSInteger)amountCents
                surchargeAmount:(NSInteger)surchargeAmount
-    isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
+    suppressMerchantPassword:(BOOL)suppressMerchantPassword
                     completion:(SPICompletionTxResult)completion;
 
 /**

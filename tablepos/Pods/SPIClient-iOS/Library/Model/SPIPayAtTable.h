@@ -74,7 +74,6 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 
 /// The currently outsanding amount on this bill, in cents.
 @property (nonatomic) NSInteger outstandingAmount;
-@property (nonatomic, assign) BOOL paymentFlowStarted;
 
 - (NSArray<SPIPaymentHistoryEntry *> *)getBillPaymentHistory;
 
@@ -90,17 +89,13 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 @property (nonatomic, copy) NSString *label;
 @property (nonatomic) NSInteger outstandingAmount;
 
-- (instancetype)initWithDictionary:(NSDictionary *)data;
-
 - (NSDictionary *)toJsonObject;
 
 @end
 
 @interface SPIGetOpenTablesResponse : NSObject
 
-@property (nonatomic, copy) NSString *tableData;
-
-- (NSArray<SPIOpenTablesEntry *> *)getOpenTables;
+@property (nonatomic, copy) NSMutableArray *openTablesData;
 
 - (SPIMessage *)toMessage:(NSString *)messageId;
 

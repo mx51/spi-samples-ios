@@ -30,6 +30,7 @@
     [data setValue:[NSNumber numberWithInteger:_cashoutAmount] forKey:@"cash_amount"];
     [data setValue:[NSNumber numberWithInteger:_surchargeAmount] forKey:@"surcharge_amount"];
     [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"cshout"]
                                        eventName:SPICashoutOnlyRequestKey

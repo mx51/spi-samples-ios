@@ -10,11 +10,13 @@
 
 @class SPIMessage;
 @class SPIConfig;
+@class SPITransactionOptions;
 
 @interface SPISettleRequest : NSObject
 
 @property (nonatomic, readonly, copy) NSString *settleId;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithSettleId:(NSString *)settleId;
 
@@ -78,6 +80,7 @@
 
 @property (nonatomic, readonly, copy) NSString *requestId;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithRequestId:(NSString *)requestId;
 

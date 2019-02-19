@@ -29,6 +29,7 @@
 - (SPIMessage *)toMessage {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:false enabledSignatureFlowOnEftpos:false enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"stl"]
                                        eventName:SPISettleRequestKey
@@ -169,6 +170,7 @@
 - (SPIMessage *)toMessage {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:false enabledSignatureFlowOnEftpos:false enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:_requestId
                                        eventName:SPISettlementEnquiryRequestKey

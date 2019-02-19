@@ -373,11 +373,12 @@
     NSDictionary *originalData = @{
                                    @"refund_amount": @(self.amountCents),
                                    @"pos_ref_id": self.posRefId,
-                                   @"suppress_merchant_password":@(self.isSuppressMerchantPassword)
+                                   @"suppress_merchant_password":@(self.suppressMerchantPassword)
                                    };
     
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
     [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"refund"]
                                        eventName:SPIRefundRequestKey
@@ -587,8 +588,9 @@
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:@(_purchaseAmount) forKey:@"purchase_amount"];
     [data setValue:@(_surchargeAmount) forKey:@"surcharge_amount"];
-    [data setValue:@(_isSuppressMerchantPassword) forKey:@"suppress_merchant_password"];
+    [data setValue:@(_suppressMerchantPassword) forKey:@"suppress_merchant_password"];
     [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"moto"]
                                        eventName:SPIMotoPurchaseRequestKey

@@ -310,7 +310,7 @@
     
     SPIGetOpenTablesResponse *openTablesResponse = [_delegate payAtTableGetOpenTables:operatorId];
     
-    if (openTablesResponse.tableData.length <= 0) {
+    if (openTablesResponse.openTablesData.count <= 0) {
         SPILog(@"There is no open table.");
     } else {
         [_spi send:[openTablesResponse toMessage:message.mid]];
@@ -343,18 +343,11 @@
 
 @implementation SPIOpenTablesEntry
 
-- (instancetype)initWithDictionary:(NSDictionary *)data {
-    [data setValue: _tableId forKey:@"table_id"];
-    [data setValue: _label forKey:@"label"];
-    [data setValue: @(_outstandingAmount) forKey:@"outstanding_amount"];
-    return self;
-}
-
 - (NSDictionary *)toJsonObject {
     NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
     [data setValue: _tableId forKey:@"table_id"];
     [data setValue: _label forKey:@"label"];
-    [data setValue: @(_outstandingAmount) forKey:@"outstanding_amount"];
+    [data setValue: @(_outstandingAmount) forKey:@"bill_outstanding_amount"];
     return data;
 }
 
@@ -362,44 +355,17 @@
 
 @implementation SPIGetOpenTablesResponse
 
-- (NSArray<SPIOpenTablesEntry *> *)getOpenTables {
-    if (_tableData == nil || [_tableData isEqualToString:@""]) {
-        return [[NSArray alloc] init];
-    }
-    
-    NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:_tableData options:0];
-    NSString *decodedString = [[NSString alloc] initWithData:decodedData encoding:NSUTF8StringEncoding];
-    SPILog(@"Decoded Get Open Tables: %@", decodedString);
-    
-    NSError *jsonError = nil;
-    NSDictionary *jsonData  = [NSJSONSerialization JSONObjectWithData:decodedData options:NSJSONReadingAllowFragments error:&jsonError];
-    
-    if (jsonError) {
-        SPILog(@"ERROR: Get Open Tables decoding error: %@", jsonError);
-        return [[NSArray alloc] init];
-    }
-    
-    NSMutableArray *getOpenTables = [[NSMutableArray alloc] init];
-    for (NSDictionary * openTableValue in jsonData) {
-        SPIOpenTablesEntry *openTablesEntry = [[SPIOpenTablesEntry alloc] initWithDictionary:openTableValue];
-        [getOpenTables addObject:openTablesEntry];
-    }
-    
-    return [getOpenTables copy];
-}
-
 - (SPIMessage *)toMessage:(NSString *)messageId {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     
     NSMutableArray<SPIOpenTablesEntry*> *getOpenTablesJson = [[NSMutableArray alloc] init];
-    for (SPIOpenTablesEntry *response in self.getOpenTables) {
+    for (SPIOpenTablesEntry *response in self.openTablesData) {
         [getOpenTablesJson addObjectsFromArray:[NSArray arrayWithObject:response.toJsonObject]];
     }
     
     [data setObject:getOpenTablesJson forKey:@"tables"];
     
-    
-    return [[SPIMessage alloc] initWithMessageId:messageId eventName:SPIPayAtTableBillDetailsKey data:data needsEncryption:true];
+    return [[SPIMessage alloc] initWithMessageId:messageId eventName:SPIPayAtTableOpenTablesKey data:data needsEncryption:true];
 }
 
 @end

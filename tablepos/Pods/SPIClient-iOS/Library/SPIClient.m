@@ -414,13 +414,13 @@ static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries be
               completion:(SPICompletionTxResult)completion {
     [self initiateRefundTx:posRefId
                amountCents:amountCents
-isSuppressMerchantPassword:false
+  suppressMerchantPassword:false
                 completion:completion];
 }
 
 - (void)initiateRefundTx:(NSString *)posRefId
              amountCents:(NSInteger)amountCents
-isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
+suppressMerchantPassword:(BOOL)suppressMerchantPassword
               completion:(SPICompletionTxResult)completion {
     
     if (self.state.status == SPIStatusUnpaired) {
@@ -441,7 +441,7 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
             
             SPIRefundRequest *refund = [[SPIRefundRequest alloc] initWithPosRefId:posRefId
                                                                       amountCents:amountCents];
-            refund.isSuppressMerchantPassword = isSuppressMerchantPassword;
+            refund.suppressMerchantPassword = suppressMerchantPassword;
             refund.config = weakSelf.config;
             
             SPIMessage *refundMsg = [refund toMessage];
@@ -561,13 +561,13 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
     [self initiateMotoPurchaseTx:posRefId
                      amountCents:amountCents
                  surchargeAmount:surchargeAmount
-      isSuppressMerchantPassword:false completion:completion];
+      suppressMerchantPassword:false completion:completion];
 }
 
 - (void)initiateMotoPurchaseTx:(NSString *)posRefId
                    amountCents:(NSInteger)amountCents
                surchargeAmount:(NSInteger)surchargeAmount
-    isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
+    suppressMerchantPassword:(BOOL)suppressMerchantPassword
                     completion:(SPICompletionTxResult)completion {
     
     if (self.state.status == SPIStatusUnpaired) {
@@ -590,7 +590,7 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
                                                                                                      posRefId:posRefId];
             motoPurchaseRequest.surchargeAmount = surchargeAmount;
             motoPurchaseRequest.config = weakSelf.config;
-            motoPurchaseRequest.isSuppressMerchantPassword = isSuppressMerchantPassword;
+            motoPurchaseRequest.suppressMerchantPassword = suppressMerchantPassword;
             
             SPIMessage *cashoutMsg = [motoPurchaseRequest toMessage];
             

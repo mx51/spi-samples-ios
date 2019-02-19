@@ -1,24 +1,33 @@
 PODS:
   - RNCryptor-objc (3.0.6)
   - SocketRocket (0.5.1)
-  - SPIClient-iOS (2.4.5):
+  - SPIClient-iOS (2.5.0):
     - RNCryptor-objc
     - SocketRocket
 
 DEPENDENCIES:
-  - SPIClient-iOS (~> 2.4.5)
+  - SPIClient-iOS (from `https://github.com/AssemblyPayments/spi-client-ios`, branch `feature/v2.5.0`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - RNCryptor-objc
     - SocketRocket
-    - SPIClient-iOS
+
+EXTERNAL SOURCES:
+  SPIClient-iOS:
+    :branch: feature/v2.5.0
+    :git: https://github.com/AssemblyPayments/spi-client-ios
+
+CHECKOUT OPTIONS:
+  SPIClient-iOS:
+    :commit: 80946082090921c9c8ea3c3909b51737be8465b3
+    :git: https://github.com/AssemblyPayments/spi-client-ios
 
 SPEC CHECKSUMS:
   RNCryptor-objc: d1b228f9c02e2173df063f0617684c134aed890e
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
-  SPIClient-iOS: a9ea73f402c037ed86d3f3a19d08491ef72dd78a
+  SPIClient-iOS: 91993a3349a9a90c044dc3ba06da7aa73b467845
 
-PODFILE CHECKSUM: 7153fb67c2084343e17616eb5cf4604fd366b7d6
+PODFILE CHECKSUM: 16ec9ea5ff15602f7d76a10082df00ea1f482fc2
 
 COCOAPODS: 1.5.3

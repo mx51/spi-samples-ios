@@ -333,6 +333,21 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
                     completion:(SPICompletionTxResult)completion;
 
 /**
+ Initiates a Mail Order / Telephone Order Purchase Transaction
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The purchase amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param isSuppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateMotoPurchaseTx:(NSString *)posRefId
+                   amountCents:(NSInteger)amountCents
+               surchargeAmount:(NSInteger)surchargeAmount
+    isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
+                    completion:(SPICompletionTxResult)completion;
+
+/**
  Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
  event to get updates on the process.
  

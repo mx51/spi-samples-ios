@@ -10,7 +10,7 @@ import UIKit
 import SPIClient_iOS
 
 class MainViewController: UITableViewController, NotificationListener {
-
+    
     @IBOutlet weak var lblStatus: UILabel!
     @IBOutlet weak var lblPosId: UILabel!
     @IBOutlet weak var lblPosAddress: UILabel!
@@ -26,6 +26,9 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var lblFlowStatus: UILabel!
     @IBOutlet weak var txtHeader: UITextField!
     @IBOutlet weak var txtFooter: UITextField!
+    @IBOutlet weak var txtOperatorId: UITextField!
+    @IBOutlet weak var txtLabel: UITextView!
+    @IBOutlet weak var swchLockedTable: UISwitch!
     
     let _lastCmd: [String] = []
     
@@ -36,7 +39,7 @@ class MainViewController: UITableViewController, NotificationListener {
     override func viewDidLoad() {
         super.viewDidLoad()
         restoreConfig()
-
+        
         registerForEvents(appEvents: [.connectionStatusChanged, .transactionFlowStateChanged])
         client.start()
     }
@@ -50,14 +53,14 @@ class MainViewController: UITableViewController, NotificationListener {
         txtHeader.text = settings.receiptHeader
         txtFooter.text = settings.receiptFooter
     }
-
+    
     // MARK: - Table view data source
-   
+    
     @IBAction func swchReceiptFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.promptForCustomerCopyOnEftpos = sender.isOn
         TableApp.current.settings.customerReceiptFromEftpos = sender.isOn
     }
-
+    
     @IBAction func swchSignatureFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.signatureFlowOnEftpos = sender.isOn
         TableApp.current.settings.customerSignatureromEftpos = sender.isOn

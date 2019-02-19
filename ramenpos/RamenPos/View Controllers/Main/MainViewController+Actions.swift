@@ -60,6 +60,7 @@ extension MainViewController {
     
     @IBAction func btnMotoClicked(_ sender: Any) {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        let isSuppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
         var surchargeAmount = 0
@@ -71,7 +72,7 @@ extension MainViewController {
             }
         }
         
-        client.initiateMotoPurchaseTx(posRefId, amountCents: amount, surchargeAmount: surchargeAmount, completion: printResult)
+        client.initiateMotoPurchaseTx(posRefId, amountCents: amount, surchargeAmount: surchargeAmount, isSuppressMerchantPassword: isSuppressMerchantPassword, completion: printResult)
     }
     
     @IBAction func btnRefundClicked(_ sender: Any) {

@@ -29,6 +29,9 @@ extension MainViewController {
         let newBill = Bill()
         newBill.billId = newBillId()
         newBill.tableId = tableId!
+        newBill.operatorId = txtOperatorId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        newBill.label = txtLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        newBill.locked = swchLockedTable.isOn
         
         TableApp.current.billsStore[newBill.billId!] = newBill
         TableApp.current.tableToBillMapping[newBill.tableId!] = newBill.billId
@@ -47,10 +50,35 @@ extension MainViewController {
         }
         
         let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!
+        if bill.locked! {
+            showMessage(title: "Add Table", msg: "Table is Locked.", type: "WARNING", isShow: true)
+            return
+        }
+        
         bill.totalAmount! += amount
         bill.outstandingAmount! += amount
         
-        showMessage(title: "Add Table", msg: "Updated: \(bill.toString()))", type: "INFO", isShow: true)
+        showMessage(title: "Add Table", msg: "Updated: \(bill.toString())", type: "INFO", isShow: true)
+    }
+    
+    @IBAction func btnLockUnlockTableClicked(_ sender: Any) {
+        let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let tableIdInt:Int? = Int(tableId!)
+        if tableIdInt == nil || tableIdInt! <= 0 {
+            showMessage(title: "Lock/UnLock Table", msg: "Incorrect Table Id!", type: "ERROR", isShow: true)
+            return
+        }
+        
+        if (TableApp.current.tableToBillMapping[tableId!] == nil) {
+            showMessage(title: "Lock/UnLock Table", msg: "Table not Open.", type: "WARNING", isShow: true)
+            return
+        }
+        
+        let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!
+        bill.locked = swchLockedTable.isOn
+        
+        let msg: String = bill.locked! ? "Locked" : "UnLocked"
+        showMessage(title: "Lock/UnLock Table", msg: "Table is \(msg): \(bill.toString())", type: "INFO", isShow: true)
     }
     
     @IBAction func btnCloseTableClicked(_ sender: Any) {
@@ -62,6 +90,11 @@ extension MainViewController {
         }
         
         let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!
+        if bill.locked! {
+            showMessage(title: "Close Table", msg: "Table is Locked.", type: "WARNING", isShow: true)
+            return
+        }
+        
         if (bill.outstandingAmount)! > 0 {
             showMessage(title: "Close Table", msg: "Bill not Paid Yet: \(bill.toString())", type: "WARNING", isShow: true)
             return

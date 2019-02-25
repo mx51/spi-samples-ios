@@ -28,7 +28,7 @@ extension TableApp: SPIPayAtTableDelegate {
             return response
         }
         
-        if  (billsStore[billId!]?.locked)! {            
+        if  ((billsStore[billId!]?.locked)! && paymentFlowStarted) {            
             response.result = SPIBillRetrievalResult.BillRetrievalResultInvalidTableId
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Get Bill Status", type: "INFO", message: "Table \(tableId ?? "") is Locked!", isShow: true))
             return response

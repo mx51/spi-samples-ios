@@ -88,8 +88,19 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)initiateOpenTx:(NSString *)posRefId
            amountCents:(NSInteger)amountCents
             completion:(SPICompletionTxResult)completion {
+    [self initiateOpenTx:posRefId
+             amountCents:amountCents
+                 options:nil
+              completion:completion];
+}
+
+- (void)initiateOpenTx:(NSString *)posRefId
+           amountCents:(NSInteger)amountCents
+               options:(SPITransactionOptions *)options
+            completion:(SPICompletionTxResult)completion {
     SPIPreauthOpenRequest *preauthRequest = [[SPIPreauthOpenRequest alloc] initWithAmountCents:amountCents posRefId:posRefId];
     preauthRequest.config = _client.config;
+    preauthRequest.options = options;
     
     SPIMessage *preauthMsg = [preauthRequest toMessage];
     
@@ -107,8 +118,20 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
               preauthId:(NSString *)preauthId
             amountCents:(NSInteger)amountCents
              completion:(SPICompletionTxResult)completion {
+    [self initiateOpenTx:posRefId
+             amountCents:amountCents
+                 options:nil
+              completion:completion];
+}
+
+- (void)initiateTopupTx:(NSString *)posRefId
+              preauthId:(NSString *)preauthId
+            amountCents:(NSInteger)amountCents
+                options:(SPITransactionOptions *)options
+             completion:(SPICompletionTxResult)completion {
     SPIPreauthTopupRequest *preauthRequest = [[SPIPreauthTopupRequest alloc] initWithPreauthID:preauthId topupAmount:amountCents posRefId:posRefId];
     preauthRequest.config = _client.config;
+    preauthRequest.options = options;
     
     SPIMessage *preauthMsg = [preauthRequest toMessage];
     
@@ -126,8 +149,21 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                             preauthId:(NSString *)preauthId
                           amountCents:(NSInteger)amountCents
                            completion:(SPICompletionTxResult)completion {
+    [self initiatePartialCancellationTx:posRefId
+                              preauthId:preauthId
+                            amountCents:amountCents
+                                options:nil
+                             completion:completion];
+}
+
+- (void)initiatePartialCancellationTx:(NSString *)posRefId
+                            preauthId:(NSString *)preauthId
+                          amountCents:(NSInteger)amountCents
+                              options:(SPITransactionOptions *)options
+                           completion:(SPICompletionTxResult)completion {
     SPIPreauthPartialCancellationRequest *preauthRequest = [[SPIPreauthPartialCancellationRequest alloc] initWithPreauthID:preauthId partialCancellationAmount:amountCents posRefId:posRefId];
     preauthRequest.config = _client.config;
+    preauthRequest.options = options;
     
     SPIMessage *preauthMsg = [preauthRequest toMessage];
     
@@ -144,8 +180,15 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)initiateExtendTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
               completion:(SPICompletionTxResult)completion {
+}
+
+- (void)initiateExtendTx:(NSString *)posRefId
+               preauthId:(NSString *)preauthId
+                 options:(SPITransactionOptions *)options
+              completion:(SPICompletionTxResult)completion {
     SPIPreauthExtendRequest *preauthRequest = [[SPIPreauthExtendRequest alloc] initWithPreauthID:preauthId posRefId:posRefId];
     preauthRequest.config = _client.config;
+    preauthRequest.options = options;
     
     SPIMessage *preauthMsg = [preauthRequest toMessage];
     
@@ -163,7 +206,11 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                    preauthId:(NSString *)preauthId
                  amountCents:(NSInteger)amountCents
                   completion:(SPICompletionTxResult)completion {
-    [self initiateCompletionTx:posRefId preauthId:preauthId amountCents:amountCents surchargeAmount:0 completion:completion];
+    [self initiateCompletionTx:posRefId
+                     preauthId:preauthId
+                   amountCents:amountCents
+               surchargeAmount:0
+                    completion:completion];
 }
 
 - (void)initiateCompletionTx:(NSString *)posRefId
@@ -171,9 +218,24 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                  amountCents:(NSInteger)amountCents
              surchargeAmount:(NSInteger)surchargeAmount
                   completion:(SPICompletionTxResult)completion {
+    [self initiateCompletionTx:posRefId
+                     preauthId:preauthId
+                   amountCents:amountCents
+               surchargeAmount:surchargeAmount
+                       options:nil
+                    completion:completion];
+}
+
+- (void)initiateCompletionTx:(NSString *)posRefId
+                   preauthId:(NSString *)preauthId
+                 amountCents:(NSInteger)amountCents
+             surchargeAmount:(NSInteger)surchargeAmount
+                     options:(SPITransactionOptions *)options
+                  completion:(SPICompletionTxResult)completion {
     SPIPreauthCompletionRequest *preauthRequest = [[SPIPreauthCompletionRequest alloc] initWithPreauthID:preauthId completionAmount:amountCents posRefId:posRefId];
     preauthRequest.surchargeAmount = surchargeAmount;
     preauthRequest.config = _client.config;
+    preauthRequest.options = options;
     
     SPIMessage *preauthMsg = [preauthRequest toMessage];
     
@@ -190,8 +252,19 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)initiateCancelTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
               completion:(SPICompletionTxResult)completion {
+    [self initiateCancelTx:posRefId
+                 preauthId:preauthId
+                   options:nil
+                completion:completion];
+}
+
+- (void)initiateCancelTx:(NSString *)posRefId
+               preauthId:(NSString *)preauthId
+                 options:(SPITransactionOptions *)options
+              completion:(SPICompletionTxResult)completion {
     SPIPreauthCancelRequest *preauthRequest = [[SPIPreauthCancelRequest alloc] initWithPreauthID:preauthId posRefId:posRefId];
     preauthRequest.config = _client.config;
+    preauthRequest.options = options;
     
     SPIMessage *preauthMsg = [preauthRequest toMessage];
     

@@ -52,6 +52,6 @@ class Bill: NSObject, NSCoding {
     }
     
     func toString() -> String {
-        return String(format: "%@ - Table:%@ OperatorId:%@ Label:%@ Total:$%.2f Outstanding:$%.2f Tips:$%.2f Locked:%@", billId!, tableId!, operatorId!, label!, Float(totalAmount!) / 100.0, Float(outstandingAmount!) / 100.0, Float(tippedAmount!) / 100.0, (locked?.description)!)
+        return String(format: "%@ - Table:%@ OperatorId:%@ Label:%@ Total:$%.2f Outstanding:$%.2f Tips:$%.2f Locked:%@", billId!, tableId!, operatorId!, label!, Float(totalAmount!) / 100.0, Float(outstandingAmount!) / 100.0, Float(tippedAmount!) / 100.0, locked!.description)
     }
 }

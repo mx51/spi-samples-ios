@@ -150,6 +150,5 @@ extension MainViewController {
             break
         }
         logMessage(String(format: ""))
-    }
-    
+    }    
 }

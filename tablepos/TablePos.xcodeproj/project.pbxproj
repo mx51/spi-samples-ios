@@ -30,6 +30,7 @@
 		491C93882124196600CC457F /* TableApp+SPIPayAtTableDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C93872124196600CC457F /* TableApp+SPIPayAtTableDelegate.swift */; };
 		496C984921224C3D00E0AD76 /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C984821224C3D00E0AD76 /* Bill.swift */; };
 		496C984B2122892500E0AD76 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C984A2122892500E0AD76 /* AppDelegate.swift */; };
+		49756FCA221E1BD10056C53C /* MessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49756FC9221E1BD10056C53C /* MessageInfo.swift */; };
 		995D443E0279A3765BA7A36F /* Pods_TablePosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24394C3AA575631CC2164B7C /* Pods_TablePosTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +83,7 @@
 		491C93872124196600CC457F /* TableApp+SPIPayAtTableDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TableApp+SPIPayAtTableDelegate.swift"; sourceTree = "<group>"; };
 		496C984821224C3D00E0AD76 /* Bill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bill.swift; sourceTree = "<group>"; };
 		496C984A2122892500E0AD76 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		49756FC9221E1BD10056C53C /* MessageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfo.swift; sourceTree = "<group>"; };
 		6B7AA15FFFAAB8BCEF5B0D0A /* Pods-TablePosTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePosTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TablePosTests/Pods-TablePosTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7874A3E79A772DF427575D4A /* Pods-TablePos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePos.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TablePos/Pods-TablePos.debug.xcconfig"; sourceTree = "<group>"; };
 		95DE8A96F3F723746C81A6AF /* Pods-TablePosTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePosTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TablePosTests/Pods-TablePosTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -185,7 +187,7 @@
 				29534F4F20BC431C0048C0E0 /* Extensions */,
 				298DCD0420BAFDBF0081940A /* Enums */,
 				29534F5620BD62010048C0E0 /* Protocols */,
-				496C9845212171D500E0AD76 /* TableClasses */,
+				496C9845212171D500E0AD76 /* Classes */,
 			);
 			path = Logic;
 			sourceTree = "<group>";
@@ -258,12 +260,13 @@
 			path = TablePosUITests;
 			sourceTree = "<group>";
 		};
-		496C9845212171D500E0AD76 /* TableClasses */ = {
+		496C9845212171D500E0AD76 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
 				496C984821224C3D00E0AD76 /* Bill.swift */,
+				49756FC9221E1BD10056C53C /* MessageInfo.swift */,
 			);
-			path = TableClasses;
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		4EAD2E22EE4B8019B959D751 /* Pods */ = {
@@ -506,6 +509,7 @@
 				2998F79F20C41EAB00431BE1 /* MainViewController+TransactionFlowChange.swift in Sources */,
 				298DCD0120BAF20D0081940A /* TableApp.swift in Sources */,
 				29534F5820BD8CE30048C0E0 /* MainViewController+Actions.swift in Sources */,
+				49756FCA221E1BD10056C53C /* MessageInfo.swift in Sources */,
 				298DCD0620BAFDD20081940A /* AppEvents.swift in Sources */,
 				290EBBB220C6DFEC00D98C3A /* SPIExtensions.swift in Sources */,
 				491C93882124196600CC457F /* TableApp+SPIPayAtTableDelegate.swift in Sources */,

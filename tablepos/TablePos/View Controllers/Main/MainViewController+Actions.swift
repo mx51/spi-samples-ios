@@ -106,46 +106,49 @@ extension MainViewController {
     }
     
     @IBAction func btnListTablesClicked(_ sender: Any) {
+        var listTables: String = "\n"
         if TableApp.current.tableToBillMapping.count > 0 {
             var openTables: String = ""
             for key in TableApp.current.tableToBillMapping.keys {
                 if openTables != "" {
-                    openTables += ","
+                    openTables += ",\n"
                 }
                 
                 openTables += key
             }
             
-            showMessage(title: "List Tables", msg: "#    Open Tables: \(openTables)", type: "INFO", isShow: true)
+            listTables = "#    Open Tables:\n\(openTables)\n"
         } else {
             showMessage(title: "List Tables", msg: "# No Open Tables.", type: "INFO", isShow: true)
         }
         
-        if TableApp.current.tableToBillMapping.count > 0 {
+        if TableApp.current.billsStore.count > 0 {
             var openBills: String = ""
             for key in TableApp.current.billsStore.keys {
                 if openBills != "" {
-                    openBills += ","
+                    openBills += ",\n"
                 }
                 
                 openBills += key
             }
             
-            showMessage(title: "List Tables", msg: "# My Bills Store: \(openBills)", type: "INFO", isShow: true)
+            listTables += "# My Bills Store:\n\(openBills)\n"
         }
         
         if TableApp.current.assemblyBillDataStore.count > 0 {
             var openAssemblyBills: String = ""
             for key in TableApp.current.assemblyBillDataStore.keys {
                 if openAssemblyBills != "" {
-                    openAssemblyBills += ","
+                    openAssemblyBills += ",\n"
                 }
                 
                 openAssemblyBills += key
             }
             
-            showMessage(title: "List Tables", msg: "# My Bills Store: \(openAssemblyBills)", type: "INFO", isShow: true)
+            listTables = "# Assembly Bills Data:\n\(openAssemblyBills)"
         }
+        
+        showMessage(title: "List Tables", msg: "\(listTables)", type: "INFO", isShow: true)
     }
     
     @IBAction func btnPrintTableClicked(_ sender: Any) {
@@ -172,19 +175,9 @@ extension MainViewController {
         let posRefId = "purchase-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-
-        let settings = TableApp.current.settings
         
         // Receipt header/footer
-        let options = SPITransactionOptions()
-        if let receiptHeader = settings.receiptHeader, receiptHeader.count > 0 {
-            options.customerReceiptHeader = receiptHeader
-            options.merchantReceiptHeader = receiptHeader
-        }
-        if let receiptFooter = settings.receiptFooter, receiptFooter.count > 0 {
-            options.customerReceiptFooter = receiptFooter
-            options.merchantReceiptFooter = receiptFooter
-        }
+        let options = setReceiptHeaderFooter()
         
         client.initiatePurchaseTx(posRefId,
                                   purchaseAmount: amount,
@@ -197,14 +190,29 @@ extension MainViewController {
     
     @IBAction func btnRefundClicked(_ sender: Any) {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        let suppressMerchantPassword =  TableApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateRefundTx(posRefId, amountCents: amount, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateRefundTx(posRefId,
+                                amountCents: amount,
+                                suppressMerchantPassword: suppressMerchantPassword,
+                                options: options,
+                                completion: printResult)
     }
     
     @IBAction func btnSettleClicked(_ sender: Any) {
         let id = SPIRequestIdHelper.id(for: "settle")
-        client.initiateSettleTx(id, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateSettleTx(id,
+                                options: options,
+                                completion: printResult)
     }
     
     func newBillId() -> String {
@@ -224,11 +232,34 @@ extension MainViewController {
         showMessage(title: title, msg: "Bill: \(bill.toString())", type: "INFO", isShow: true)
     }
     
+    func sanitizePrintText(_ text: String?) -> String? {
+        var sanitizeText: String? = text?.replacingOccurrences(of: "\\r\\n", with: "\n");
+        sanitizeText = sanitizeText?.replacingOccurrences(of: "\\n", with: "\n");
+        sanitizeText = sanitizeText?.replacingOccurrences(of: "\\\\emphasis", with: "\\emphasis");
+        return sanitizeText?.replacingOccurrences(of: "\\\\clear", with: "\\clear");
+    }
+    
     func showMessage(title: String, msg: String, type: String, isShow: Bool, completion: (() -> Swift.Void)? = nil) {
         logMessage("\(type): \(msg)")
         
         if isShow {
             showAlert(title: title, message: msg)
         }
+    }
+    
+    func setReceiptHeaderFooter() -> SPITransactionOptions {
+        let settings = TableApp.current.settings
+        let options = SPITransactionOptions()
+        
+        if let receiptHeader = settings.receiptHeader, receiptHeader.count > 0 {
+            options.customerReceiptHeader = sanitizePrintText(receiptHeader)
+            options.merchantReceiptHeader = sanitizePrintText(receiptHeader)
+        }
+        if let receiptFooter = settings.receiptFooter, receiptFooter.count > 0 {
+            options.customerReceiptFooter = sanitizePrintText(receiptFooter)
+            options.merchantReceiptFooter = sanitizePrintText(receiptFooter)
+        }
+        
+        return options
     }
 }

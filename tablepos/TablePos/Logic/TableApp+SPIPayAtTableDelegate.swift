@@ -81,7 +81,7 @@ extension TableApp: SPIPayAtTableDelegate {
         if tableToBillMapping.count > 0 {
             openTables = "Open Tables:\n"
             for item in tableToBillMapping {
-                if billsStore[item.value]!.operatorId == operatorId {
+                if billsStore[item.value]!.operatorId == operatorId  && billsStore[item.value]!.outstandingAmount! > 0 {
                     let openTablesItem = SPIOpenTablesEntry()
                     openTablesItem.tableId = item.key
                     openTablesItem.label = billsStore[item.value]!.label!
@@ -112,16 +112,16 @@ extension TableApp: SPIPayAtTableDelegate {
         let myBill = billsStore[billPaymentFlowEndedResponse.billId!]
         myBill!.locked = false
         
-        message += "Bill Id                : \(billPaymentFlowEndedResponse.billId.description)\n"
-        message += "Table Id               : \(billPaymentFlowEndedResponse.tableId.description)\n"
-        message += "Operator Id            : \(billPaymentFlowEndedResponse.operatorId.description)\n"
+        message += "Bill Id: \(billPaymentFlowEndedResponse.billId.description)\n"
+        message += "Table Id: \(billPaymentFlowEndedResponse.tableId.description)\n"
+        message += "Operator Id: \(billPaymentFlowEndedResponse.operatorId.description)\n"
         message += "Bill OutStanding Amount: $\(Double(billPaymentFlowEndedResponse.billOutstandingAmount) / 100.00)\n"
-        message += "Bill Total Amount      : $\(Double(billPaymentFlowEndedResponse.billTotalAmount) / 100.00)\n"
-        message += "Card Total Count       : \(billPaymentFlowEndedResponse.cardTotalCount)\n"
-        message += "Card Total Amount      : $\(Double(billPaymentFlowEndedResponse.cardTotalAmount) / 100.00)\n"
-        message += "Cash Total Count       : \(billPaymentFlowEndedResponse.cashTotalCount)\n"
-        message += "Cash Total Amount      : $\(Double(billPaymentFlowEndedResponse.cashTotalAmount) / 100.00)\n"
-        message += "Locked                 : \(myBill!.locked!.description)"
+        message += "Bill Total Amount: $\(Double(billPaymentFlowEndedResponse.billTotalAmount) / 100.00)\n"
+        message += "Card Total Count: \(billPaymentFlowEndedResponse.cardTotalCount)\n"
+        message += "Card Total Amount: $\(Double(billPaymentFlowEndedResponse.cardTotalAmount) / 100.00)\n"
+        message += "Cash Total Count: \(billPaymentFlowEndedResponse.cashTotalCount)\n"
+        message += "Cash Total Amount: $\(Double(billPaymentFlowEndedResponse.cashTotalAmount) / 100.00)\n"
+        message += "Locked: \(myBill!.locked!.description)"
         
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Flow Ended", type: "INFO", message: message, isShow: true))
     }    

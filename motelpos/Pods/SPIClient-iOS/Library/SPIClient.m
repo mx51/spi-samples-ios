@@ -1520,19 +1520,27 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
 }
 
 - (void)handlePrintingResponse:(SPIMessage *)m {
-    [_delegate printingResponse:m];
+    if([_delegate respondsToSelector:@selector(printingResponse:)]) {
+        [_delegate printingResponse:m];
+    }
 }
 
 - (void)handleTerminalStatusResponse:(SPIMessage *)m {
-    [_delegate terminalStatusResponse:m];
+    if([_delegate respondsToSelector:@selector(terminalStatusResponse:)]) {
+        [_delegate terminalStatusResponse:m];
+    }
 }
 
 - (void)handleTerminalConfigurationResponse:(SPIMessage *)m {
-    [_delegate terminalConfigurationResponse:m];
+    if([_delegate respondsToSelector:@selector(terminalConfigurationResponse:)]) {
+        [_delegate terminalConfigurationResponse:m];
+    }
 }
 
 - (void)handleBatteryLevelChanged:(SPIMessage *)m {
-    [_delegate batteryLevelChanged:m];
+    if([_delegate respondsToSelector:@selector(batteryLevelChanged:)]) {
+        [_delegate batteryLevelChanged:m];
+    }
 }
 
 #pragma mark - Internals for connection management

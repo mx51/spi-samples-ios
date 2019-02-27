@@ -465,6 +465,13 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
 - (SPIPayAtTable *)enablePayAtTable;
 
 /**
+ Disables Pay-at-Table feature and returns the configuration object.
+ 
+ @return Configuration object handling table and bill requests and responses.
+ */
+- (SPIPayAtTable *)disablePayAtTable;
+
+/**
  Enables Preauth feature and returns the configuration object.
  
  @return Configuration object handling the dispatch queue.

@@ -263,6 +263,10 @@
     return !(code == nil || code.length == 0);
 }
 
+- (BOOL)wasTimeOutOfSyncError {
+    return [self.message.error hasPrefix:@"TIME_OUT_OF_SYNC"];
+}
+
 - (BOOL)wasOperationInProgressError {
     return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS"];
 }

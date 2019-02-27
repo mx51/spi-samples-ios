@@ -130,6 +130,8 @@
 
 - (instancetype)initWithMessage:(SPIMessage *)message;
 
+- (BOOL)wasTimeOutOfSyncError;
+
 - (BOOL)wasRetrievedSuccessfully;
 
 - (BOOL)wasOperationInProgressError;

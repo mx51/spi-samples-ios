@@ -239,6 +239,11 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
  */
 @property (nonatomic, assign) BOOL isAwaitingGltResponse;
 
+/**
+ The pos ref id  when Get Last Transaction response.
+ */
+@property (nonatomic, copy) NSString *gltResponsePosRefId;
+
 - (instancetype)initWithTid:(NSString *)tid
                        type:(SPITransactionType)type
                 amountCents:(NSInteger)amountCents

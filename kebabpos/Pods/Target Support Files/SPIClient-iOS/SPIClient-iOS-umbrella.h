@@ -44,8 +44,8 @@
 #import "SPIManifest+Internal.h"
 #import "SPIModels.h"
 #import "SPIDeviceInfo.h"
-#import "SPIGCDTimer.h"
 #import "SPILogger.h"
+#import "SPIRepeatingTimer.h"
 
 FOUNDATION_EXPORT double SPIClient_iOSVersionNumber;
 FOUNDATION_EXPORT const unsigned char SPIClient_iOSVersionString[];

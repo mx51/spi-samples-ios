@@ -211,6 +211,7 @@
     state.cancelAttemptTime = self.cancelAttemptTime;
     state.request = self.request;
     state.isAwaitingGltResponse = self.isAwaitingGltResponse;
+    state.gltResponsePosRefId = self.gltResponsePosRefId;
     
     return state;
 }

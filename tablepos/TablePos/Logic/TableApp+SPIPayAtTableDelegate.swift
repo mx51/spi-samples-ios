@@ -77,11 +77,16 @@ extension TableApp: SPIPayAtTableDelegate {
         let response: SPIGetOpenTablesResponse = SPIGetOpenTablesResponse()
         let openTablesArray = NSMutableArray()
         var openTables: String = ""
+        var isOpenTables = false
         
         if tableToBillMapping.count > 0 {
-            openTables = "Open Tables:\n"
             for item in tableToBillMapping {
                 if billsStore[item.value]!.operatorId == operatorId  && billsStore[item.value]!.outstandingAmount! > 0 {
+                    if !isOpenTables {
+                        openTables = "Open Tables:\n"
+                        isOpenTables = true
+                    }
+                    
                     let openTablesItem = SPIOpenTablesEntry()
                     openTablesItem.tableId = item.key
                     openTablesItem.label = billsStore[item.value]!.label!
@@ -90,9 +95,11 @@ extension TableApp: SPIPayAtTableDelegate {
                     openTablesArray.add(openTablesItem)
                 }
             }
-        } else {
-            openTables = "No Open Tables."
         }
+        
+        if !isOpenTables {
+            openTables = "No Open Tables."
+        }        
         
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: openTables, isShow: true))
         

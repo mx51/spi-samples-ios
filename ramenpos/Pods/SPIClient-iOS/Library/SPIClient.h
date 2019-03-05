@@ -360,7 +360,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 - (void)initiateMotoPurchaseTx:(NSString *)posRefId
                    amountCents:(NSInteger)amountCents
                surchargeAmount:(NSInteger)surchargeAmount
-    suppressMerchantPassword:(BOOL)suppressMerchantPassword
+      suppressMerchantPassword:(BOOL)suppressMerchantPassword
                     completion:(SPICompletionTxResult)completion;
 
 /**
@@ -472,7 +472,8 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
               completion:(SPICompletionTxResult)completion;
 
 /**
- Initiates a Mail Order / Telephone Order purchase transaction.
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
  
  @param posRefId The unique identifier for the transaction.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
@@ -481,7 +482,8 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                        completion:(SPICompletionTxResult)completion;
 
 /**
- Initiates a Mail Order / Telephone Order purchase transaction.
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
  
  @param posRefId The unique identifier for the transaction.
  @param options Additional options applied on per-transaction basis.

@@ -1053,15 +1053,17 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 }
 
 - (BOOL)hasSerialNumberChanged:(NSString *)updatedSerialNumber {
-    if ([_serialNumber isEqualToString:updatedSerialNumber])
-    return false;
+    if ([_serialNumber isEqualToString:updatedSerialNumber]) {
+        return false;
+    }
     
     return true;
 }
 
 - (BOOL)hasEftposAddressChanged:(NSString *)updatedEftposAddress {
-    if ([_eftposAddress isEqualToString:updatedEftposAddress])
-    return false;
+    if ([_eftposAddress isEqualToString:updatedEftposAddress]) {
+        return false;
+    }
     
     return true;
 }
@@ -1970,7 +1972,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
             
         } else if ([eventName isEqualToString:SPIPayAtTableBillPaymentKey]) {
             [weakSelf.spiPat handleBillPaymentAdvice:m];
-
+            
         } else if ([eventName isEqualToString:SPIPayAtTableGetOpenTablesKey]) {
             [weakSelf.spiPat handleGetOpenTablesRequest:m];
             

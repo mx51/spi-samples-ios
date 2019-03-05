@@ -180,6 +180,10 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)initiateExtendTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
               completion:(SPICompletionTxResult)completion {
+    [self initiateExtendTx:posRefId
+                 preauthId:preauthId
+                   options:nil
+                completion:completion];
 }
 
 - (void)initiateExtendTx:(NSString *)posRefId

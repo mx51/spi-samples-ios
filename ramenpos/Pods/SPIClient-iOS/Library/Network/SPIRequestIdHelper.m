@@ -29,7 +29,7 @@
 
 + (NSString *)idForString:(NSString *)string {
     NSUInteger counter = [SPIRequestIdHelper sharedInstance].counter++;
-    return [NSString stringWithFormat:@"%@%ld", string, counter];
+    return [NSString stringWithFormat:@"%@%lu", string, (unsigned long)counter];
 }
 
 @end

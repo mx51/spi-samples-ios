@@ -150,10 +150,10 @@
 + (NSString *)paymentTypeString:(SPIPaymentType)ptype {
     NSString *result = nil;
     switch (ptype) {
-        case SPIPaymentTypeCard:
+            case SPIPaymentTypeCard:
             result = @"CARD";
             break;
-        case SPIPaymentTypeCash:
+            case SPIPaymentTypeCash:
             result =  @"CASH";
             break;
         default:
@@ -312,9 +312,9 @@
     
     if (openTablesResponse.openTablesData.count <= 0) {
         SPILog(@"There is no open table.");
-    } else {
-        [_spi send:[openTablesResponse toMessage:message.mid]];
     }
+    
+    [_spi send:[openTablesResponse toMessage:message.mid]];
 }
 
 @end
@@ -355,15 +355,23 @@
 
 @implementation SPIGetOpenTablesResponse
 
-- (SPIMessage *)toMessage:(NSString *)messageId {
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
-    
+- (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables {
     NSMutableArray<SPIOpenTablesEntry*> *getOpenTablesJson = [[NSMutableArray alloc] init];
+    
+    if (self.openTablesData.count <= 0) {
+        return getOpenTablesJson;
+    }
+    
     for (SPIOpenTablesEntry *response in self.openTablesData) {
         [getOpenTablesJson addObjectsFromArray:[NSArray arrayWithObject:response.toJsonObject]];
     }
     
-    [data setObject:getOpenTablesJson forKey:@"tables"];
+    return getOpenTablesJson;
+}
+
+- (SPIMessage *)toMessage:(NSString *)messageId {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    [data setObject:[self getOpenTables] forKey:@"tables"];
     
     return [[SPIMessage alloc] initWithMessageId:messageId eventName:SPIPayAtTableOpenTablesKey data:data needsEncryption:true];
 }

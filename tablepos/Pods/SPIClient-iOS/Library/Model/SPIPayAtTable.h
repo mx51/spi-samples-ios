@@ -97,6 +97,8 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 
 @property (nonatomic, copy) NSMutableArray *openTablesData;
 
+- (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables;
+
 - (SPIMessage *)toMessage:(NSString *)messageId;
 
 @end

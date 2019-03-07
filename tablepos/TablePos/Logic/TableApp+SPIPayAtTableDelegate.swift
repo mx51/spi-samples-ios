@@ -9,8 +9,8 @@
 import Foundation
 import SPIClient_iOS
 
-extension TableApp: SPIPayAtTableDelegate {
-    func pay(atTableGetBillStatus billId: String!, tableId: String!, operatorId: String!) -> SPIBillStatusResponse! {
+extension TableApp: SPIPayAtTableDelegate {    
+    func pay(atTableGetBillStatus billId: String!, tableId: String!, operatorId: String!, paymentFlowStarted: Bool) -> SPIBillStatusResponse! {
         let response: SPIBillStatusResponse = SPIBillStatusResponse()
         var billId = billId
         
@@ -28,11 +28,19 @@ extension TableApp: SPIPayAtTableDelegate {
             return response
         }
         
+        if  ((billsStore[billId!]?.locked)! && paymentFlowStarted) {            
+            response.result = SPIBillRetrievalResult.BillRetrievalResultInvalidTableId
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Get Bill Status", type: "INFO", message: "Table \(tableId ?? "") is Locked!", isShow: true))
+            return response
+        }
+        
         let myBill = billsStore[billId!]
+        myBill?.locked = paymentFlowStarted
         
         response.result = SPIBillRetrievalResult.BillRetrievalResultSuccess
         response.billId = billId
         response.tableId = tableId
+        response.operatorId = operatorId
         response.totalAmount = (myBill?.totalAmount)!
         response.outstandingAmount = (myBill?.outstandingAmount)!
         response.billData = assemblyBillDataStore[billId!]
@@ -47,13 +55,14 @@ extension TableApp: SPIPayAtTableDelegate {
             return response
         }
         
-        SPILogMsg("# Got a \(billPayment!.paymentType) Payment against bill \(String(describing: billPayment!.billId)) for table \(String(describing: billPayment!.tableId))")
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: "# Got a \(billPayment!.paymentType) Payment against bill \(String(describing: billPayment!.billId)) for table \(String(describing: billPayment!.tableId))", isShow: true))
         
         let bill: Bill = billsStore[billPayment.billId]!
         bill.outstandingAmount! -= billPayment.purchaseAmount
         bill.tippedAmount! += billPayment.tipAmount
-        
-        SPILogMsg("Updated Bill: \(bill.toString())")
+        bill.locked = bill.outstandingAmount == 0 ? false: true
+
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: "Updated Bill: \(bill.toString())", isShow: true))
         
         assemblyBillDataStore[billPayment.billId] = updatedBillData
         
@@ -64,4 +73,63 @@ extension TableApp: SPIPayAtTableDelegate {
         return response
     }
     
+    func pay(atTableGetOpenTables operatorId: String!) -> SPIGetOpenTablesResponse! {
+        let response: SPIGetOpenTablesResponse = SPIGetOpenTablesResponse()
+        let openTablesArray = NSMutableArray()
+        var openTables: String = ""
+        var isOpenTables = false
+        
+        if tableToBillMapping.count > 0 {
+            for item in tableToBillMapping {
+                if billsStore[item.value]!.operatorId == operatorId  && billsStore[item.value]!.outstandingAmount! > 0 {
+                    if !isOpenTables {
+                        openTables = "Open Tables:\n"
+                        isOpenTables = true
+                    }
+                    
+                    let openTablesItem = SPIOpenTablesEntry()
+                    openTablesItem.tableId = item.key
+                    openTablesItem.label = billsStore[item.value]!.label!
+                    openTablesItem.outstandingAmount = (billsStore[item.value]?.outstandingAmount)!
+                    openTables += "Table ID: \(openTablesItem.tableId.description) Label: \(openTablesItem.label.description) Outstanding Amount: \(Double(openTablesItem.outstandingAmount) / 100.00)\n"
+                    openTablesArray.add(openTablesItem)
+                }
+            }
+        }
+        
+        if !isOpenTables {
+            openTables = "No Open Tables."
+        }        
+        
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: openTables, isShow: true))
+        
+        response.openTablesData = openTablesArray
+        return response
+    }
+    
+    func pay(atTableBillPaymentFlowEnded message: SPIMessage!) {
+        let billPaymentFlowEndedResponse: SPIBillPaymentFlowEndedResponse = SPIBillPaymentFlowEndedResponse(message: message)
+        var message: String = ""
+        
+        if !(billsStore[billPaymentFlowEndedResponse.billId] != nil) {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Flow Ended", type: "ERROR", message: "Incorrect Bill Id!", isShow: true))
+            return
+        }
+        
+        let myBill = billsStore[billPaymentFlowEndedResponse.billId!]
+        myBill!.locked = false
+        
+        message += "Bill Id: \(billPaymentFlowEndedResponse.billId.description)\n"
+        message += "Table Id: \(billPaymentFlowEndedResponse.tableId.description)\n"
+        message += "Operator Id: \(billPaymentFlowEndedResponse.operatorId.description)\n"
+        message += "Bill OutStanding Amount: $\(Double(billPaymentFlowEndedResponse.billOutstandingAmount) / 100.00)\n"
+        message += "Bill Total Amount: $\(Double(billPaymentFlowEndedResponse.billTotalAmount) / 100.00)\n"
+        message += "Card Total Count: \(billPaymentFlowEndedResponse.cardTotalCount)\n"
+        message += "Card Total Amount: $\(Double(billPaymentFlowEndedResponse.cardTotalAmount) / 100.00)\n"
+        message += "Cash Total Count: \(billPaymentFlowEndedResponse.cashTotalCount)\n"
+        message += "Cash Total Amount: $\(Double(billPaymentFlowEndedResponse.cashTotalAmount) / 100.00)\n"
+        message += "Locked: \(myBill!.locked!.description)"
+        
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Flow Ended", type: "INFO", message: message, isShow: true))
+    }    
 }

@@ -99,19 +99,15 @@ class MainViewController: UITableViewController, NotificationListener {
     }
     
     @IBAction func txtHeaderEditingDidEnd(_ sender: UITextField) {
-        RamenApp.current.settings.receiptHeader = sanitizeHeaderFooter(sender.text)
+        RamenApp.current.settings.receiptHeader = sender.text
     }
     
     @IBAction func txtFooterEditingDidEnd(_ sender: UITextField) {
-        RamenApp.current.settings.receiptFooter = sanitizeHeaderFooter(sender.text)
+        RamenApp.current.settings.receiptFooter = sender.text
     }
     
     @IBAction func swchSuppressMerchantPasswordValueChanged(_ sender: UISwitch) {
         RamenApp.current.settings.suppressMerchantPassword = sender.isOn
-    }
-    
-    private func sanitizeHeaderFooter(_ text: String?) -> String? {
-        return text?.replacingOccurrences(of: "\\r\\n", with: "\r\n")
     }
     
     @objc

@@ -300,12 +300,28 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  
  @param posRefId The unique identifier for the transaction.
  @param amountCents The refund amount in cents.
- @param isSuppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
 - (void)initiateRefundTx:(NSString *)posRefId
              amountCents:(NSInteger)amountCents
-isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
+suppressMerchantPassword:(BOOL)suppressMerchantPassword
+              completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a refund transaction. Be subscribed to TxFlowStateChanged event to
+ get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The refund amount in cents.
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateRefundTx:(NSString *)posRefId
+             amountCents:(NSInteger)amountCents
+suppressMerchantPassword:(BOOL)suppressMerchantPassword
+                 options:(SPITransactionOptions *)options
               completion:(SPICompletionTxResult)completion;
 
 /**
@@ -333,6 +349,38 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
                     completion:(SPICompletionTxResult)completion;
 
 /**
+ Initiates a Mail Order / Telephone Order Purchase Transaction
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The purchase amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateMotoPurchaseTx:(NSString *)posRefId
+                   amountCents:(NSInteger)amountCents
+               surchargeAmount:(NSInteger)surchargeAmount
+      suppressMerchantPassword:(BOOL)suppressMerchantPassword
+                    completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a Mail Order / Telephone Order Purchase Transaction
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The purchase amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateMotoPurchaseTx:(NSString *)posRefId
+                   amountCents:(NSInteger)amountCents
+               surchargeAmount:(NSInteger)surchargeAmount
+      suppressMerchantPassword:(BOOL)suppressMerchantPassword
+                       options:(SPITransactionOptions *)options
+                    completion:(SPICompletionTxResult)completion;
+
+/**
  Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
  event to get updates on the process.
  
@@ -356,6 +404,22 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
 - (void)initiateCashoutOnlyTx:(NSString *)posRefId
                   amountCents:(NSInteger)amountCents
               surchargeAmount:(NSInteger)surchargeAmount
+                   completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
+ event to get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The cashout amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateCashoutOnlyTx:(NSString *)posRefId
+                  amountCents:(NSInteger)amountCents
+              surchargeAmount:(NSInteger)surchargeAmount
+                      options:(SPITransactionOptions *)options
                    completion:(SPICompletionTxResult)completion;
 
 /**
@@ -392,15 +456,41 @@ isSuppressMerchantPassword:(BOOL)isSuppressMerchantPassword
  @param posRefId The unique identifier for the transaction.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
-- (void)initiateSettleTx:(NSString *)posRefId completion:(SPICompletionTxResult)completion;
+- (void)initiateSettleTx:(NSString *)posRefId
+              completion:(SPICompletionTxResult)completion;
 
 /**
- Initiates a Mail Order / Telephone Order purchase transaction.
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateSettleTx:(NSString *)posRefId
+                 options:(SPITransactionOptions *)options
+              completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
  
  @param posRefId The unique identifier for the transaction.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
 - (void)initiateSettlementEnquiry:(NSString *)posRefId
+                       completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateSettlementEnquiry:(NSString *)posRefId
+                          options:(SPITransactionOptions *)options
                        completion:(SPICompletionTxResult)completion;
 
 /**

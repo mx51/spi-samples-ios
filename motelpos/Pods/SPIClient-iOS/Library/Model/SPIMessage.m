@@ -70,6 +70,9 @@ NSString *const SPIPayAtTableSetTableConfigKey = @"set_table_config"; // outgoin
 NSString *const SPIPayAtTableGetBillDetailsKey = @"get_bill_details"; // incoming. When eftpos wants to aretrieve the bill for a table.
 NSString *const SPIPayAtTableBillDetailsKey = @"bill_details";        // outgoing. We reply with this when eftpos requests to us get_bill_details.
 NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incoming. When the eftpos advices
+NSString *const SPIPayAtTableBillPaymentFlowEndedKey = @"bill_payment_flow_ended";
+NSString *const SPIPayAtTableGetOpenTablesKey = @"get_open_tables";
+NSString *const SPIPayAtTableOpenTablesKey = @"open_tables";
 
 NSString *const SPIPrintingRequestKey = @"print";
 NSString *const SPIPrintingResponseKey = @"print_response";

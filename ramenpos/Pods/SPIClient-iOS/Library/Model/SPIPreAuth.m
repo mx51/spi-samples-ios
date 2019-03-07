@@ -37,10 +37,14 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 @implementation SPIPreAuth
 
 - (instancetype)init:(SPIClient *)client queue:(dispatch_queue_t)queue {
-    _client = client;
-    _queue = queue;
-    _txLock = [[NSObject alloc] init];
-    
+    self = [super init];
+
+    if (self) {
+        _client = client;
+        _queue = queue;
+        _txLock = [[NSObject alloc] init];
+    }
+
     return self;
 }
 
@@ -49,7 +53,7 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)callDelegate:(void (^)(id<SPIDelegate>))block {
     if (_client.delegate != nil) {
         __weak __typeof(&*_client) weakSelf = _client;
-        
+
         dispatch_async(dispatch_get_main_queue(), ^{
             block(weakSelf.delegate);
         });
@@ -66,19 +70,17 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 
 - (void)initiateAccountVerifyTx:(NSString *)posRefId
                      completion:(SPICompletionTxResult)completion {
-    
     SPIAccountVerifyRequest *accountVerifyRequest = [[SPIAccountVerifyRequest alloc] initWithPosRefId:posRefId];
-    
     accountVerifyRequest.config = _client.config;
-    
+
     SPIMessage *accountVerifyMsg = [accountVerifyRequest toMessage];
-    
+
     SPITransactionFlowState *tfs = [[SPITransactionFlowState alloc] initWithTid:posRefId
                                                                            type:SPITransactionTypeAccountVerify
                                                                     amountCents:0
                                                                         message:accountVerifyMsg
                                                                             msg:@"Waiting for EFTPOS connection to make account verify request"];
-    
+
     NSString *message = @"Asked EFTPOS to verify account";
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
@@ -86,19 +88,28 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)initiateOpenTx:(NSString *)posRefId
            amountCents:(NSInteger)amountCents
             completion:(SPICompletionTxResult)completion {
-    
+    [self initiateOpenTx:posRefId
+             amountCents:amountCents
+                 options:nil
+              completion:completion];
+}
+
+- (void)initiateOpenTx:(NSString *)posRefId
+           amountCents:(NSInteger)amountCents
+               options:(SPITransactionOptions *)options
+            completion:(SPICompletionTxResult)completion {
     SPIPreauthOpenRequest *preauthRequest = [[SPIPreauthOpenRequest alloc] initWithAmountCents:amountCents posRefId:posRefId];
-    
     preauthRequest.config = _client.config;
-    
+    preauthRequest.options = options;
+
     SPIMessage *preauthMsg = [preauthRequest toMessage];
-    
+
     SPITransactionFlowState *tfs = [[SPITransactionFlowState alloc] initWithTid:posRefId
                                                                            type:SPITransactionTypePreAuth
                                                                     amountCents:amountCents
                                                                         message:preauthMsg
                                                                             msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to make preauth request for %.2f", ((float)amountCents / 100.0)]];
-    
+
     NSString *message = [NSString stringWithFormat:@"Asked EFTPOS to create preauth for %.2f", ((float)amountCents / 100.0)];
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
@@ -107,19 +118,29 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
               preauthId:(NSString *)preauthId
             amountCents:(NSInteger)amountCents
              completion:(SPICompletionTxResult)completion {
-    
+    [self initiateOpenTx:posRefId
+             amountCents:amountCents
+                 options:nil
+              completion:completion];
+}
+
+- (void)initiateTopupTx:(NSString *)posRefId
+              preauthId:(NSString *)preauthId
+            amountCents:(NSInteger)amountCents
+                options:(SPITransactionOptions *)options
+             completion:(SPICompletionTxResult)completion {
     SPIPreauthTopupRequest *preauthRequest = [[SPIPreauthTopupRequest alloc] initWithPreauthID:preauthId topupAmount:amountCents posRefId:posRefId];
-    
     preauthRequest.config = _client.config;
-    
+    preauthRequest.options = options;
+
     SPIMessage *preauthMsg = [preauthRequest toMessage];
-    
+
     SPITransactionFlowState *tfs = [[SPITransactionFlowState alloc] initWithTid:posRefId
                                                                            type:SPITransactionTypePreAuth
                                                                     amountCents:amountCents
                                                                         message:preauthMsg
                                                                             msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to make preauth topup request for %.2f", ((float)amountCents / 100.0)]];
-    
+
     NSString *message = [NSString stringWithFormat:@"Asked EFTPOS to make preauth request topup for %.2f", ((float)amountCents / 100.0)];
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
@@ -128,18 +149,30 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                             preauthId:(NSString *)preauthId
                           amountCents:(NSInteger)amountCents
                            completion:(SPICompletionTxResult)completion {
+    [self initiatePartialCancellationTx:posRefId
+                              preauthId:preauthId
+                            amountCents:amountCents
+                                options:nil
+                             completion:completion];
+}
+
+- (void)initiatePartialCancellationTx:(NSString *)posRefId
+                            preauthId:(NSString *)preauthId
+                          amountCents:(NSInteger)amountCents
+                              options:(SPITransactionOptions *)options
+                           completion:(SPICompletionTxResult)completion {
     SPIPreauthPartialCancellationRequest *preauthRequest = [[SPIPreauthPartialCancellationRequest alloc] initWithPreauthID:preauthId partialCancellationAmount:amountCents posRefId:posRefId];
-    
     preauthRequest.config = _client.config;
-    
+    preauthRequest.options = options;
+
     SPIMessage *preauthMsg = [preauthRequest toMessage];
-    
+
     SPITransactionFlowState *tfs = [[SPITransactionFlowState alloc] initWithTid:posRefId
                                                                            type:SPITransactionTypePreAuth
                                                                     amountCents:amountCents
                                                                         message:preauthMsg
                                                                             msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to make preauth partial cancellation request for %.2f", ((float)amountCents / 100.0)]];
-    
+
     NSString *message = [NSString stringWithFormat:@"Asked EFTPOS to make preauth partial cancellation for %.2f", ((float)amountCents / 100.0)];
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
@@ -147,18 +180,28 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)initiateExtendTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
               completion:(SPICompletionTxResult)completion {
+    [self initiateExtendTx:posRefId
+                 preauthId:preauthId
+                   options:nil
+                completion:completion];
+}
+
+- (void)initiateExtendTx:(NSString *)posRefId
+               preauthId:(NSString *)preauthId
+                 options:(SPITransactionOptions *)options
+              completion:(SPICompletionTxResult)completion {
     SPIPreauthExtendRequest *preauthRequest = [[SPIPreauthExtendRequest alloc] initWithPreauthID:preauthId posRefId:posRefId];
-    
     preauthRequest.config = _client.config;
-    
+    preauthRequest.options = options;
+
     SPIMessage *preauthMsg = [preauthRequest toMessage];
-    
+
     SPITransactionFlowState *tfs = [[SPITransactionFlowState alloc] initWithTid:posRefId
                                                                            type:SPITransactionTypePreAuth
                                                                     amountCents:0
                                                                         message:preauthMsg
                                                                             msg:@"Waiting for EFTPOS connection to make preauth Extend request"];
-    
+
     NSString *message = @"Asked EFTPOS to make preauth Extend request";
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
@@ -167,7 +210,11 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                    preauthId:(NSString *)preauthId
                  amountCents:(NSInteger)amountCents
                   completion:(SPICompletionTxResult)completion {
-    [self initiateCompletionTx:posRefId preauthId:preauthId amountCents:amountCents surchargeAmount:0 completion:completion];
+    [self initiateCompletionTx:posRefId
+                     preauthId:preauthId
+                   amountCents:amountCents
+               surchargeAmount:0
+                    completion:completion];
 }
 
 - (void)initiateCompletionTx:(NSString *)posRefId
@@ -175,19 +222,33 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                  amountCents:(NSInteger)amountCents
              surchargeAmount:(NSInteger)surchargeAmount
                   completion:(SPICompletionTxResult)completion {
+    [self initiateCompletionTx:posRefId
+                     preauthId:preauthId
+                   amountCents:amountCents
+               surchargeAmount:surchargeAmount
+                       options:nil
+                    completion:completion];
+}
+
+- (void)initiateCompletionTx:(NSString *)posRefId
+                   preauthId:(NSString *)preauthId
+                 amountCents:(NSInteger)amountCents
+             surchargeAmount:(NSInteger)surchargeAmount
+                     options:(SPITransactionOptions *)options
+                  completion:(SPICompletionTxResult)completion {
     SPIPreauthCompletionRequest *preauthRequest = [[SPIPreauthCompletionRequest alloc] initWithPreauthID:preauthId completionAmount:amountCents posRefId:posRefId];
-    
     preauthRequest.surchargeAmount = surchargeAmount;
     preauthRequest.config = _client.config;
-    
+    preauthRequest.options = options;
+
     SPIMessage *preauthMsg = [preauthRequest toMessage];
-    
+
     SPITransactionFlowState *tfs = [[SPITransactionFlowState alloc] initWithTid:posRefId
                                                                            type:SPITransactionTypePreAuth
                                                                     amountCents:amountCents
                                                                         message:preauthMsg
                                                                             msg:[NSString stringWithFormat:@"Waiting for EFTPOS connection to make preauth completion request for $%.2f surcharge amount: $%.2f", ((float)amountCents / 100.0), ((float)surchargeAmount / 100.0)]];
-    
+
     NSString *message = [NSString stringWithFormat:@"Asked EFTPOS to make preauth completion for %.2f surcharge amount: $%.2f", ((float)amountCents / 100.0), ((float)surchargeAmount / 100.0)];
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
@@ -195,18 +256,28 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (void)initiateCancelTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
               completion:(SPICompletionTxResult)completion {
+    [self initiateCancelTx:posRefId
+                 preauthId:preauthId
+                   options:nil
+                completion:completion];
+}
+
+- (void)initiateCancelTx:(NSString *)posRefId
+               preauthId:(NSString *)preauthId
+                 options:(SPITransactionOptions *)options
+              completion:(SPICompletionTxResult)completion {
     SPIPreauthCancelRequest *preauthRequest = [[SPIPreauthCancelRequest alloc] initWithPreauthID:preauthId posRefId:posRefId];
-    
     preauthRequest.config = _client.config;
-    
+    preauthRequest.options = options;
+
     SPIMessage *preauthMsg = [preauthRequest toMessage];
-    
+
     SPITransactionFlowState *tfs = [[SPITransactionFlowState alloc] initWithTid:posRefId
                                                                            type:SPITransactionTypePreAuth
                                                                     amountCents:0
                                                                         message:preauthMsg
                                                                             msg:@"Waiting for EFTPOS connection to make preauth cancellation request"];
-    
+
     NSString *message = @"Asked EFTPOS to make preauth cancellation request";
     [self _initiatePreauthTx:tfs message:message completion:completion];
 }
@@ -214,29 +285,29 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 -(void)_initiatePreauthTx:(SPITransactionFlowState *)tfs
                   message:(NSString *)message
                completion:(SPICompletionTxResult)completion {
-    
+
     if (_client.state.status == SPIStatusUnpaired) {
         completion([[SPIInitiateTxResult alloc] initWithTxResult:NO message:@"Not paired"]);
         return;
     }
-    
+
     __weak __typeof(& *self) weakSelf = self;
-    
+
     dispatch_async(_queue, ^{
         @synchronized(weakSelf.txLock) {
             if (self->_client.state.flow != SPIFlowIdle) {
                 completion([[SPIInitiateTxResult alloc] initWithTxResult:NO message:@"Not idle"]);
                 return;
             }
-            
+
             self->_client.state.flow = SPIFlowTransaction;
             self->_client.state.txFlowState = tfs;
-            
+
             if ([self->_client send:tfs.request]) {
                 [self->_client.state.txFlowState sent:message];
             }
         }
-        
+
         [self transactionFlowStateChanged];
         completion([[SPIInitiateTxResult alloc] initWithTxResult:YES message:@"Preauth initiated"]);
     });
@@ -246,7 +317,7 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 
 - (void)_handlePreauthMessage:(SPIMessage *)m {
     NSString *eventName = m.eventName;
-    
+
     if ([eventName isEqualToString:SPIAccountVerifyResponseKey]) {
         [self _handleAccountVerifyResponse:m];
     } else if ([eventName isEqualToString:SPIPreauthOpenResponseKey] ||
@@ -268,11 +339,11 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
             SPILog(@"Received Account Verify response but I was not waiting for one. Incoming Pos Ref ID: %@", incomingPosRefId);
             return;
         }
-        
+
         [_client.state.txFlowState completed:m.successState
                                     response:m msg:@"Account Verify Transaction Ended."];
     }
-    
+
     [self transactionFlowStateChanged];
 }
 
@@ -283,11 +354,11 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
             SPILog(@"Received Preauth response but I was not waiting for one. Incoming Pos Ref ID: %@", incomingPosRefId);
             return;
         }
-        
+
         [_client.state.txFlowState completed:m.successState
                                     response:m msg:@"Preauth Transaction Ended."];
     }
-    
+
     [self transactionFlowStateChanged];
 }
 
@@ -307,20 +378,20 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 
 - (instancetype)initWithPosRefId:(NSString *)posRefId {
     self = [super init];
-    
+
     if (self) {
         _config = [[SPIConfig alloc] init];
         _posRefId = posRefId;
     }
-    
+
     return self;
 }
 
 - (SPIMessage *)toMessage {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
-    [_config addReceiptConfig:data];
-    
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prav"]
                                        eventName:SPIAccountVerifyRequestKey
                                             data:data
@@ -333,13 +404,13 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 
 - (instancetype)initWithMessage:(SPIMessage *)message {
     self = [super init];
-    
+
     if (self) {
         _details = [[SPIPurchaseResponse alloc] initWithMessage:message];
         _posRefId = _details.posRefId;
         _message = message;
     }
-    
+
     return self;
 }
 
@@ -350,13 +421,13 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (instancetype)initWithAmountCents:(NSInteger)amountCents
                            posRefId:(NSString *)posRefId {
     self = [super init];
-    
+
     if (self) {
         _config = [[SPIConfig alloc] init];
         _posRefId = posRefId;
         _preauthAmount = amountCents;
     }
-    
+
     return self;
 }
 
@@ -364,8 +435,9 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:[NSNumber numberWithInteger:_preauthAmount] forKey:@"preauth_amount"];
-    [_config addReceiptConfig:data];
-    
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prac"]
                                        eventName:SPIPreauthOpenRequestKey
                                             data:data
@@ -380,14 +452,14 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                       topupAmount:(NSInteger)topupAmount
                          posRefId:(NSString *)posRefId {
     self = [super init];
-    
+
     if (self) {
         _config = [[SPIConfig alloc] init];
         _preauthId = preauthID;
         _topupAmount = topupAmount;
         _posRefId = posRefId;
     }
-    
+
     return self;
 }
 
@@ -396,8 +468,9 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:_preauthId forKey:@"preauth_id"];
     [data setValue:[NSNumber numberWithInteger:_topupAmount] forKey:@"topup_amount"];
-    [_config addReceiptConfig:data];
-    
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prtu"]
                                        eventName:SPIPreauthTopupRequestKey
                                             data:data
@@ -412,14 +485,14 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
         partialCancellationAmount:(NSInteger)partialCancellationAmount
                          posRefId:(NSString *)posRefId {
     self = [super init];
-    
+
     if (self) {
         _config = [[SPIConfig alloc] init];
         _preauthId = preauthID;
         _partialCancellationAmount = partialCancellationAmount;
         _posRefId = posRefId;
     }
-    
+
     return self;
 }
 
@@ -428,8 +501,9 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:_preauthId forKey:@"preauth_id"];
     [data setValue:[NSNumber numberWithInteger:_partialCancellationAmount] forKey:@"preauth_cancel_amount"];
-    [_config addReceiptConfig:data];
-    
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prpc"]
                                        eventName:SPIPreauthPartialCancellationRequestKey
                                             data:data
@@ -443,13 +517,13 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (instancetype)initWithPreauthID:(NSString *)preauthID
                          posRefId:(NSString *)posRefId {
     self = [super init];
-    
+
     if (self) {
         _config = [[SPIConfig alloc] init];
         _preauthId = preauthID;
         _posRefId = posRefId;
     }
-    
+
     return self;
 }
 
@@ -457,8 +531,9 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:_preauthId forKey:@"preauth_id"];
-    [_config addReceiptConfig:data];
-    
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prext"]
                                        eventName:SPIPreauthExtendRequestKey
                                             data:data
@@ -472,13 +547,13 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 - (instancetype)initWithPreauthID:(NSString *)preauthID
                          posRefId:(NSString *)posRefId {
     self = [super init];
-    
+
     if (self) {
         _config = [[SPIConfig alloc] init];
         _preauthId = preauthID;
         _posRefId = posRefId;
     }
-    
+
     return self;
 }
 
@@ -486,8 +561,9 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:_preauthId forKey:@"preauth_id"];
-    [_config addReceiptConfig:data];
-    
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prac"]
                                        eventName:SPIPreauthCancellationRequestKey
                                             data:data
@@ -502,14 +578,14 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
                  completionAmount:(NSInteger)completionAmount
                          posRefId:(NSString *)posRefId {
     self = [super init];
-    
+
     if (self) {
         _config = [[SPIConfig alloc] init];
         _preauthId = preauthID;
         _completionAmount = completionAmount;
         _posRefId = posRefId;
     }
-    
+
     return self;
 }
 
@@ -519,8 +595,9 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     [data setValue:_preauthId forKey:@"preauth_id"];
     [data setValue:[NSNumber numberWithInteger:_completionAmount] forKey:@"completion_amount"];
     [data setValue:[NSNumber numberWithInteger:_surchargeAmount] forKey:@"surcharge_amount"];
-    [_config addReceiptConfig:data];
-    
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prac"]
                                        eventName:SPIPreauthCompleteRequestKey
                                             data:data
@@ -533,14 +610,14 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
 
 - (instancetype)initWithMessage:(SPIMessage *)message {
     self = [super init];
-    
+
     if (self) {
         _preauthId = [_message getDataStringValue:@"preauth_id"];
         _details = [[SPIPurchaseResponse alloc] initWithMessage:message];
         _posRefId = _details.posRefId;
         _message = message;
     }
-    
+
     return self;
 }
 
@@ -601,6 +678,22 @@ NSString *const SPIPreauthCompleteResponseKey = @"completion_response";
     } else {
         return 0;
     }
+}
+
+- (NSString *)getMerchantReceipt {
+    return [self.message getDataStringValue:@"merchant_receipt"];
+}
+
+- (NSString *)getCustomerReceipt {
+    return [self.message getDataStringValue:@"customer_receipt"];
+}
+
+- (BOOL)wasMerchantReceiptPrinted {
+    return [self.message getDataBoolValue:@"merchant_receipt_printed" defaultIfNotFound:false];
+}
+
+- (BOOL)wasCustomerReceiptPrinted {
+    return [self.message getDataBoolValue:@"customer_receipt_printed" defaultIfNotFound:false];
 }
 
 @end

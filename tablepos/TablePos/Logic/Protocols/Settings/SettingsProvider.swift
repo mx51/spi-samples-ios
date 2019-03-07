@@ -20,6 +20,7 @@ class SettingsProvider {
         case printMerchantCopy
         case receiptHeader
         case receiptFooter
+        case suppressMerchantPassword
     }
     
     init() {
@@ -87,4 +88,8 @@ class SettingsProvider {
         set { setSettingsForKey(key: .receiptFooter, value: newValue) }
     }
     
+    var suppressMerchantPassword: Bool? {
+        get { return readSettingsFrom(key: .suppressMerchantPassword) as? Bool }
+        set { setSettingsForKey(key: .suppressMerchantPassword, value: newValue) }
+    }
 }

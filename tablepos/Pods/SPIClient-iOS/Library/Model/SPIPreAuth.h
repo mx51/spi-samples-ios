@@ -42,9 +42,20 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
            amountCents:(NSInteger)amountCents
             completion:(SPICompletionTxResult)completion;
 
+- (void)initiateOpenTx:(NSString *)posRefId
+           amountCents:(NSInteger)amountCents
+               options:(SPITransactionOptions *)options
+            completion:(SPICompletionTxResult)completion;
+
 - (void)initiateTopupTx:(NSString *)posRefId
               preauthId:(NSString *)preauthId
             amountCents:(NSInteger)amountCents
+             completion:(SPICompletionTxResult)completion;
+
+- (void)initiateTopupTx:(NSString *)posRefId
+              preauthId:(NSString *)preauthId
+            amountCents:(NSInteger)amountCents
+                options:(SPITransactionOptions *)options
              completion:(SPICompletionTxResult)completion;
 
 - (void)initiatePartialCancellationTx:(NSString *)posRefId
@@ -52,8 +63,19 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
                           amountCents:(NSInteger)amountCents
                            completion:(SPICompletionTxResult)completion;
 
+- (void)initiatePartialCancellationTx:(NSString *)posRefId
+                            preauthId:(NSString *)preauthId
+                          amountCents:(NSInteger)amountCents
+                              options:(SPITransactionOptions *)options
+                           completion:(SPICompletionTxResult)completion;
+
 - (void)initiateExtendTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
+              completion:(SPICompletionTxResult)completion;
+
+- (void)initiateExtendTx:(NSString *)posRefId
+               preauthId:(NSString *)preauthId
+                 options:(SPITransactionOptions *)options
               completion:(SPICompletionTxResult)completion;
 
 - (void)initiateCompletionTx:(NSString *)posRefId
@@ -67,8 +89,20 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
              surchargeAmount:(NSInteger)surchargeAmount
                   completion:(SPICompletionTxResult)completion;
 
+- (void)initiateCompletionTx:(NSString *)posRefId
+                   preauthId:(NSString *)preauthId
+                 amountCents:(NSInteger)amountCents
+             surchargeAmount:(NSInteger)surchargeAmount
+                     options:(SPITransactionOptions *)options
+                  completion:(SPICompletionTxResult)completion;
+
 - (void)initiateCancelTx:(NSString *)posRefId
                preauthId:(NSString *)preauthId
+              completion:(SPICompletionTxResult)completion;
+
+- (void)initiateCancelTx:(NSString *)posRefId
+               preauthId:(NSString *)preauthId
+                 options:(SPITransactionOptions *)options
               completion:(SPICompletionTxResult)completion;
 
 - (void)_handlePreauthMessage:(SPIMessage *)m;
@@ -103,6 +137,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, readonly) NSInteger preauthAmount;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithAmountCents:(NSInteger)amountCents posRefId:(NSString *)posRefId;
 
@@ -116,6 +151,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, readonly) NSInteger topupAmount;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithPreauthID:(NSString *)preauthID topupAmount:(NSInteger)topupAmount posRefId:(NSString *)posRefId;
 
@@ -129,6 +165,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, readonly) NSInteger partialCancellationAmount;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithPreauthID:(NSString *)preauthID partialCancellationAmount:(NSInteger)partialCancellationAmount posRefId:(NSString *)posRefId;
 
@@ -141,6 +178,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 @property (nonatomic, readonly, copy) NSString *preauthId;
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithPreauthID:(NSString *)preauthID posRefId:(NSString *)posRefId;
 
@@ -153,6 +191,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 @property (nonatomic, readonly, copy) NSString *preauthId;
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithPreauthID:(NSString *)preauthID posRefId:(NSString *)posRefId;
 
@@ -167,6 +206,7 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 @property (nonatomic, readonly) NSInteger completionAmount;
 @property (nonatomic) NSInteger surchargeAmount;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithPreauthID:(NSString *)preauthID completionAmount:(NSInteger)completionAmount posRefId:(NSString *)posRefId;
 
@@ -190,5 +230,13 @@ typedef void (^SPICompletionTxResult)(SPIInitiateTxResult *result);
 - (NSInteger)getCompletionAmount;
 
 - (NSInteger)getSurchargeAmountForPreauthCompletion;
+
+- (NSString *)getCustomerReceipt;
+
+- (NSString *)getMerchantReceipt;
+
+- (BOOL)wasMerchantReceiptPrinted;
+
+- (BOOL)wasCustomerReceiptPrinted;
 
 @end

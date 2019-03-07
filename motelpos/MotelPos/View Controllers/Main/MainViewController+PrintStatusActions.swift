@@ -86,8 +86,8 @@ extension MainViewController {
                         logMessage(String(format: "# Response: %@", details.getText()))
                         logMessage(String(format: "# RRN: %@", details.getRRN()))
                         logMessage(String(format: "# Scheme: %@", details.schemeName))
-                        logMessage(String(format: "# Customer Receipt:"))
-                        logMessage((!details.wasCustomerReceiptPrinted()) ? details.getMerchantReceipt() : "# PRINTED FROM EFTPOS")
+                        logMessage(String(format: "# Merchant Receipt:"))
+                        logMessage((!details.wasCustomerReceiptPrinted()) ? details.getCustomerReceipt() : "# PRINTED FROM EFTPOS")
                         break
                     default:
                         logMessage(String(format: "# MOTEL POS DOESN'T KNOW WHAT TO DO WITH THIS TX TYPE WHEN IT SUCCEEDS"))
@@ -105,7 +105,7 @@ extension MainViewController {
                             logMessage(String(format: "# RRN: %@", purchaseResponse.getRRN()))
                             logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
                             logMessage(String(format: "# Customer receipt:"))
-                            logMessage(purchaseResponse.getCustomerReceipt())
+                            logMessage((!purchaseResponse.wasCustomerReceiptPrinted()) ? purchaseResponse.getCustomerReceipt() : "# PRINTED FROM EFTPOS")
                         }
                         break
                     case .accountVerify:

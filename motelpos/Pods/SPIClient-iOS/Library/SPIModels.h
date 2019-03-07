@@ -40,7 +40,7 @@ typedef NS_ENUM(NSUInteger, SPIFlow) {
 
 /**
  Types of supported transactions.
-
+ 
  - SPITransactionTypePurchase: Purchase.
  - SPITransactionTypeRefund: Refund.
  - SPITransactionTypeCashoutOnly: Cashout-only.
@@ -327,7 +327,10 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 @property (nonatomic) BOOL signatureFlowOnEftpos;
 @property (nonatomic) BOOL printMerchantCopy;
 
-- (void)addReceiptConfig:(NSMutableDictionary *)data;
+- (void)addReceiptConfig:(NSMutableDictionary *)data
+enabledPromptForCustomerCopyOnEftpos:(BOOL)enabledPromptForCustomerCopyOnEftpos
+enabledSignatureFlowOnEftpos:(BOOL)enabledSignatureFlowOnEftpos
+enabledPrintMerchantCopy:(BOOL)enabledPrintMerchantCopy;
 
 @end
 

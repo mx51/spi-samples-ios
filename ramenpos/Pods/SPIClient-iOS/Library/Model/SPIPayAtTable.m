@@ -115,30 +115,34 @@
 @implementation SPIBillPayment
 
 - (instancetype)initWithMessage:(SPIMessage *)message {
-    _incomingAdvice = message;
-    _billId = [_incomingAdvice getDataStringValue:@"bill_id"];
-    _tableId = [_incomingAdvice getDataStringValue:@"table_id"];
-    _operatorId = [_incomingAdvice getDataStringValue:@"operator_id"];
+    self = [super init];
+
+    if (self) {
+        _incomingAdvice = message;
+        _billId = [_incomingAdvice getDataStringValue:@"bill_id"];
+        _tableId = [_incomingAdvice getDataStringValue:@"table_id"];
+        _operatorId = [_incomingAdvice getDataStringValue:@"operator_id"];
 
 
-    NSString *paymentType = [_incomingAdvice getDataStringValue:@"payment_type"];
-    NSString *cardPaymentType = [SPIBillPayment paymentTypeString:SPIPaymentTypeCard].lowercaseString;
-    NSString *cashPaymentType = [SPIBillPayment paymentTypeString:SPIPaymentTypeCash].lowercaseString;
-    
-    if ([paymentType isEqualToString:cardPaymentType]) {
-        _paymentType = SPIPaymentTypeCard;
-    } else if ([paymentType isEqualToString:cashPaymentType]) {
-        _paymentType = SPIPaymentTypeCash;
+        NSString *paymentType = [_incomingAdvice getDataStringValue:@"payment_type"];
+        NSString *cardPaymentType = [SPIBillPayment paymentTypeString:SPIPaymentTypeCard].lowercaseString;
+        NSString *cashPaymentType = [SPIBillPayment paymentTypeString:SPIPaymentTypeCash].lowercaseString;
+
+        if ([paymentType isEqualToString:cardPaymentType]) {
+            _paymentType = SPIPaymentTypeCard;
+        } else if ([paymentType isEqualToString:cashPaymentType]) {
+            _paymentType = SPIPaymentTypeCash;
+        }
+
+        NSDictionary<NSString *,NSObject *> *data = (NSDictionary *)message.data[@"payment_details"];
+
+        // this is when we ply the sub object "payment_details" into a purchase response for convenience.
+        SPIMessage *purchaseMsg = [[SPIMessage alloc] initWithMessageId:message.mid eventName:@"payment_details" data:data needsEncryption:false];
+
+        _purchaseResponse = [[SPIPurchaseResponse alloc] initWithMessage:purchaseMsg];
+        _purchaseAmount = [_purchaseResponse getPurchaseAmount];
+        _tipAmount =  [_purchaseResponse getTipAmount];
     }
-    
-    NSDictionary<NSString *,NSObject *> *data = (NSDictionary *)message.data[@"payment_details"];
-
-    // this is when we ply the sub object "payment_details" into a purchase response for convenience.
-    SPIMessage *purchaseMsg = [[SPIMessage alloc] initWithMessageId:message.mid eventName:@"payment_details" data:data needsEncryption:false];
-
-    _purchaseResponse = [[SPIPurchaseResponse alloc] initWithMessage:purchaseMsg];
-    _purchaseAmount = [_purchaseResponse getPurchaseAmount];
-    _tipAmount =  [_purchaseResponse getTipAmount];
 
     return self;
 }
@@ -156,7 +160,7 @@
             result =  nil;
             break;
     }
-    
+
     return result;
 }
 
@@ -200,18 +204,22 @@
 @implementation SPIPayAtTable
 
 - (instancetype)initWithClient:(SPIClient *)spi {
-    _spi = spi;
-    _config = [[SPIPayAtTableConfig alloc] init];
-    _config.payAtTableEnabled = true;
-    _config.operatorIdEnabled = true;
-    _config.allowedOperatorIds = [NSArray array];
-    _config.equalSplitEnabled = true;
-    _config.splitByAmountEnabled = true;
-    _config.summaryReportEnabled = true;
-    _config.tippingEnabled = true;
-    _config.labelOperatorId = @"Operator ID";
-    _config.labelPayButton = @"Pay at Table";
-    _config.labelTableId = @"Table Name";
+    self = [super init];
+
+    if (self) {
+        _spi = spi;
+        _config = [[SPIPayAtTableConfig alloc] init];
+        _config.payAtTableEnabled = true;
+        _config.operatorIdEnabled = true;
+        _config.allowedOperatorIds = [NSArray array];
+        _config.equalSplitEnabled = true;
+        _config.splitByAmountEnabled = true;
+        _config.summaryReportEnabled = true;
+        _config.tippingEnabled = true;
+        _config.labelOperatorId = @"Operator ID";
+        _config.labelPayButton = @"Pay at Table";
+        _config.labelTableId = @"Table Name";
+    }
 
     return self;
 }
@@ -223,9 +231,13 @@
 - (void)handleGetBillDetailsRequest:(SPIMessage *)message {
     NSString *operatorId = [message getDataStringValue:@"operator_id"];
     NSString *tableId = [message getDataStringValue:@"table_id"];
+    BOOL paymentFlowStarted = [message getDataBoolValue:@"payment_flow_started" defaultIfNotFound:false];
 
     // Ask POS for Bill Details for this tableId, inluding encoded PaymentData
-    SPIBillStatusResponse *billStatus = [_delegate payAtTableGetBillStatus:nil tableId:tableId operatorId:operatorId];
+    SPIBillStatusResponse *billStatus = [_delegate payAtTableGetBillStatus:nil
+                                                                   tableId:tableId
+                                                                operatorId:operatorId
+                                                        paymentFlowStarted:paymentFlowStarted];
     billStatus.tableId = tableId;
     if (billStatus.totalAmount <= 0) {
         SPILog(@"Table has 0 total amount. Not sending it to EFTPOS.");
@@ -238,7 +250,10 @@
     SPIBillPayment *billPayment = [[SPIBillPayment alloc] initWithMessage:message];
 
     // Ask POS for Bill Details, inluding encoded PaymentData
-    SPIBillStatusResponse *existingBillStatus = [_delegate payAtTableGetBillStatus:billPayment.billId tableId:billPayment.tableId operatorId:billPayment.operatorId];
+    SPIBillStatusResponse *existingBillStatus = [_delegate payAtTableGetBillStatus:billPayment.billId
+                                                                           tableId:billPayment.tableId
+                                                                        operatorId:billPayment.operatorId
+                                                                paymentFlowStarted:billPayment.paymentFlowStarted];
     if (existingBillStatus.result != BillRetrievalResultSuccess) {
         SPILog(@"Could not retrieve bill status for payment advice. Sending error to EFTPOS.");
         [_spi send:[existingBillStatus toMessage:message.mid]];
@@ -284,6 +299,81 @@
 
 - (void)handleGetTableConfig:(SPIMessage *)message {
     [_spi send:[_config toMessage:message.mid]];
+}
+
+- (void)handleBillPaymentFlowEnded:(SPIMessage *)message {
+    [_delegate payAtTableBillPaymentFlowEnded:message];
+}
+
+- (void)handleGetOpenTablesRequest:(SPIMessage *)message {
+    NSString *operatorId = [message getDataStringValue:@"operator_id"];
+
+    SPIGetOpenTablesResponse *openTablesResponse = [_delegate payAtTableGetOpenTables:operatorId];
+
+    if (openTablesResponse.openTablesData.count <= 0) {
+        SPILog(@"There is no open table.");
+    }
+
+    [_spi send:[openTablesResponse toMessage:message.mid]];
+}
+
+@end
+
+@implementation SPIBillPaymentFlowEndedResponse
+
+- (instancetype)initWithMessage:(SPIMessage *)message {
+    self = [super init];
+
+    if (self) {
+        _billId = [message getDataStringValue:@"bill_id"];
+        _tableId = [message getDataStringValue:@"table_id"];
+        _operatorId = [message getDataStringValue:@"operator_id"];
+        _billOutstandingAmount = [message getDataIntegerValue:@"bill_outstanding_amount"];
+        _billTotalAmount = [message getDataIntegerValue:@"bill_total_amount"];
+        _cardTotalCount = [message getDataIntegerValue:@"card_total_count"];
+        _cardTotalAmount = [message getDataIntegerValue:@"card_total_amount"];
+        _cashTotalCount = [message getDataIntegerValue:@"cash_total_count"];
+        _cashTotalAmount = [message getDataIntegerValue:@"cash_total_amount"];
+    }
+
+    return self;
+}
+
+@end
+
+@implementation SPIOpenTablesEntry
+
+- (NSDictionary *)toJsonObject {
+    NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
+    [data setValue: _tableId forKey:@"table_id"];
+    [data setValue: _label forKey:@"label"];
+    [data setValue: @(_outstandingAmount) forKey:@"bill_outstanding_amount"];
+    return data;
+}
+
+@end
+
+@implementation SPIGetOpenTablesResponse
+
+- (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables {
+    NSMutableArray<SPIOpenTablesEntry*> *getOpenTablesJson = [[NSMutableArray alloc] init];
+
+    if (self.openTablesData.count <= 0) {
+        return getOpenTablesJson;
+    }
+
+    for (SPIOpenTablesEntry *response in self.openTablesData) {
+        [getOpenTablesJson addObjectsFromArray:[NSArray arrayWithObject:response.toJsonObject]];
+    }
+
+    return getOpenTablesJson;
+}
+
+- (SPIMessage *)toMessage:(NSString *)messageId {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    [data setObject:[self getOpenTables] forKey:@"tables"];
+
+    return [[SPIMessage alloc] initWithMessageId:messageId eventName:SPIPayAtTableOpenTablesKey data:data needsEncryption:true];
 }
 
 @end

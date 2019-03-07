@@ -10,7 +10,7 @@ import UIKit
 import SPIClient_iOS
 
 class MainViewController: UITableViewController, NotificationListener {
-
+    
     @IBOutlet weak var lblStatus: UILabel!
     @IBOutlet weak var lblPosId: UILabel!
     @IBOutlet weak var lblPosAddress: UILabel!
@@ -26,6 +26,10 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var lblFlowStatus: UILabel!
     @IBOutlet weak var txtHeader: UITextField!
     @IBOutlet weak var txtFooter: UITextField!
+    @IBOutlet weak var txtOperatorId: UITextField!
+    @IBOutlet weak var txtLabel: UITextView!
+    @IBOutlet weak var swchLockedTable: UISwitch!
+    @IBOutlet weak var swchSuppressMerchantPassword: UISwitch!
     
     let _lastCmd: [String] = []
     
@@ -36,8 +40,8 @@ class MainViewController: UITableViewController, NotificationListener {
     override func viewDidLoad() {
         super.viewDidLoad()
         restoreConfig()
-
-        registerForEvents(appEvents: [.connectionStatusChanged, .transactionFlowStateChanged])
+        
+        registerForEvents(appEvents: [.connectionStatusChanged, .transactionFlowStateChanged, .payAtTableGetBillStatus, .payAtTableBillPaymentReceived, .payAtTableGetOpenTables, .payAtTableBillPaymentFlowEnded])
         client.start()
     }
     
@@ -47,17 +51,19 @@ class MainViewController: UITableViewController, NotificationListener {
         swchReceiptFromEftpos.isOn = settings.customerReceiptFromEftpos ?? false
         swchSignatureFromEftpos.isOn = settings.customerSignatureromEftpos ?? false
         swchPrintMerchantCopy.isOn = settings.printMerchantCopy ?? false
+        swchSuppressMerchantPassword.isOn = settings.suppressMerchantPassword ?? false
+        
         txtHeader.text = settings.receiptHeader
         txtFooter.text = settings.receiptFooter
     }
-
+    
     // MARK: - Table view data source
-   
+    
     @IBAction func swchReceiptFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.promptForCustomerCopyOnEftpos = sender.isOn
         TableApp.current.settings.customerReceiptFromEftpos = sender.isOn
     }
-
+    
     @IBAction func swchSignatureFromEFTPOSValueChanged(_ sender: UISwitch) {
         client.config.signatureFlowOnEftpos = sender.isOn
         TableApp.current.settings.customerSignatureromEftpos = sender.isOn
@@ -69,15 +75,15 @@ class MainViewController: UITableViewController, NotificationListener {
     }
     
     @IBAction func txtHeaderEditingDidEnd(_ sender: UITextField) {
-        TableApp.current.settings.receiptHeader = sanitizeHeaderFooter(sender.text)
+        TableApp.current.settings.receiptHeader = sender.text
     }
     
     @IBAction func txtFooterEditingDidEnd(_ sender: UITextField) {
-        TableApp.current.settings.receiptFooter = sanitizeHeaderFooter(sender.text)
+        TableApp.current.settings.receiptFooter = sender.text
     }
     
-    private func sanitizeHeaderFooter(_ text: String?) -> String? {
-        return text?.replacingOccurrences(of: "\\r\\n", with: "\r\n")
+    @IBAction func swchSuppressMerchantPasswordValueChanged(_ sender: UISwitch) {
+        TableApp.current.settings.suppressMerchantPassword = sender.isOn
     }
     
     @objc
@@ -93,6 +99,18 @@ class MainViewController: UITableViewController, NotificationListener {
             DispatchQueue.main.async {
                 self.stateChanged(state: state)
             }
+            
+            
+        case AppEvent.payAtTableGetBillStatus.rawValue,
+             AppEvent.payAtTableBillPaymentReceived.rawValue,
+             AppEvent.payAtTableGetOpenTables.rawValue,
+             AppEvent.payAtTableBillPaymentFlowEnded.rawValue:
+            
+            guard let messageInfo = notification.object as? MessageInfo else { return }
+            DispatchQueue.main.async {
+                self.showMessage(title: messageInfo.title!, msg: messageInfo.message!, type: messageInfo.type!, isShow: messageInfo.isShow)
+            }
+            
         default:
             break
         }

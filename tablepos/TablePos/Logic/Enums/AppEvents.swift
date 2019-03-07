@@ -13,4 +13,8 @@ enum AppEvent: String {
     case pairingFlowChanged
     case transactionFlowStateChanged
     case secretsDropped
+    case payAtTableGetOpenTables
+    case payAtTableGetBillStatus
+    case payAtTableBillPaymentReceived
+    case payAtTableBillPaymentFlowEnded
 }

@@ -106,9 +106,9 @@ extension MainViewController {
             logMessage(String(format: "# BANKED CASH AMOUNT: %.2f", Float(purchaseResponse.getBankCashAmount()) / 100.0))
         case .failed:
             logMessage(String(format: "# WE DID NOT GET PAID :("))
-            logMessage(String(format: "# Error: %@", txState.response.error))
-            logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
             if (txState.response != nil) {
+                logMessage(String(format: "# Error: %@", txState.response.error))
+                logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
                 purchaseResponse = SPIPurchaseResponse(message: txState.response)
                 logMessage(String(format: "# Response: %@", purchaseResponse.getText()))
                 logMessage(String(format: "# RRN: %@", purchaseResponse.getRRN()))
@@ -142,9 +142,9 @@ extension MainViewController {
             break
         case .failed:
             logMessage(String(format: "# REFUND FAILED!"))
-            logMessage(String(format: "# Error: %@", txState.response.error))
-            logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
             if (txState.response != nil) {
+                logMessage(String(format: "# Error: %@", txState.response.error))
+                logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
                 refundResponse = SPIRefundResponse(message: txState.response)
                 logMessage(String(format: "# Response: %@", refundResponse.getText()))
                 logMessage(String(format: "# RRN: %@", refundResponse.getRRN()))
@@ -217,14 +217,14 @@ extension MainViewController {
             break
         case .failed:
             logMessage(String(format: "# WE DID NOT GET MOTO-PAID :("))
-            logMessage(String(format: "# Error: %@", txState.response.error))
-            logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
             if let response = txState.response , let motoResponse = SPIMotoPurchaseResponse(message: response),let purchaseResponse = motoResponse.purchaseResponse  {
+                logMessage(String(format: "# Error: %@", txState.response.error))
+                logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
                 logMessage(String(format: "# Response: %@", purchaseResponse.getText()))
                 logMessage(String(format: "# RRN: %@", purchaseResponse.getRRN()))
                 logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
                 logMessage(String(format: "# Customer receipt:"))
-                logMessage(purchaseResponse.getCustomerReceipt())
+                logMessage((!purchaseResponse.wasCustomerReceiptPrinted() ? purchaseResponse.getCustomerReceipt() : "# PRINTED FROM EFTPOS"))
             }
             break
         case .unknown:
@@ -271,7 +271,7 @@ extension MainViewController {
             if let settleResponse = SPISettlement(message: txState.response) {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(String(settleResponse.getReceipt()))
+                logMessage((!settleResponse.wasMerchantReceiptPrinted() ? settleResponse.getMerchantReceipt() : "# PRINTED FROM EFTPOS"))
                 logMessage(String(format: "# Period start: %@", settleResponse.getPeriodStartTime().toString()))
                 logMessage(String(format: "# Period end: %@", settleResponse.getPeriodEndTime().toString()))
                 logMessage(String(format: "# Settlement time: %@", settleResponse.getTriggeredTime().toString()))
@@ -287,6 +287,8 @@ extension MainViewController {
                 for  s in schemes ?? [] {
                     logMessage(String(format: "Scheme Name: %@, SettleByAcquirer: %@, TotalCount: %i, TotalValue: %.2f", s.schemeName, String(s.settleByAcquirer), s.totalCount, Float(s.totalValue) / 100.0))
                 }
+                
+
             }
             break
         case .failed:
@@ -295,7 +297,7 @@ extension MainViewController {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Error: %@", txState.response.error))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(settleResponse.getReceipt())
+                logMessage((!settleResponse.wasMerchantReceiptPrinted() ? settleResponse.getMerchantReceipt() : "# PRINTED FROM EFTPOS"))
             }
             break
         case .unknown:
@@ -311,7 +313,7 @@ extension MainViewController {
             if let settleResponse = SPISettlement(message: txState.response) {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(settleResponse.getReceipt())
+                logMessage((!settleResponse.wasMerchantReceiptPrinted() ? settleResponse.getMerchantReceipt() : "# PRINTED FROM EFTPOS"))
                 logMessage(String(format: "# Period start: %@", settleResponse.getPeriodStartTime().toString()))
                 logMessage(String(format: "# Period end: %@", settleResponse.getPeriodEndTime().toString()))
                 logMessage(String(format: "# Settlement time: %@", settleResponse.getTriggeredTime().toString()))
@@ -335,7 +337,7 @@ extension MainViewController {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Error: %@", txState.response.error))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(settleResponse.getReceipt())
+                logMessage((!settleResponse.wasMerchantReceiptPrinted() ? settleResponse.getMerchantReceipt() : "# PRINTED FROM EFTPOS"))
             }
             break
         case .unknown:

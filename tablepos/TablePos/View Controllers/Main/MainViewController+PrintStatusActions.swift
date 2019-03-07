@@ -75,7 +75,7 @@ extension MainViewController {
                             let settleResponse: SPISettlement = SPISettlement(message: txState.response)
                             logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                             logMessage(String(format: "# Merchant Receipt:"))
-                            logMessage(settleResponse.getReceipt().trimmingCharacters(in: .whitespacesAndNewlines))
+                            logMessage(settleResponse.getMerchantReceipt().trimmingCharacters(in: .whitespacesAndNewlines))
                         }
                         break
                     default:
@@ -115,7 +115,7 @@ extension MainViewController {
                             logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                             logMessage(String(format: "# Error: %@", txState.response.error))
                             logMessage(String(format: "# Merchant Receipt:"))
-                            logMessage(settleResponse.getReceipt().trimmingCharacters(in: .whitespacesAndNewlines))
+                            logMessage(settleResponse.getMerchantReceipt().trimmingCharacters(in: .whitespacesAndNewlines))
                         }
                         break
                     default:
@@ -150,6 +150,5 @@ extension MainViewController {
             break
         }
         logMessage(String(format: ""))
-    }
-    
+    }    
 }

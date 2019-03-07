@@ -35,18 +35,8 @@ extension MainViewController {
         
         client.enablePayAtTable()
         
-        let settings = RamenApp.current.settings
-        
         // Receipt header/footer
-        let options = SPITransactionOptions()
-        if let receiptHeader = settings.receiptHeader, receiptHeader.count > 0 {
-            options.customerReceiptHeader = receiptHeader
-            options.merchantReceiptHeader = receiptHeader
-        }
-        if let receiptFooter = settings.receiptFooter, receiptFooter.count > 0 {
-            options.customerReceiptFooter = receiptFooter
-            options.merchantReceiptFooter = receiptFooter
-        }
+        let options = setReceiptHeaderFooter()
         
         client.initiatePurchaseTx(posRefId,
                                   purchaseAmount: amount,
@@ -60,6 +50,7 @@ extension MainViewController {
     
     @IBAction func btnMotoClicked(_ sender: Any) {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        let suppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
         var surchargeAmount = 0
@@ -71,15 +62,31 @@ extension MainViewController {
             }
         }
         
-        client.initiateMotoPurchaseTx(posRefId, amountCents: amount, surchargeAmount: surchargeAmount, completion: printResult)
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateMotoPurchaseTx(posRefId,
+                                      amountCents: amount,
+                                      surchargeAmount: surchargeAmount,
+                                      suppressMerchantPassword: suppressMerchantPassword,
+                                      options: options,
+                                      completion: printResult)
     }
     
     @IBAction func btnRefundClicked(_ sender: Any) {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
-        let isSuppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
+        let suppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateRefundTx(posRefId, amountCents: amount, isSuppressMerchantPassword: isSuppressMerchantPassword, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateRefundTx(posRefId,
+                                amountCents: amount,
+                                suppressMerchantPassword: suppressMerchantPassword,
+                                options: options,
+                                completion: printResult)
     }
     
     @IBAction func btnCashOutClicked(_ sender: Any) {
@@ -94,17 +101,33 @@ extension MainViewController {
         }
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateCashoutOnlyTx(posRefId, amountCents: amount, surchargeAmount: surchargeAmount, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateCashoutOnlyTx(posRefId,
+                                     amountCents: amount,
+                                     surchargeAmount: surchargeAmount,
+                                     options: options,
+                                     completion: printResult)
     }
     
     @IBAction func btnSettleClicked(_ sender: Any) {
         let id = SPIRequestIdHelper.id(for: "settle")
-        client.initiateSettleTx(id, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateSettleTx(id, options: options, completion: printResult)
     }
     
     @IBAction func btnSettleEnquiryClicked(_ sender: Any) {
         let id = SPIRequestIdHelper.id(for: "stlenq")
-        client.initiateSettlementEnquiry(id, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateSettlementEnquiry(id, options: options, completion: printResult)
     }
     
     @IBAction func btnLastTransactionClicked(_ sender: Any) {
@@ -144,9 +167,10 @@ extension MainViewController {
     }
     
     func sanitizePrintText(_ text: String?) -> String? {
-        let boldText: String? = text?.replacingOccurrences(of: "\\n", with: "\n");
-        let newLineText: String? = boldText?.replacingOccurrences(of: "\\\\emphasis", with: "\\emphasis");
-        return newLineText?.replacingOccurrences(of: "\\\\clear", with: "\\clear");
+        var sanitizeText: String? = text?.replacingOccurrences(of: "\\r\\n", with: "\n");
+        sanitizeText = sanitizeText?.replacingOccurrences(of: "\\n", with: "\n");
+        sanitizeText = sanitizeText?.replacingOccurrences(of: "\\\\emphasis", with: "\\emphasis");
+        return sanitizeText?.replacingOccurrences(of: "\\\\clear", with: "\\clear");
     }
     
     func showMessage(title: String, msg: String, type: String, isShow: Bool, completion: (() -> Swift.Void)? = nil) {
@@ -157,4 +181,19 @@ extension MainViewController {
         }
     }
     
+    func setReceiptHeaderFooter() -> SPITransactionOptions {
+        let settings = RamenApp.current.settings
+        let options = SPITransactionOptions()
+        
+        if let receiptHeader = settings.receiptHeader, receiptHeader.count > 0 {
+            options.customerReceiptHeader = sanitizePrintText(receiptHeader)
+            options.merchantReceiptHeader = sanitizePrintText(receiptHeader)
+        }
+        if let receiptFooter = settings.receiptFooter, receiptFooter.count > 0 {
+            options.customerReceiptFooter = sanitizePrintText(receiptFooter)
+            options.merchantReceiptFooter = sanitizePrintText(receiptFooter)
+        }
+        
+        return options
+    }
 }

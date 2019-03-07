@@ -42,7 +42,7 @@
                                    };
     
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
-    [_config addReceiptConfig:data];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
     [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prchs"]
@@ -373,11 +373,12 @@
     NSDictionary *originalData = @{
                                    @"refund_amount": @(self.amountCents),
                                    @"pos_ref_id": self.posRefId,
-                                   @"suppress_merchant_password":@(self.isSuppressMerchantPassword)
+                                   @"suppress_merchant_password":@(self.suppressMerchantPassword)
                                    };
     
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
-    [_config addReceiptConfig:data];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"refund"]
                                        eventName:SPIRefundRequestKey
@@ -585,9 +586,11 @@
 - (SPIMessage *)toMessage {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
-    [data setValue:[NSNumber numberWithInteger:_purchaseAmount] forKey:@"purchase_amount"];
-    [data setValue:[NSNumber numberWithInteger:_surchargeAmount] forKey:@"surcharge_amount"];
-    [_config addReceiptConfig:data];
+    [data setValue:@(_purchaseAmount) forKey:@"purchase_amount"];
+    [data setValue:@(_surchargeAmount) forKey:@"surcharge_amount"];
+    [data setValue:@(_suppressMerchantPassword) forKey:@"suppress_merchant_password"];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"moto"]
                                        eventName:SPIMotoPurchaseRequestKey

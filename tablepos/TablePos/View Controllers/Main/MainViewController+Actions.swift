@@ -29,6 +29,9 @@ extension MainViewController {
         let newBill = Bill()
         newBill.billId = newBillId()
         newBill.tableId = tableId!
+        newBill.operatorId = txtOperatorId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        newBill.label = txtLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        newBill.locked = swchLockedTable.isOn
         
         TableApp.current.billsStore[newBill.billId!] = newBill
         TableApp.current.tableToBillMapping[newBill.tableId!] = newBill.billId
@@ -47,10 +50,35 @@ extension MainViewController {
         }
         
         let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!
+        if bill.locked! {
+            showMessage(title: "Add Table", msg: "Table is Locked.", type: "WARNING", isShow: true)
+            return
+        }
+        
         bill.totalAmount! += amount
         bill.outstandingAmount! += amount
         
-        showMessage(title: "Add Table", msg: "Updated: \(bill.toString()))", type: "INFO", isShow: true)
+        showMessage(title: "Add Table", msg: "Updated: \(bill.toString())", type: "INFO", isShow: true)
+    }
+    
+    @IBAction func btnLockUnlockTableClicked(_ sender: Any) {
+        let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let tableIdInt:Int? = Int(tableId!)
+        if tableIdInt == nil || tableIdInt! <= 0 {
+            showMessage(title: "Lock/UnLock Table", msg: "Incorrect Table Id!", type: "ERROR", isShow: true)
+            return
+        }
+        
+        if (TableApp.current.tableToBillMapping[tableId!] == nil) {
+            showMessage(title: "Lock/UnLock Table", msg: "Table not Open.", type: "WARNING", isShow: true)
+            return
+        }
+        
+        let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!
+        bill.locked = swchLockedTable.isOn
+        
+        let msg: String = bill.locked! ? "Locked" : "UnLocked"
+        showMessage(title: "Lock/UnLock Table", msg: "Table is \(msg): \(bill.toString())", type: "INFO", isShow: true)
     }
     
     @IBAction func btnCloseTableClicked(_ sender: Any) {
@@ -62,6 +90,11 @@ extension MainViewController {
         }
         
         let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!
+        if bill.locked! {
+            showMessage(title: "Close Table", msg: "Table is Locked.", type: "WARNING", isShow: true)
+            return
+        }
+        
         if (bill.outstandingAmount)! > 0 {
             showMessage(title: "Close Table", msg: "Bill not Paid Yet: \(bill.toString())", type: "WARNING", isShow: true)
             return
@@ -73,46 +106,49 @@ extension MainViewController {
     }
     
     @IBAction func btnListTablesClicked(_ sender: Any) {
+        var listTables: String = "\n"
         if TableApp.current.tableToBillMapping.count > 0 {
             var openTables: String = ""
             for key in TableApp.current.tableToBillMapping.keys {
                 if openTables != "" {
-                    openTables += ","
+                    openTables += ",\n"
                 }
                 
                 openTables += key
             }
             
-            showMessage(title: "List Tables", msg: "#    Open Tables: \(openTables)", type: "INFO", isShow: true)
+            listTables = "#    Open Tables:\n\(openTables)\n"
         } else {
             showMessage(title: "List Tables", msg: "# No Open Tables.", type: "INFO", isShow: true)
         }
         
-        if TableApp.current.tableToBillMapping.count > 0 {
+        if TableApp.current.billsStore.count > 0 {
             var openBills: String = ""
             for key in TableApp.current.billsStore.keys {
                 if openBills != "" {
-                    openBills += ","
+                    openBills += ",\n"
                 }
                 
                 openBills += key
             }
             
-            showMessage(title: "List Tables", msg: "# My Bills Store: \(openBills)", type: "INFO", isShow: true)
+            listTables += "# My Bills Store:\n\(openBills)\n"
         }
         
         if TableApp.current.assemblyBillDataStore.count > 0 {
             var openAssemblyBills: String = ""
             for key in TableApp.current.assemblyBillDataStore.keys {
                 if openAssemblyBills != "" {
-                    openAssemblyBills += ","
+                    openAssemblyBills += ",\n"
                 }
                 
                 openAssemblyBills += key
             }
             
-            showMessage(title: "List Tables", msg: "# My Bills Store: \(openAssemblyBills)", type: "INFO", isShow: true)
+            listTables = "# Assembly Bills Data:\n\(openAssemblyBills)"
         }
+        
+        showMessage(title: "List Tables", msg: "\(listTables)", type: "INFO", isShow: true)
     }
     
     @IBAction func btnPrintTableClicked(_ sender: Any) {
@@ -139,19 +175,9 @@ extension MainViewController {
         let posRefId = "purchase-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-
-        let settings = TableApp.current.settings
         
         // Receipt header/footer
-        let options = SPITransactionOptions()
-        if let receiptHeader = settings.receiptHeader, receiptHeader.count > 0 {
-            options.customerReceiptHeader = receiptHeader
-            options.merchantReceiptHeader = receiptHeader
-        }
-        if let receiptFooter = settings.receiptFooter, receiptFooter.count > 0 {
-            options.customerReceiptFooter = receiptFooter
-            options.merchantReceiptFooter = receiptFooter
-        }
+        let options = setReceiptHeaderFooter()
         
         client.initiatePurchaseTx(posRefId,
                                   purchaseAmount: amount,
@@ -164,14 +190,29 @@ extension MainViewController {
     
     @IBAction func btnRefundClicked(_ sender: Any) {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        let suppressMerchantPassword =  TableApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
-        client.initiateRefundTx(posRefId, amountCents: amount, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateRefundTx(posRefId,
+                                amountCents: amount,
+                                suppressMerchantPassword: suppressMerchantPassword,
+                                options: options,
+                                completion: printResult)
     }
     
     @IBAction func btnSettleClicked(_ sender: Any) {
         let id = SPIRequestIdHelper.id(for: "settle")
-        client.initiateSettleTx(id, completion: printResult)
+        
+        // Receipt header/footer
+        let options = setReceiptHeaderFooter()
+        
+        client.initiateSettleTx(id,
+                                options: options,
+                                completion: printResult)
     }
     
     func newBillId() -> String {
@@ -191,11 +232,34 @@ extension MainViewController {
         showMessage(title: title, msg: "Bill: \(bill.toString())", type: "INFO", isShow: true)
     }
     
+    func sanitizePrintText(_ text: String?) -> String? {
+        var sanitizeText: String? = text?.replacingOccurrences(of: "\\r\\n", with: "\n");
+        sanitizeText = sanitizeText?.replacingOccurrences(of: "\\n", with: "\n");
+        sanitizeText = sanitizeText?.replacingOccurrences(of: "\\\\emphasis", with: "\\emphasis");
+        return sanitizeText?.replacingOccurrences(of: "\\\\clear", with: "\\clear");
+    }
+    
     func showMessage(title: String, msg: String, type: String, isShow: Bool, completion: (() -> Swift.Void)? = nil) {
         logMessage("\(type): \(msg)")
         
         if isShow {
             showAlert(title: title, message: msg)
         }
+    }
+    
+    func setReceiptHeaderFooter() -> SPITransactionOptions {
+        let settings = TableApp.current.settings
+        let options = SPITransactionOptions()
+        
+        if let receiptHeader = settings.receiptHeader, receiptHeader.count > 0 {
+            options.customerReceiptHeader = sanitizePrintText(receiptHeader)
+            options.merchantReceiptHeader = sanitizePrintText(receiptHeader)
+        }
+        if let receiptFooter = settings.receiptFooter, receiptFooter.count > 0 {
+            options.customerReceiptFooter = sanitizePrintText(receiptFooter)
+            options.merchantReceiptFooter = sanitizePrintText(receiptFooter)
+        }
+        
+        return options
     }
 }

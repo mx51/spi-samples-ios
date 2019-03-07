@@ -150,10 +150,10 @@
 + (NSString *)paymentTypeString:(SPIPaymentType)ptype {
     NSString *result = nil;
     switch (ptype) {
-            case SPIPaymentTypeCard:
+        case SPIPaymentTypeCard:
             result = @"CARD";
             break;
-            case SPIPaymentTypeCash:
+        case SPIPaymentTypeCash:
             result =  @"CASH";
             break;
         default:

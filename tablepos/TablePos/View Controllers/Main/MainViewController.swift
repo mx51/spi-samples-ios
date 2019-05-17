@@ -27,15 +27,31 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var txtHeader: UITextField!
     @IBOutlet weak var txtFooter: UITextField!
     @IBOutlet weak var txtOperatorId: UITextField!
-    @IBOutlet weak var txtLabel: UITextView!
+    @IBOutlet weak var txtLabel: UITextField!
     @IBOutlet weak var swchLockedTable: UISwitch!
     @IBOutlet weak var swchSuppressMerchantPassword: UISwitch!
+    @IBOutlet weak var swchPatEnabled: UISwitch!
+    @IBOutlet weak var swchOperatorIDEnabled: UISwitch!
+    @IBOutlet weak var swchEqualSplit: UISwitch!
+    @IBOutlet weak var swchSplitByAmount: UISwitch!
+    @IBOutlet weak var swchTipping: UISwitch!
+    @IBOutlet weak var swchSummaryReport: UISwitch!
+    @IBOutlet weak var swchTableRetrievalButton: UISwitch!
+    @IBOutlet weak var txtLabelOperatorId: UITextField!
+    @IBOutlet weak var txtLabelTableId: UITextField!
+    @IBOutlet weak var txtLabelPayButton: UITextField!
+    @IBOutlet weak var txtAllowedOperatorId: UITextField!
+    
     
     let _lastCmd: [String] = []
     
     var client: SPIClient {
         return TableApp.current.client
     } 
+
+    var spiPat: SPIPayAtTable {
+        return TableApp.current.spiPat
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +71,17 @@ class MainViewController: UITableViewController, NotificationListener {
         
         txtHeader.text = settings.receiptHeader
         txtFooter.text = settings.receiptFooter
+        
+        swchPatEnabled.isOn = settings.patEnabled ?? false
+        swchOperatorIDEnabled.isOn = settings.operatorIdEnabled ?? false
+        swchEqualSplit.isOn = settings.equalSplit ?? false
+        swchSplitByAmount.isOn = settings.splitByAmount ?? false
+        swchTipping.isOn = settings.tipping ?? false
+        swchSummaryReport.isOn = settings.summaryReport ?? false
+        swchTableRetrievalButton.isOn = settings.tableRetrievalButton ?? false
+        txtLabelPayButton.text = settings.labelPayButton
+        txtLabelTableId.text = settings.labelTableId
+        txtLabelOperatorId.text = settings.labelOperatorId
     }
     
     // MARK: - Table view data source
@@ -84,6 +111,48 @@ class MainViewController: UITableViewController, NotificationListener {
     
     @IBAction func swchSuppressMerchantPasswordValueChanged(_ sender: UISwitch) {
         TableApp.current.settings.suppressMerchantPassword = sender.isOn
+    }
+    
+    @IBAction func swchOperatorIDEnabledValueChanged(_ sender: UISwitch) {
+        spiPat.config.operatorIdEnabled = sender.isOn
+        TableApp.current.settings.operatorIdEnabled = sender.isOn
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func swchPayAtTableValueChanged(_ sender: UISwitch) {
+        spiPat.config.payAtTableEnabled = sender.isOn
+        TableApp.current.settings.patEnabled = sender.isOn
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func swchEqualSplitValueChanged(_ sender: UISwitch) {
+        spiPat.config.equalSplitEnabled = sender.isOn
+        TableApp.current.settings.equalSplit = sender.isOn
+        spiPat.pushConfig()
+    }
+
+    @IBAction func swchSplitByAmountValueChanged(_ sender: UISwitch) {
+        spiPat.config.splitByAmountEnabled = sender.isOn
+        TableApp.current.settings.splitByAmount = sender.isOn
+        spiPat.pushConfig()
+    }
+
+    @IBAction func swchTippingValueChanged(_ sender: UISwitch) {
+        spiPat.config.tippingEnabled = sender.isOn
+        TableApp.current.settings.tipping = sender.isOn
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func swchSummaryReportValueChanged(_ sender: UISwitch) {
+        spiPat.config.summaryReportEnabled = sender.isOn
+        TableApp.current.settings.summaryReport = sender.isOn
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func swchTableRetrievalButtonValueChanged(_ sender: UISwitch) {
+        spiPat.config.tableRetrievalEnabled = sender.isOn
+        TableApp.current.settings.tableRetrievalButton = sender.isOn
+        spiPat.pushConfig()
     }
     
     @objc

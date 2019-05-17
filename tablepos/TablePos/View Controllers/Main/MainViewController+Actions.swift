@@ -215,6 +215,45 @@ extension MainViewController {
                                 completion: printResult)
     }
     
+    @IBAction func btnSetLabelOperatorIdClicked(_ sender:  Any) {
+        spiPat.config.labelOperatorId = txtLabelOperatorId.text
+        TableApp.current.settings.labelOperatorId = txtLabelOperatorId.text
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnSetLabelTableIdClicked(_ sender: Any) {
+        spiPat.config.labelTableId = txtLabelTableId.text
+        TableApp.current.settings.labelTableId = txtLabelTableId.text
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnSetLabelPayButtonClicked(_ sender: Any) {
+        spiPat.config.labelPayButton = txtLabelPayButton.text
+        TableApp.current.settings.labelPayButton = txtLabelPayButton.text
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnAddAllowedOperatorIdClicked(_ sender: Any) {
+        TableApp.current.allowedOperatorIds.append(txtAllowedOperatorId.text!)
+        spiPat.config.allowedOperatorIds = TableApp.current.allowedOperatorIds
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnSetPatAllEnabledClicked(_ sender: Any) {
+        TableApp.current.enablePayAtTableConfig()
+        swchPatEnabled.isOn = TableApp.current.settings.patEnabled ?? false
+        swchOperatorIDEnabled.isOn = TableApp.current.settings.operatorIdEnabled ?? false
+        swchEqualSplit.isOn = TableApp.current.settings.equalSplit ?? false
+        swchSplitByAmount.isOn = TableApp.current.settings.splitByAmount ?? false
+        swchTipping.isOn = TableApp.current.settings.tipping ?? false
+        swchSummaryReport.isOn = TableApp.current.settings.summaryReport ?? false
+        swchTableRetrievalButton.isOn = TableApp.current.settings.tableRetrievalButton ?? false
+        txtLabelPayButton.text = TableApp.current.settings.labelPayButton
+        txtLabelTableId.text = TableApp.current.settings.labelTableId
+        txtLabelOperatorId.text = TableApp.current.settings.labelOperatorId
+        spiPat.pushConfig()
+    }
+    
     func newBillId() -> String {
         let orginalDate = Date()
         return String(orginalDate.timeIntervalSince1970)

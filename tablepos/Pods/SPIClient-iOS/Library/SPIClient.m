@@ -9,6 +9,7 @@
 #import "NSObject+Util.h"
 #import "NSString+Util.h"
 #import "NSDate+Util.h"
+#import "NSDateFormatter+Util.h"
 #import "SPICashout.h"
 #import "SPIClient.h"
 #import "SPIClient+Internal.h"
@@ -105,12 +106,6 @@ static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries be
 
 - (SPIPayAtTable *)enablePayAtTable {
     _spiPat = [[SPIPayAtTable alloc] initWithClient:self];
-    return _spiPat;
-}
-
-- (SPIPayAtTable *)disablePayAtTable {
-    _spiPat = [[SPIPayAtTable alloc] initWithClient:self];
-    _spiPat.config.payAtTableEnabled = false;
     return _spiPat;
 }
 
@@ -998,13 +993,16 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     NSString *was = _serialNumber;
     _serialNumber = serialNumber.copy;
     
-    if (_autoAddressResolutionEnable && [self hasSerialNumberChanged:was]) {
+    if ([self hasSerialNumberChanged:was]) {
         __weak __typeof(&*self) weakSelf = self;
         
         dispatch_async(self.queue, ^{
             // we're turning it on
             [weakSelf autoResolveEftposAddress];
         });
+    } else {
+        self.state.deviceAddressStatus.responseCode = DeviceAddressResponceCodeSerialNumberNotChanged;
+        [self deviceAddressChanged];
     }
 }
 
@@ -1079,10 +1077,18 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     
     [[SPIDeviceService alloc] retrieveServiceWithSerialNumber:_serialNumber apiKey:_deviceApiKey acquirerCode:_acquirerCode isTestMode:_testMode completion:^(SPIDeviceAddressStatus *addressResponse) {
         if (addressResponse.address.length == 0) {
+            SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+            currentDeviceAddressStatus.responseCode = DeviceAddressResponceCodeError;
+            self.state.deviceAddressStatus = currentDeviceAddressStatus;
+            [self deviceAddressChanged];
             return;
         }
         
         if (![self hasEftposAddressChanged:addressResponse.address]) {
+            SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+            currentDeviceAddressStatus.responseCode = DeviceAddressResponceCodeAddressNotChanged;
+            self.state.deviceAddressStatus = currentDeviceAddressStatus;
+            [self deviceAddressChanged];
             return;
         }
         
@@ -1093,6 +1099,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
         SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
         currentDeviceAddressStatus.address = addressResponse.address;
         currentDeviceAddressStatus.lastUpdated = addressResponse.lastUpdated;
+        currentDeviceAddressStatus.responseCode = DeviceAddressResponceCodeSuccess;
         self.state.deviceAddressStatus = currentDeviceAddressStatus;
         [self deviceAddressChanged];
     }];
@@ -1486,7 +1493,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 [txState completed:gltResponse.successState response:m msg:@"Last transaction retrieved"];
             } else {
                 // TH-4A - Let's try to match the received last transaction against the current transaction
-                SPIMessageSuccessState successState = [self gltMatch:gltResponse posRefId:txState.posRefId];
+                SPIMessageSuccessState successState = [self gltMatch:gltResponse expectedAmount:txState.amountCents requestDate:txState.requestDate posRefId:txState.posRefId];
                 if (successState == SPIMessageSuccessStateUnknown) {
                     // TH-4N: Didn't Match our transaction. Consider unknown state.
                     SPILog(@"Did not match transaction");
@@ -1517,6 +1524,26 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
     
     if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    return gltResponse.getSuccessState;
+}
+
+- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
+                    expectedAmount:(NSInteger)expectedAmount
+                       requestDate:(NSDate *)requestDate
+                          posRefId:(NSString *)posRefId {
+    SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
+    
+    NSDate *gltBankDate = [[NSDateFormatter dateFormaterWithFormatter:@"ddMMyyyyHHmmss"] dateFromString:[gltResponse getBankDateTimeString]];
+    BOOL compare = [requestDate compare:gltBankDate];
+    
+    if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    if ([[[gltResponse getTxType] uppercaseString] isEqual: @"PURCHASE"] && [gltResponse getBankNonCashAmount] != expectedAmount && compare > 0) {
         return SPIMessageSuccessStateUnknown;
     }
     

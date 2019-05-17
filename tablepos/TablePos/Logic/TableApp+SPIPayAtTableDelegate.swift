@@ -60,6 +60,7 @@ extension TableApp: SPIPayAtTableDelegate {
         let bill: Bill = billsStore[billPayment.billId]!
         bill.outstandingAmount! -= billPayment.purchaseAmount
         bill.tippedAmount! += billPayment.tipAmount
+        bill.surchargeAmount! += billPayment.surchargeAmount
         bill.locked = bill.outstandingAmount == 0 ? false: true
 
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: "Updated Bill: \(bill.toString())", isShow: true))
@@ -81,7 +82,8 @@ extension TableApp: SPIPayAtTableDelegate {
         
         if tableToBillMapping.count > 0 {
             for item in tableToBillMapping {
-                if billsStore[item.value]!.operatorId == operatorId  && billsStore[item.value]!.outstandingAmount! > 0 {
+                if billsStore[item.value]!.operatorId == operatorId  && billsStore[item.value]!.outstandingAmount! > 0 &&
+                    !billsStore[item.value]!.locked!{
                     if !isOpenTables {
                         openTables = "Open Tables:\n"
                         isOpenTables = true

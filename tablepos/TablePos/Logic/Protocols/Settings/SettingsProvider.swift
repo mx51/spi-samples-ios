@@ -21,6 +21,16 @@ class SettingsProvider {
         case receiptHeader
         case receiptFooter
         case suppressMerchantPassword
+        case patEnabled
+        case operatorIdEnabled
+        case equalSplit
+        case splitByAmount
+        case tipping
+        case summaryReport
+        case tableRetrievalButton
+        case labelOperatorId
+        case labelTableId
+        case labelPayButton
     }
     
     init() {
@@ -91,5 +101,55 @@ class SettingsProvider {
     var suppressMerchantPassword: Bool? {
         get { return readSettingsFrom(key: .suppressMerchantPassword) as? Bool }
         set { setSettingsForKey(key: .suppressMerchantPassword, value: newValue) }
+    }
+    
+    var patEnabled: Bool? {
+        get { return readSettingsFrom(key: .patEnabled) as? Bool}
+        set { setSettingsForKey(key: .patEnabled, value: newValue)}
+    }
+    
+    var operatorIdEnabled: Bool? {
+        get { return readSettingsFrom(key: .operatorIdEnabled) as? Bool}
+        set { setSettingsForKey(key: .operatorIdEnabled, value: newValue)}
+    }
+    
+    var equalSplit: Bool? {
+        get { return readSettingsFrom(key: .equalSplit) as? Bool}
+        set { setSettingsForKey(key: .equalSplit, value: newValue)}
+    }
+    
+    var splitByAmount: Bool? {
+        get { return readSettingsFrom(key: .splitByAmount) as? Bool}
+        set { setSettingsForKey(key: .splitByAmount, value: newValue)}
+    }
+    
+    var tipping: Bool? {
+        get { return readSettingsFrom(key: .tipping) as? Bool}
+        set { setSettingsForKey(key: .tipping, value: newValue)}
+    }
+    
+    var summaryReport: Bool? {
+        get { return readSettingsFrom(key: .summaryReport) as? Bool}
+        set { setSettingsForKey(key: .summaryReport, value: newValue)}
+    }
+    
+    var tableRetrievalButton: Bool? {
+        get { return readSettingsFrom(key: .tableRetrievalButton) as? Bool}
+        set { setSettingsForKey(key: .tableRetrievalButton, value: newValue)}
+    }
+    
+    var labelOperatorId: String? {
+        get { return readSettingsFrom(key: .labelOperatorId) as? String }
+        set { setSettingsForKey(key: .labelOperatorId, value: newValue) }
+    }
+
+    var labelTableId: String? {
+        get { return readSettingsFrom(key: .labelTableId) as? String }
+        set { setSettingsForKey(key: .labelTableId, value: newValue) }
+    }
+    
+    var labelPayButton: String? {
+        get { return readSettingsFrom(key: .labelPayButton) as? String }
+        set { setSettingsForKey(key: .labelPayButton, value: newValue) }
     }
 }

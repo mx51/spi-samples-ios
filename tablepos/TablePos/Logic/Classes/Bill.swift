@@ -16,6 +16,7 @@ class Bill: NSObject, NSCoding {
     var totalAmount: Int?
     var outstandingAmount:Int?
     var tippedAmount:Int?
+    var surchargeAmount:Int?
     var locked:Bool?
     
     func encode(with aCoder: NSCoder) {
@@ -26,6 +27,7 @@ class Bill: NSObject, NSCoding {
         if totalAmount != nil { aCoder.encode(totalAmount, forKey: "totalAmount")} else { totalAmount = 0 }
         if outstandingAmount != nil { aCoder.encode(outstandingAmount, forKey: "outstandingAmount")} else { outstandingAmount = 0 }
         if tippedAmount != nil {aCoder.encode(tippedAmount, forKey: "tippedAmount")} else { tippedAmount = 0 }
+        if surchargeAmount != nil {aCoder.encode(surchargeAmount, forKey: "surchargeAmount")} else { surchargeAmount = 0 }
         if locked != nil {aCoder.encode(locked, forKey: "locked")} else { locked = false }
     }
     
@@ -37,6 +39,7 @@ class Bill: NSObject, NSCoding {
         self.totalAmount = aDecoder.decodeObject(forKey: "totalAmount") as? Int
         self.outstandingAmount = aDecoder.decodeObject(forKey: "outstandingAmount") as? Int
         self.tippedAmount = aDecoder.decodeObject(forKey: "tippedAmount") as? Int
+        self.surchargeAmount = aDecoder.decodeObject(forKey: "surchargeAmount") as? Int
         self.locked = aDecoder.decodeObject(forKey: "locked") as? Bool
     }
     
@@ -48,10 +51,11 @@ class Bill: NSObject, NSCoding {
         totalAmount = 0
         outstandingAmount = 0
         tippedAmount = 0
+        surchargeAmount = 0
         locked = false
     }
     
     func toString() -> String {
-        return String(format: "%@ - Table:%@ OperatorId:%@ Label:%@ Total:$%.2f Outstanding:$%.2f Tips:$%.2f Locked:%@", billId!, tableId!, operatorId!, label!, Float(totalAmount!) / 100.0, Float(outstandingAmount!) / 100.0, Float(tippedAmount!) / 100.0, locked!.description)
+        return String(format: "%@ - Table:%@ OperatorId:%@ Label:%@ Total:$%.2f Outstanding:$%.2f Tips:$%.2f Surcharge:$%.2f Locked:%@", billId!, tableId!, operatorId!, label!, Float(totalAmount!) / 100.0, Float(outstandingAmount!) / 100.0, Float(tippedAmount!) / 100.0, Float(surchargeAmount!) / 100.0, locked!.description)
     }
 }

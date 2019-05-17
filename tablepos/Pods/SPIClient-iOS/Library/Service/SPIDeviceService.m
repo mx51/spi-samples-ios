@@ -41,6 +41,7 @@
     SPIDeviceAddressStatus *state = [SPIDeviceAddressStatus new];
     state.address = self.address;
     state.lastUpdated = self.lastUpdated;
+    state.responseCode = self.responseCode;
     return state;
 }
 

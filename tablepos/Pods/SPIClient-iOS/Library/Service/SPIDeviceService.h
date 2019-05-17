@@ -10,8 +10,16 @@
 
 @interface SPIDeviceAddressStatus : NSObject <NSCopying>
 
+typedef NS_ENUM(NSUInteger, SPIDeviceAddressResponceCode) {
+    DeviceAddressResponceCodeSuccess,
+    DeviceAddressResponceCodeError,
+    DeviceAddressResponceCodeAddressNotChanged,
+    DeviceAddressResponceCodeSerialNumberNotChanged,
+};
+
 @property (nonatomic, copy) NSString *address;
 @property (nonatomic, copy) NSString *lastUpdated;
+@property (nonatomic) SPIDeviceAddressResponceCode responseCode;
 
 - (instancetype)initWithJSONString:(NSString *)JSONString;
 

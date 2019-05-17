@@ -142,6 +142,7 @@
         _purchaseResponse = [[SPIPurchaseResponse alloc] initWithMessage:purchaseMsg];
         _purchaseAmount = [_purchaseResponse getPurchaseAmount];
         _tipAmount =  [_purchaseResponse getTipAmount];
+        _surchargeAmount = [_purchaseResponse getSurchargeAmount];
     }
     
     return self;
@@ -180,6 +181,7 @@
     [data setValue:[NSString stringWithFormat:@"%@",_labelOperatorId] forKey:@"operator_id_label"];
     [data setValue:[NSString stringWithFormat:@"%@",_labelTableId] forKey:@"table_id_label"];
     [data setValue:_allowedOperatorIds forKey:@"operator_id_list"];
+    [data setValue:[NSNumber numberWithBool:_tableRetrievalEnabled] forKey:@"table_retrieval_enabled"];
     
     return [[SPIMessage alloc] initWithMessageId:messageId eventName:SPIPayAtTableSetTableConfigKey data:data needsEncryption:true];
 }
@@ -209,16 +211,6 @@
     if (self) {
         _spi = spi;
         _config = [[SPIPayAtTableConfig alloc] init];
-        _config.payAtTableEnabled = true;
-        _config.operatorIdEnabled = true;
-        _config.allowedOperatorIds = [NSArray array];
-        _config.equalSplitEnabled = true;
-        _config.splitByAmountEnabled = true;
-        _config.summaryReportEnabled = true;
-        _config.tippingEnabled = true;
-        _config.labelOperatorId = @"Operator ID";
-        _config.labelPayButton = @"Pay at Table";
-        _config.labelTableId = @"Table Name";
     }
     
     return self;

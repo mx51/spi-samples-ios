@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   SPIClient-iOS:
-    :commit: ab35d48b887a925918f3e3b954011eec15f0ad60
+    :commit: e01574656f59ae83d690d0ed0e5367101ffe5519
     :git: https://github.com/AssemblyPayments/spi-client-ios.git
 
 SPEC CHECKSUMS:

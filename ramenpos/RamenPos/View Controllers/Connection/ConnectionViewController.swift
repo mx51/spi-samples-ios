@@ -70,9 +70,13 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return
         }
         
+        btnSave.isEnabled = false
         RamenApp.current.client.testMode = swchTestModeValue.isOn
         RamenApp.current.client.autoAddressResolutionEnable = swchAutoResolution.isOn
         RamenApp.current.client.serialNumber = txtSerialNumber.text
+        
+        let alertVC = UIAlertController(title: "Device Address Info", message: "Device Address Service is waiting for response...", preferredStyle: .alert)
+        self.showAlert(alertController: alertVC)
     }
     
     @IBAction func swchTestModeValueChanged(_ sender: UISwitch) {
@@ -157,15 +161,42 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     func deviceAddressStatusAndAction(_ state: SPIState?) {
         SPILogMsg("deviceAddressStatusAndAction \(String(describing: state))")
-        
+        btnSave.isEnabled = true
         guard let state = state else { return }
         
-        if (state.deviceAddressStatus.address != nil) {
-            txtPosAddress.text = state.deviceAddressStatus.address! as String
-            let alertVC = UIAlertController(title: "Device Address Status", message: "- Device Address has been updated to \(state.deviceAddressStatus.address ?? "")", preferredStyle: .alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-                SPILogMsg("# [ok] ")
-            }))
+        let alertVC: UIAlertController
+        
+        if (state.deviceAddressStatus != nil) {
+            switch state.deviceAddressStatus.deviceAddressResponseCode {
+            case .DeviceAddressResponceCodeSuccess:
+                txtPosAddress.text = state.deviceAddressStatus.address
+                alertVC = UIAlertController(title: "Device Address Status", message: "- Device Address has been updated to \(state.deviceAddressStatus.address ?? "")", preferredStyle: .alert)
+                alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    SPILogMsg("# [ok] ")
+                }))
+            case .DeviceAddressResponceCodeInvalidSerialNumber:
+                txtPosAddress.text = ""
+                alertVC = UIAlertController(title: "Device Address Error", message: "The serial number is invalid!", preferredStyle: .alert)
+                alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    SPILogMsg("# [ok] ")
+                }))
+            case .DeviceAddressResponceCodeAddressNotChanged:
+                alertVC = UIAlertController(title: "Device Address Error", message: "The IP address have not changed!", preferredStyle: .alert)
+                alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    SPILogMsg("# [ok] ")
+                }))
+            case .DeviceAddressResponceCodeSerialNumberNotChanged:
+                alertVC = UIAlertController(title: "Device Address Error", message: "The serial number have not changed!", preferredStyle: .alert)
+                alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    SPILogMsg("# [ok] ")
+                }))
+            case .DeviceAddressResponceCodeDeviceError:
+                txtPosAddress.text = ""
+                alertVC = UIAlertController(title: "Device Address Error", message: "The device service error! \(state.deviceAddressStatus.responseCode)", preferredStyle: .alert)
+                alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    SPILogMsg("# [ok] ")
+                }))
+            }
             
             self.showAlert(alertController: alertVC)
         }

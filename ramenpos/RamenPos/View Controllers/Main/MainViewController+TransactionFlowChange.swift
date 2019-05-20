@@ -96,10 +96,14 @@ extension MainViewController {
     
     func txCancel() {
         let alertVC = UIAlertController(title: "Transaction", message: client.state.txFlowState.displayMessage, preferredStyle: .alert)
-        let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
-            self.client.cancelTransaction()
+        
+        if client.state.txFlowState.type != .settleEnquiry {
+            let cancelBtn = UIAlertAction(title: "Cancel", style: .default) { (_) in
+                self.client.cancelTransaction()
+            }
+            alertVC.addAction(cancelBtn)
         }
-        alertVC.addAction(cancelBtn)
+        
         showAlert(alertController: alertVC)
     }
     

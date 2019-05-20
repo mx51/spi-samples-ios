@@ -9,6 +9,7 @@
 #import "NSObject+Util.h"
 #import "NSString+Util.h"
 #import "NSDate+Util.h"
+#import "NSDateFormatter+Util.h"
 #import "SPICashout.h"
 #import "SPIClient.h"
 #import "SPIClient+Internal.h"
@@ -105,12 +106,6 @@ static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries be
 
 - (SPIPayAtTable *)enablePayAtTable {
     _spiPat = [[SPIPayAtTable alloc] initWithClient:self];
-    return _spiPat;
-}
-
-- (SPIPayAtTable *)disablePayAtTable {
-    _spiPat = [[SPIPayAtTable alloc] initWithClient:self];
-    _spiPat.config.payAtTableEnabled = false;
     return _spiPat;
 }
 
@@ -998,13 +993,20 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     NSString *was = _serialNumber;
     _serialNumber = serialNumber.copy;
     
-    if (_autoAddressResolutionEnable && [self hasSerialNumberChanged:was]) {
+    if ([self hasSerialNumberChanged:was]) {
         __weak __typeof(&*self) weakSelf = self;
         
         dispatch_async(self.queue, ^{
             // we're turning it on
             [weakSelf autoResolveEftposAddress];
         });
+    } else {
+        if (self.state.deviceAddressStatus == nil) {
+            self.state.deviceAddressStatus = [[SPIDeviceAddressStatus alloc] init];
+        }
+        
+        self.state.deviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponceCodeSerialNumberNotChanged;
+        [self deviceAddressChanged];
     }
 }
 
@@ -1078,11 +1080,35 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     }
     
     [[SPIDeviceService alloc] retrieveServiceWithSerialNumber:_serialNumber apiKey:_deviceApiKey acquirerCode:_acquirerCode isTestMode:_testMode completion:^(SPIDeviceAddressStatus *addressResponse) {
-        if (addressResponse.address.length == 0) {
+        if (addressResponse == nil) {
+            SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+            currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponceCodeDeviceError;
+            self.state.deviceAddressStatus = currentDeviceAddressStatus;
+            [self deviceAddressChanged];
             return;
         }
         
+        if (addressResponse.address.length == 0) {
+            if (addressResponse.responseCode == 404) {
+                SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+                currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponceCodeInvalidSerialNumber;
+                self.state.deviceAddressStatus = currentDeviceAddressStatus;
+                [self deviceAddressChanged];
+                return;
+            } else {
+                SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+                currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponceCodeDeviceError;
+                self.state.deviceAddressStatus = currentDeviceAddressStatus;
+                [self deviceAddressChanged];
+                return;
+            }
+        }
+        
         if (![self hasEftposAddressChanged:addressResponse.address]) {
+            SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+            currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponceCodeAddressNotChanged;
+            self.state.deviceAddressStatus = currentDeviceAddressStatus;
+            [self deviceAddressChanged];
             return;
         }
         
@@ -1093,6 +1119,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
         SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
         currentDeviceAddressStatus.address = addressResponse.address;
         currentDeviceAddressStatus.lastUpdated = addressResponse.lastUpdated;
+        currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponceCodeSuccess;
         self.state.deviceAddressStatus = currentDeviceAddressStatus;
         [self deviceAddressChanged];
     }];
@@ -1486,7 +1513,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 [txState completed:gltResponse.successState response:m msg:@"Last transaction retrieved"];
             } else {
                 // TH-4A - Let's try to match the received last transaction against the current transaction
-                SPIMessageSuccessState successState = [self gltMatch:gltResponse posRefId:txState.posRefId];
+                SPIMessageSuccessState successState = [self gltMatch:gltResponse expectedAmount:txState.amountCents requestDate:txState.requestDate posRefId:txState.posRefId];
                 if (successState == SPIMessageSuccessStateUnknown) {
                     // TH-4N: Didn't Match our transaction. Consider unknown state.
                     SPILog(@"Did not match transaction");
@@ -1517,6 +1544,26 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
     
     if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    return gltResponse.getSuccessState;
+}
+
+- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
+                    expectedAmount:(NSInteger)expectedAmount
+                       requestDate:(NSDate *)requestDate
+                          posRefId:(NSString *)posRefId {
+    SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
+    
+    NSDate *gltBankDate = [[NSDateFormatter dateFormaterWithFormatter:@"ddMMyyyyHHmmss"] dateFromString:[gltResponse getBankDateTimeString]];
+    BOOL compare = [requestDate compare:gltBankDate];
+    
+    if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    if ([[[gltResponse getTxType] uppercaseString] isEqual: @"PURCHASE"] && [gltResponse getBankNonCashAmount] != expectedAmount && compare > 0) {
         return SPIMessageSuccessStateUnknown;
     }
     
@@ -1644,11 +1691,11 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     
     dispatch_async(self.queue, ^{
         switch (newConnectionState) {
-                case SPIConnectionStateConnecting:
+            case SPIConnectionStateConnecting:
                 SPILog(@"I'm connecting to the EFTPOS at %@...", weakSelf.eftposAddress);
                 break;
                 
-                case SPIConnectionStateConnected:
+            case SPIConnectionStateConnected:
                 self->_retriesSinceLastDeviceAddressResolution = 0;
                 
                 if (weakSelf.state.flow == SPIFlowPairing && weakSelf.state.status == SPIStatusUnpaired) {
@@ -1664,7 +1711,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 }
                 break;
                 
-                case SPIConnectionStateDisconnected:
+            case SPIConnectionStateDisconnected:
                 SPILog(@"I'm disconnected from %@", weakSelf.eftposAddress);
                 // Let's reset some lifecycle related state, ready for next connection
                 weakSelf.mostRecentPingSent = nil;

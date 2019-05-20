@@ -41,6 +41,7 @@
     SPIDeviceAddressStatus *state = [SPIDeviceAddressStatus new];
     state.address = self.address;
     state.lastUpdated = self.lastUpdated;
+    state.deviceAddressResponseCode = self.deviceAddressResponseCode;
     return state;
 }
 
@@ -54,6 +55,7 @@
                              isTestMode:(BOOL)isTestMode
                              completion:(DeviceAddressStatusResult)completion {
     NSString *deviceAddressUrl;
+    SPIDeviceAddressStatus *deviceAddressStatus = [[SPIDeviceAddressStatus alloc] init];
     
     if (isTestMode) {
         deviceAddressUrl = [NSString stringWithFormat: @"https://device-address-api-sb.%@.msp.assemblypayments.com/v1/%@/ip", acquirerCode, serialNumber];
@@ -66,20 +68,21 @@
     [request setValue:apiKey forHTTPHeaderField:@"ASM-MSP-DEVICE-ADDRESS-API-KEY"];
     [request setURL:[NSURL URLWithString:deviceAddressUrl]];
     
-    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResponse, NSError * _Nullable error) {
         if (error) {
             NSLog(@"Error getting %@: %@", deviceAddressUrl, error);
             completion(nil);
             return;
         }
-        NSHTTPURLResponse *responseCode = (NSHTTPURLResponse *)response;
-        if ([responseCode statusCode] != 200){
-            NSLog(@"Error getting %@, HTTP status code %li", deviceAddressUrl, (long)[responseCode statusCode]);
-            completion(nil);
+        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)urlResponse;
+        if ([httpResponse statusCode] != 200){
+            NSLog(@"Error getting %@, HTTP status code %li", deviceAddressUrl, (long)[httpResponse statusCode]);
+            deviceAddressStatus.responseCode = [httpResponse statusCode];
+            completion([deviceAddressStatus initWithJSONString:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]);
             return;
         }
         
-        completion([[SPIDeviceAddressStatus alloc] initWithJSONString:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]);
+        completion([deviceAddressStatus initWithJSONString:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]]);
     }];
     [task resume];
 }

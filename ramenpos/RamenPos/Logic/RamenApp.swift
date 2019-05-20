@@ -23,7 +23,7 @@ class RamenApp: NSObject {
     func initialize() {
         client.eftposAddress = settings.eftposAddress
         client.posId = settings.posId
-        client.serialNumber = settings.serialNumber
+        
         client.config.signatureFlowOnEftpos = settings.customerSignatureFromEftpos ?? false
         client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEftpos ?? false
         

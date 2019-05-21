@@ -36,7 +36,8 @@
 
 - (void)setupConnection {
     self.expectation = [self expectationWithDescription:@"success"];
-
+    [self.expectation fulfill];
+    
     self.spi.eftposAddress = @"emulator-prod.herokuapp.com";
     self.spi.posId         = @"ACMEPOS3TEST";
     self.spi.delegate      = self;

@@ -103,7 +103,7 @@ extension TableApp: SPIPayAtTableDelegate {
         
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: openTables, isShow: true))
         
-        response.openTablesData = openTablesArray
+        response.openTablesEntries = openTablesArray
         return response
     }
     

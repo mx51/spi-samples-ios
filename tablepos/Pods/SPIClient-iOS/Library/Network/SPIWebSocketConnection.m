@@ -42,7 +42,7 @@
     
     // Create a new socket instance specifying the url, SPI protocol and Websocket to use.
     // The will create a TCP/IP socket connection to the provided URL and perform HTTP websocket negotiation
-    self.webSocket          = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:8.0] protocols:@[@"spi.2.5.0"]];
+    self.webSocket          = [[SRWebSocket alloc] initWithURLRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.url] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:8.0] protocols:@[@"spi.2.6.0"]];
     self.webSocket.delegate = self;
     
     // Let's let our users know that we are now connecting...

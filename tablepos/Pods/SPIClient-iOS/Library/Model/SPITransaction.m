@@ -282,7 +282,7 @@
 }
 
 - (BOOL)isStillInProgress:(NSString *)posRefId {
-    return ([self wasOperationInProgressError] && [posRefId isEqualToString:[self getPosRefId]]);
+    return ([self wasOperationInProgressError] && ([posRefId isEqualToString:[self getPosRefId]] || [self getPosRefId] == nil));
 }
 
 - (SPIMessageSuccessState)getSuccessState {
@@ -299,6 +299,10 @@
 
 - (NSString *)getPosRefId {
     return [self.message getDataStringValue:@"pos_ref_id"];
+}
+
+- (NSInteger)getBankNonCashAmount {
+    return [self.message getDataIntegerValue:@"bank_noncash_amount"];
 }
 
 - (NSString *)getSchemeApp {

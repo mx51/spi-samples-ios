@@ -63,6 +63,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     @IBAction func unpair() {
         RamenApp.current.client.unpair()
+        RamenApp.current.client.serialNumber = ""
     }
     
     @IBAction func saveButtonClicked(_ sender: Any) {

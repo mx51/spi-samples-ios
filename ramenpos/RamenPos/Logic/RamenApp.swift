@@ -15,15 +15,19 @@ class RamenApp: NSObject {
     
     var settings = SettingsProvider()
     var client = SPIClient()
-
+    
     static var current: RamenApp {
         return _instance
     }
-
+    
     func initialize() {
         client.eftposAddress = settings.eftposAddress
         client.posId = settings.posId
+        
+        client.testMode = settings.testMode!
+        client.autoAddressResolutionEnable = settings.autoResolution!
         client.serialNumber = settings.serialNumber
+        
         client.config.signatureFlowOnEftpos = settings.customerSignatureFromEftpos ?? false
         client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEftpos ?? false
         

@@ -310,8 +310,15 @@
     
     SPIGetOpenTablesResponse *openTablesResponse = [_delegate payAtTableGetOpenTables:operatorId];
     
-    if (openTablesResponse.openTablesData.count <= 0) {
+    if (openTablesResponse.openTablesEntries.count <= 0) {
         SPILog(@"There is no open table.");
+    }
+
+    for (NSInteger i = 0; i < openTablesResponse.openTablesEntries.count; i++) {
+        if (openTablesResponse.openTablesEntries[i].tableId.length > 20) {
+            SPILog(@"%@ Table Id is greater than 20 characters!", openTablesResponse.openTablesEntries[i].tableId);
+            openTablesResponse.openTablesEntries[i].tableId = [openTablesResponse.openTablesEntries[i].tableId substringToIndex:20];
+        }
     }
     
     [_spi send:[openTablesResponse toMessage:message.mid]];
@@ -358,11 +365,11 @@
 - (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables {
     NSMutableArray<SPIOpenTablesEntry*> *getOpenTablesJson = [[NSMutableArray alloc] init];
     
-    if (self.openTablesData.count <= 0) {
+    if (self.openTablesEntries.count <= 0) {
         return getOpenTablesJson;
     }
     
-    for (SPIOpenTablesEntry *response in self.openTablesData) {
+    for (SPIOpenTablesEntry *response in self.openTablesEntries) {
         [getOpenTablesJson addObjectsFromArray:[NSArray arrayWithObject:response.toJsonObject]];
     }
     

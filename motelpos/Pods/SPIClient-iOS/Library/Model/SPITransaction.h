@@ -151,6 +151,8 @@
 
 - (NSString *)getPosRefId;
 
+- (NSInteger)getBankNonCashAmount;
+
 - (NSString *)getSchemeApp DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
 - (NSString *)getSchemeName DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
@@ -159,7 +161,7 @@
 
 - (NSInteger)getTransactionAmount DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
-- (NSString *)getBankDateTimeString DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
+- (NSString *)getBankDateTimeString;
 
 - (NSString *)getRRN DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 

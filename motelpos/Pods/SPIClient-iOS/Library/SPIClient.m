@@ -9,6 +9,7 @@
 #import "NSObject+Util.h"
 #import "NSString+Util.h"
 #import "NSDate+Util.h"
+#import "NSDateFormatter+Util.h"
 #import "SPICashout.h"
 #import "SPIClient.h"
 #import "SPIClient+Internal.h"
@@ -1486,7 +1487,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 [txState completed:gltResponse.successState response:m msg:@"Last transaction retrieved"];
             } else {
                 // TH-4A - Let's try to match the received last transaction against the current transaction
-                SPIMessageSuccessState successState = [self gltMatch:gltResponse posRefId:txState.posRefId];
+                SPIMessageSuccessState successState = [self gltMatch:gltResponse expectedAmount:txState.amountCents requestDate:txState.requestDate posRefId:txState.posRefId];
                 if (successState == SPIMessageSuccessStateUnknown) {
                     // TH-4N: Didn't Match our transaction. Consider unknown state.
                     SPILog(@"Did not match transaction");
@@ -1517,6 +1518,26 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
     
     if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    return gltResponse.getSuccessState;
+}
+
+- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
+                    expectedAmount:(NSInteger)expectedAmount
+                       requestDate:(NSDate *)requestDate
+                          posRefId:(NSString *)posRefId {
+    SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
+    
+    NSDate *gltBankDate = [[NSDateFormatter dateFormaterWithFormatter:@"ddMMyyyyHHmmss"] dateFromString:[gltResponse getBankDateTimeString]];
+    BOOL compare = [requestDate compare:gltBankDate];
+    
+    if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    if ([[[gltResponse getTxType] uppercaseString] isEqual: @"PURCHASE"] && [gltResponse getBankNonCashAmount] != expectedAmount && compare > 0) {
         return SPIMessageSuccessStateUnknown;
     }
     

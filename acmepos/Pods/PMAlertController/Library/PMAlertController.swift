@@ -107,7 +107,7 @@ open class PMAlertController: UIViewController {
         self.animateDismissWithGravity(.cancel)
         self.dismiss(animated: true, completion: nil)
     }
-
+    
     //MARK: - Text Fields
     open func addTextField(_ configuration: (_ textField: UITextField?) -> Void){
         let textField = UITextField()

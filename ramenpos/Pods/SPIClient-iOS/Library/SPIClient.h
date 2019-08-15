@@ -21,7 +21,7 @@ typedef void (^SPIAuthCodeSubmitCompletionResult)(SPISubmitAuthCodeResult *resul
 
 /**
  Completion handler.
- 
+
  @param alreadyMovedToIdleState True means we have moved back to the Idle state. false means current flow was not finished yet.
  @param state Current state.
  */
@@ -149,7 +149,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  If you provide secrets, it will start in PairedConnecting status; Otherwise
  it will start in Unpaired status.
- 
+
  @return YES if needs to pair, else NO.
  */
 - (BOOL)start;
@@ -161,7 +161,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 
 /**
  Set the pairing secrets.
- 
+
  @param encKey Encryption key.
  @param hmacKey HMAC key.
  */
@@ -172,7 +172,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  Typically when your user clicks the "OK" bubtton to acknowldge that pairing
  is finished, or that transaction is finished. When true, you can dismiss the
  flow screen and show back the idle screen.
- 
+
  @param completion Completion handler.
  */
 - (void)ackFlowEndedAndBackToIdle:(SPICompletionState)completion;
@@ -206,7 +206,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  Initiates a purchase transaction. Be subscribed to TxFlowStateChanged event
  to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents NSInteger
  @param completion SPICompletionTxResult
@@ -218,9 +218,9 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  Initiates a purchase transaction. Be subscribed to TxFlowStateChanged event to
  get updates on the process.
- 
+
  NOTE: Tip and cashout are not allowed simultaneously.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param purchaseAmount The purchase amount in cents.
  @param tipAmount The tip amount in cents.
@@ -239,9 +239,9 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  Initiates a purchase transaction. Be subscribed to TxFlowStateChanged event to
  get updates on the process.
- 
+
  NOTE: Tip and cashout are not allowed simultaneously.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param purchaseAmount The purchase amount in cents.
  @param tipAmount The tip amount in cents.
@@ -261,9 +261,9 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  Initiates a purchase transaction. Be subscribed to TxFlowStateChanged event to
  get updates on the process.
- 
+
  NOTE: Tip and cashout are not allowed simultaneously.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param purchaseAmount The purchase amount in cents.
  @param tipAmount The tip amount in cents.
@@ -285,7 +285,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  Initiates a refund transaction. Be subscribed to TxFlowStateChanged event to
  get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The refund amount in cents.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
@@ -297,7 +297,7 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 /**
  Initiates a refund transaction. Be subscribed to TxFlowStateChanged event to
  get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The refund amount in cents.
  @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
@@ -311,7 +311,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a refund transaction. Be subscribed to TxFlowStateChanged event to
  get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The refund amount in cents.
  @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
@@ -326,7 +326,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 /**
  Initiates a Mail Order / Telephone Order Purchase Transaction
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The purchase amount in cents.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
@@ -337,7 +337,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 /**
  Initiates a Mail Order / Telephone Order Purchase Transaction
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The purchase amount in cents.
  @param surchargeAmount The surcharge amount in cents
@@ -350,7 +350,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 /**
  Initiates a Mail Order / Telephone Order Purchase Transaction
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The purchase amount in cents.
  @param surchargeAmount The surcharge amount in cents
@@ -365,7 +365,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 /**
  Initiates a Mail Order / Telephone Order Purchase Transaction
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The purchase amount in cents.
  @param surchargeAmount The surcharge amount in cents
@@ -383,7 +383,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
  event to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The cashout amount in cents.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
@@ -395,7 +395,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
  event to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The cashout amount in cents.
  @param surchargeAmount The surcharge amount in cents
@@ -409,7 +409,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
  event to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param amountCents The cashout amount in cents.
  @param surchargeAmount The surcharge amount in cents
@@ -424,7 +424,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 /**
  Let the EFTPOS know whether merchant accepted or declined the signature.
- 
+
  @param accepted YES if merchant accepted the signature from customer or NO otherwise.
  */
 - (void)acceptSignature:(BOOL)accepted;
@@ -435,7 +435,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
  not. If valid==true is returned, no need to do anything else. Expect updates
  via standard callback. If valid==false is returned, you can show your user
  the accompanying message, and invite them to enter another code.
- 
+
  @param authCode The alphanumeric 6-character code obtained by your customer from the merchant call centre.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
@@ -452,7 +452,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a settlement transaction.
  Be subscribed to TxFlowStateChanged event to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
@@ -462,7 +462,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a settlement transaction.
  Be subscribed to TxFlowStateChanged event to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param options Additional options applied on per-transaction basis.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
@@ -474,7 +474,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a settlement transaction.
  Be subscribed to TxFlowStateChanged event to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
@@ -484,7 +484,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 /**
  Initiates a settlement transaction.
  Be subscribed to TxFlowStateChanged event to get updates on the process.
- 
+
  @param posRefId The unique identifier for the transaction.
  @param options Additional options applied on per-transaction basis.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
@@ -508,7 +508,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
  transaction type. This method will return immediately whether recovery has
  started or not. If recovery has started, you need to bring up the transaction
  modal to your user a be listening to TxFlowStateChanged.
- 
+
  @param posRefId The unique identifier for the transaction to be recovered.
  @param txType The transaction type.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
@@ -523,7 +523,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
  response did match, and that transaction was successful/failed. If Unknown is
  returned, it means that the gltResponse does not match the expected
  transaction.
- 
+
  @param gltResponse The gltResponse message to check.
  @param expectedType The expected type (e.g. Purchase, Refund).
  @param expectedAmount The expected amount in cents.
@@ -542,7 +542,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
  response did match, and that transaction was successful/failed. If Unknown is
  returned, it means that the gltResponse does not match the expected
  transaction.
- 
+
  @param posRefId The reference ID that you passed in with the original request.
  */
 - (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse posRefId:(NSString *)posRefId;
@@ -566,21 +566,21 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 /**
  Enables Pay-at-Table feature and returns the configuration object.
- 
+
  @return Configuration object handling table and bill requests and responses.
  */
 - (SPIPayAtTable *)enablePayAtTable;
 
 /**
  Enables Preauth feature and returns the configuration object.
- 
+
  @return Configuration object handling the dispatch queue.
  */
 - (SPIPreAuth *)enablePreauth;
 
 /**
  Printing Free Format Receipt
- 
+
  @param key The authentication token
  @param payload The string of characters which represent the receipt that should be printed
  */

@@ -95,7 +95,7 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 
 @interface SPIGetOpenTablesResponse : NSObject
 
-@property (nonatomic, copy) NSMutableArray *openTablesData;
+@property (nonatomic, copy) NSMutableArray<SPIOpenTablesEntry *> *openTablesEntries;
 
 - (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables;
 

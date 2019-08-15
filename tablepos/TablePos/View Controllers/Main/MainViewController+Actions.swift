@@ -11,13 +11,7 @@ import SPIClient_iOS
 
 extension MainViewController {
     
-    @IBAction func btnOpenTableClicked(_ sender: Any) {        
-        let tableIdInt:Int? = Int(txtTableId.text!)
-        if tableIdInt == nil || tableIdInt! <= 0 {
-            showMessage(title: "Open Table", msg: "Incorrect Table Id!", type: "ERROR", isShow: true)
-            return
-        }
-        
+    @IBAction func btnOpenTableClicked(_ sender: Any) {         
         let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if TableApp.current.tableToBillMapping[tableId!] != nil {

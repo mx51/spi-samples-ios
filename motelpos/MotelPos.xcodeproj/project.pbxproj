@@ -204,7 +204,7 @@
 			isa = PBXGroup;
 			children = (
 				29B013A220BAB40C00F93AAF /* MotelPos */,
-				29B013BB20BAB40E00F93AAF /* MotelPosTest */,
+				29B013BB20BAB40E00F93AAF /* MotelPosTests */,
 				29B013C620BAB40E00F93AAF /* MotelPosUITests */,
 				29B013A120BAB40C00F93AAF /* Products */,
 				4EAD2E22EE4B8019B959D751 /* Pods */,
@@ -234,13 +234,13 @@
 			path = MotelPos;
 			sourceTree = "<group>";
 		};
-		29B013BB20BAB40E00F93AAF /* MotelPosTest */ = {
+		29B013BB20BAB40E00F93AAF /* MotelPosTests */ = {
 			isa = PBXGroup;
 			children = (
 				29B013BC20BAB40E00F93AAF /* MotelPosTests.m */,
 				29B013BE20BAB40E00F93AAF /* Info.plist */,
 			);
-			path = MotelPosTest;
+			path = MotelPosTests;
 			sourceTree = "<group>";
 		};
 		29B013C620BAB40E00F93AAF /* MotelPosUITests */ = {
@@ -346,7 +346,7 @@
 				TargetAttributes = {
 					29B0139F20BAB40C00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1030;
 					};
 					29B013B720BAB40E00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
@@ -687,7 +687,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "motelpos/Resources/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -710,7 +710,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "motelpos/Resources/Bridging-Header.h";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

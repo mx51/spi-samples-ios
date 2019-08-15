@@ -14,7 +14,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var txtOutput: UITextView!
     @IBOutlet weak var txtPosId: UITextField!
     @IBOutlet weak var txtPosAddress: UITextField!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -50,7 +50,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBAction func unpair() {
         TableApp.current.client.unpair()
     }
-
+    
     @objc
     func onNotificationArrived(notification: NSNotification) {
         DispatchQueue.main.async {
@@ -71,7 +71,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             }
         }
     }
-
+    
     func printStatusAndAction(_ state: SPIState?) {
         SPILogMsg("printStatusAndAction \(String(describing: state))")
         
@@ -101,47 +101,51 @@ class ConnectionViewController: UITableViewController, NotificationListener {
                 break
             case .pairing: // Paired, Pairing - we have just finished the pairing flow. OK to ack.
                 showPairing(TableApp.current.client.state)
+            default:
+                break
             }
             
+        default:
+            break
         }
     }
     
     func showPairing(_ state: SPIState) {
         SPILogMsg("showPairing")
-
+        
         guard let pairingFlowState = state.pairingFlowState else {
             return showError("Missing pairingFlowState \(state)")
         }
         
         let alertVC = UIAlertController(title: "EFTPOS Pairing Process", message: pairingFlowState.message, preferredStyle: .alert)
-
+        
         if pairingFlowState.isAwaitingCheckFromPos {
             alertVC.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (_) in
                 SPILogMsg("# [pair_cancel] - cancel pairing process")
                 
                 self.pairingCancel()
             }))
-
+            
             alertVC.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
                 SPILogMsg("# [pair_confirm] - confirm the code matches")
                 
                 TableApp.current.client.pairingConfirmCode()
             }))
-
+            
         } else if !pairingFlowState.isFinished {
             alertVC.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
                 SPILogMsg("# [pair_cancel] - cancel pairing process")
                 
                 self.pairingCancel()
             }))
-
+            
         } else if pairingFlowState.isSuccessful {
             alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                 SPILogMsg("# [ok] - acknowledge pairing")
                 
                 self.acknowledge()
             }))
-
+            
         } else {
             // error
             alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
@@ -149,15 +153,15 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         
         self.showAlert(alertController: alertVC)
     }
-
+    
     func acknowledge() {
         SPILogMsg("acknowledge")
-
+        
         TableApp.current.client.ackFlowEndedAndBack {  _, state in
             self.printStatusAndAction(TableApp.current.client.state)
         }
     }
-
+    
     func showError(_ msg: String, completion: (() -> Swift.Void)? = nil) {
         SPILogMsg("ERROR: \(msg)")
         
@@ -166,9 +170,9 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     func appendReceipt(_ msg: String?) {
         SPILogMsg("appendReceipt \(String(describing: msg))")
-
+        
         guard let msg = msg, msg.count > 0 else { return }
-
+        
         DispatchQueue.main.async {
             self.txtOutput.text = msg + "\n================\n" + self.txtOutput.text
         }

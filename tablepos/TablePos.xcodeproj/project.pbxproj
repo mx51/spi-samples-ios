@@ -24,8 +24,8 @@
 		29B013AB20BAB40C00F93AAF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B013A920BAB40C00F93AAF /* Main.storyboard */; };
 		29B013AD20BAB40E00F93AAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29B013AC20BAB40E00F93AAF /* Assets.xcassets */; };
 		29B013B020BAB40E00F93AAF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29B013AE20BAB40E00F93AAF /* LaunchScreen.storyboard */; };
-		29B013BD20BAB40E00F93AAF /* MotelPosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B013BC20BAB40E00F93AAF /* MotelPosTests.m */; };
-		29B013C820BAB40E00F93AAF /* MotelPosUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B013C720BAB40E00F93AAF /* MotelPosUITests.m */; };
+		29B013BD20BAB40E00F93AAF /* TablePosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B013BC20BAB40E00F93AAF /* TablePosTests.m */; };
+		29B013C820BAB40E00F93AAF /* TablePosUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B013C720BAB40E00F93AAF /* TablePosUITests.m */; };
 		4013ADC769B0248B65A69F4B /* Pods_TablePosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 340D513B3407E8FAEFF11065 /* Pods_TablePosUITests.framework */; };
 		491C93882124196600CC457F /* TableApp+SPIPayAtTableDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491C93872124196600CC457F /* TableApp+SPIPayAtTableDelegate.swift */; };
 		496C984921224C3D00E0AD76 /* Bill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C984821224C3D00E0AD76 /* Bill.swift */; };
@@ -73,10 +73,10 @@
 		29B013AF20BAB40E00F93AAF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		29B013B120BAB40E00F93AAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29B013B820BAB40E00F93AAF /* TablePosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TablePosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		29B013BC20BAB40E00F93AAF /* MotelPosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MotelPosTests.m; sourceTree = "<group>"; };
+		29B013BC20BAB40E00F93AAF /* TablePosTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TablePosTests.m; sourceTree = "<group>"; };
 		29B013BE20BAB40E00F93AAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29B013C320BAB40E00F93AAF /* TablePosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TablePosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		29B013C720BAB40E00F93AAF /* MotelPosUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MotelPosUITests.m; sourceTree = "<group>"; };
+		29B013C720BAB40E00F93AAF /* TablePosUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TablePosUITests.m; sourceTree = "<group>"; };
 		29B013C920BAB40E00F93AAF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		340D513B3407E8FAEFF11065 /* Pods_TablePosUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TablePosUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43222D75C606FD53FBF8461E /* Pods-TablePosUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePosUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TablePosUITests/Pods-TablePosUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -212,7 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				29B013A220BAB40C00F93AAF /* TablePos */,
-				29B013BB20BAB40E00F93AAF /* TablePosTest */,
+				29B013BB20BAB40E00F93AAF /* TablePosTests */,
 				29B013C620BAB40E00F93AAF /* TablePosUITests */,
 				29B013A120BAB40C00F93AAF /* Products */,
 				4EAD2E22EE4B8019B959D751 /* Pods */,
@@ -242,19 +242,19 @@
 			path = TablePos;
 			sourceTree = "<group>";
 		};
-		29B013BB20BAB40E00F93AAF /* TablePosTest */ = {
+		29B013BB20BAB40E00F93AAF /* TablePosTests */ = {
 			isa = PBXGroup;
 			children = (
-				29B013BC20BAB40E00F93AAF /* MotelPosTests.m */,
+				29B013BC20BAB40E00F93AAF /* TablePosTests.m */,
 				29B013BE20BAB40E00F93AAF /* Info.plist */,
 			);
-			path = TablePosTest;
+			path = TablePosTests;
 			sourceTree = "<group>";
 		};
 		29B013C620BAB40E00F93AAF /* TablePosUITests */ = {
 			isa = PBXGroup;
 			children = (
-				29B013C720BAB40E00F93AAF /* MotelPosUITests.m */,
+				29B013C720BAB40E00F93AAF /* TablePosUITests.m */,
 				29B013C920BAB40E00F93AAF /* Info.plist */,
 			);
 			path = TablePosUITests;
@@ -363,7 +363,7 @@
 				TargetAttributes = {
 					29B0139F20BAB40C00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1030;
 					};
 					29B013B720BAB40E00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
@@ -530,7 +530,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29B013BD20BAB40E00F93AAF /* MotelPosTests.m in Sources */,
+				29B013BD20BAB40E00F93AAF /* TablePosTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,7 +538,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				29B013C820BAB40E00F93AAF /* MotelPosUITests.m in Sources */,
+				29B013C820BAB40E00F93AAF /* TablePosUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -707,7 +707,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "tablepos/Resources/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -730,7 +730,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "tablepos/Resources/Bridging-Header.h";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -752,7 +752,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.TablePosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TabePos.app/TablePos";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TablePos.app/TablePos";
 			};
 			name = Debug;
 		};

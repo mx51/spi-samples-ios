@@ -142,6 +142,8 @@ extension MainViewController {
                         break
                     }
                     break
+                default:
+                    break
                 }
                 break
             }

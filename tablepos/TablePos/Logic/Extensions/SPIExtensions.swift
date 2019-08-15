@@ -18,6 +18,8 @@ extension SPIMessageSuccessState {
             return "success"
         case .unknown:
             return "unknown"
+        default:
+            return ""
         }
     }
 }
@@ -31,6 +33,8 @@ extension SPIStatus {
             return "Connecting"
         case .pairedConnected:
             return "Connected"
+        default:
+            return ""
         }
     }
 }
@@ -44,6 +48,8 @@ extension SPIFlow {
             return "Pairing"
         case .transaction:
             return "Transaction"
+        default:
+            return ""
         }
     }
 }
@@ -69,6 +75,8 @@ extension SPITransactionType {
             return "Pre Auth"
         case .accountVerify:
             return "Account Verify"
+        default:
+            return ""
         }
     }
 }

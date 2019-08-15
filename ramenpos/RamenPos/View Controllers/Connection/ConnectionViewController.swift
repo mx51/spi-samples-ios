@@ -63,7 +63,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     @IBAction func unpair() {
         RamenApp.current.client.unpair()
-        RamenApp.current.client.serialNumber = ""
     }
     
     @IBAction func saveButtonClicked(_ sender: Any) {
@@ -155,8 +154,12 @@ class ConnectionViewController: UITableViewController, NotificationListener {
                 break
             case .pairing: // Paired, Pairing - we have just finished the pairing flow. OK to ack.
                 showPairing(RamenApp.current.client.state)
+            default:
+                break
             }
             
+        default:
+            break
         }
     }
     
@@ -192,6 +195,12 @@ class ConnectionViewController: UITableViewController, NotificationListener {
                     SPILogMsg("# [ok] ")
                 }))
             case .DeviceAddressResponceCodeDeviceError:
+                txtPosAddress.text = ""
+                alertVC = UIAlertController(title: "Device Address Error", message: "The device service error! \(state.deviceAddressStatus.responseCode)", preferredStyle: .alert)
+                alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+                    SPILogMsg("# [ok] ")
+                }))
+            default:
                 txtPosAddress.text = ""
                 alertVC = UIAlertController(title: "Device Address Error", message: "The device service error! \(state.deviceAddressStatus.responseCode)", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in

@@ -84,6 +84,8 @@ extension MainViewController {
             }
         case .idle:
             break
+        default:
+            break
         }
     }
     
@@ -124,6 +126,8 @@ extension MainViewController {
             logMessage(String(format: "# IF YOU CONFIRM THAT THE CUSTOMER PAID, CLOSE THE ORDER."))
             logMessage(String(format: "# OTHERWISE, RETRY THE PAYMENT FROM SCRATCH."))
             break
+        default:
+            break
         }
     }
     
@@ -157,6 +161,8 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE REFUND WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            break
+        default:
             break
         }
     }
@@ -195,6 +201,8 @@ extension MainViewController {
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
             break
+        default:
+            break
         }
     }
     
@@ -231,6 +239,8 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE MOTO WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            break
+        default:
             break
         }
     }
@@ -288,7 +298,7 @@ extension MainViewController {
                     logMessage(String(format: "Scheme Name: %@, SettleByAcquirer: %@, TotalCount: %i, TotalValue: %.2f", s.schemeName, String(s.settleByAcquirer), s.totalCount, Float(s.totalValue) / 100.0))
                 }
                 
-
+                
             }
             break
         case .failed:
@@ -302,6 +312,8 @@ extension MainViewController {
             break
         case .unknown:
             logMessage(String(format: "# SETTLEMENT ENQUIRY RESULT UNKNOWN!"))
+            break
+        default:
             break
         }
     }
@@ -342,6 +354,8 @@ extension MainViewController {
             break
         case .unknown:
             logMessage(String(format: "# SETTLEMENT ENQUIRY RESULT UNKNOWN!"))
+            break
+        default:
             break
         }
     }

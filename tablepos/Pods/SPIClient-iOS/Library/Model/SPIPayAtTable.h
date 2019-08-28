@@ -89,6 +89,8 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 @property (nonatomic, copy) NSString *label;
 @property (nonatomic) NSInteger outstandingAmount;
 
+- (instancetype)initWithDictionary:(NSDictionary *)data;
+
 - (NSDictionary *)toJsonObject;
 
 @end

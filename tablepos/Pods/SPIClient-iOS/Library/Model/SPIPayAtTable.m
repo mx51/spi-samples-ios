@@ -304,13 +304,7 @@
     
     if (openTablesResponse.openTablesEntries.count <= 0) {
         SPILog(@"There is no open table.");
-    }
-
-    for (NSInteger i = 0; i < openTablesResponse.openTablesEntries.count; i++) {
-        if (openTablesResponse.openTablesEntries[i].tableId.length > 20) {
-            SPILog(@"%@ Table Id is greater than 20 characters!", openTablesResponse.openTablesEntries[i].tableId);
-            openTablesResponse.openTablesEntries[i].tableId = [openTablesResponse.openTablesEntries[i].tableId substringToIndex:20];
-        }
+        openTablesResponse = [[SPIGetOpenTablesResponse alloc] init];
     }
     
     [_spi send:[openTablesResponse toMessage:message.mid]];
@@ -342,6 +336,13 @@
 
 @implementation SPIOpenTablesEntry
 
+- (instancetype)initWithDictionary:(NSDictionary *)data {
+    _tableId = [data valueForKey:@"table_id"];
+    _label = [data valueForKey:@"label"];
+    _outstandingAmount = [[data valueForKey:@"bill_outstanding_amount"] integerValue];
+    return self;
+}
+
 - (NSDictionary *)toJsonObject {
     NSMutableDictionary * data = [[NSMutableDictionary alloc] init];
     [data setValue: _tableId forKey:@"table_id"];
@@ -357,7 +358,7 @@
 - (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables {
     NSMutableArray<SPIOpenTablesEntry*> *getOpenTablesJson = [[NSMutableArray alloc] init];
     
-    if (self.openTablesEntries.count <= 0) {
+    if (self.openTablesEntries == nil || self.openTablesEntries.count <= 0) {
         return getOpenTablesJson;
     }
     

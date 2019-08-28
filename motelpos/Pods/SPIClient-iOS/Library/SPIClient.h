@@ -561,7 +561,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 */
 - (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
                     expectedAmount:(NSInteger)expectedAmount
-                   requestDate:(NSDate *)requestDate
+                       requestDate:(NSDate *)requestDate
                           posRefId:(NSString *)posRefId;
 
 /**
@@ -570,13 +570,6 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
  @return Configuration object handling table and bill requests and responses.
  */
 - (SPIPayAtTable *)enablePayAtTable;
-
-/**
- Disables Pay-at-Table feature and returns the configuration object.
- 
- @return Configuration object handling table and bill requests and responses.
- */
-- (SPIPayAtTable *)disablePayAtTable;
 
 /**
  Enables Preauth feature and returns the configuration object.

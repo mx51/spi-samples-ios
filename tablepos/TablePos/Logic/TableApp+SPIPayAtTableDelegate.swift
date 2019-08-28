@@ -62,7 +62,7 @@ extension TableApp: SPIPayAtTableDelegate {
         bill.tippedAmount! += billPayment.tipAmount
         bill.surchargeAmount! += billPayment.surchargeAmount
         bill.locked = bill.outstandingAmount == 0 ? false: true
-
+        
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: "Updated Bill: \(bill.toString())", isShow: true))
         
         assemblyBillDataStore[billPayment.billId] = updatedBillData
@@ -100,10 +100,10 @@ extension TableApp: SPIPayAtTableDelegate {
         }
         
         if !isOpenTables {
-            openTables = "No Open Tables."
-        }        
-        
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: openTables, isShow: true))
+            //No Open Tables.
+        } else {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: openTables, isShow: true))
+        }
         
         response.openTablesEntries = openTablesArray
         return response
@@ -113,8 +113,8 @@ extension TableApp: SPIPayAtTableDelegate {
         let billPaymentFlowEndedResponse: SPIBillPaymentFlowEndedResponse = SPIBillPaymentFlowEndedResponse(message: message)
         var message: String = ""
         
-        if !(billsStore[billPaymentFlowEndedResponse.billId] != nil) {
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Flow Ended", type: "ERROR", message: "Incorrect Bill Id!", isShow: true))
+        if !(billsStore[billPaymentFlowEndedResponse.tableId] != nil) {
+            //Table Id not found
             return
         }
         

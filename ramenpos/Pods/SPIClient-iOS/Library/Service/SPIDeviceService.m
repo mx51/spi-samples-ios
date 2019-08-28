@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "SPIDeviceService.h"
 
+static NSTimeInterval connectionTimeout = 8; // How long do we wait for a pong to come back
+
 @implementation SPIDeviceAddressStatus : NSObject
 
 - (instancetype)init
@@ -64,6 +66,7 @@
     }
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    [request setTimeoutInterval:connectionTimeout];
     [request setHTTPMethod:@"GET"];
     [request setValue:apiKey forHTTPHeaderField:@"ASM-MSP-DEVICE-ADDRESS-API-KEY"];
     [request setURL:[NSURL URLWithString:deviceAddressUrl]];

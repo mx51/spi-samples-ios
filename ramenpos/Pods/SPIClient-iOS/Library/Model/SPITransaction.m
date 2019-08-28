@@ -231,6 +231,10 @@
     return [self.message getDataStringValue:attribute];
 }
 
+- (BOOL)wasTxnPastPointOfNoReturn {
+    return [self.message.error hasPrefix:@"TXN_PAST_POINT_OF_NO_RETURN"];
+}
+
 @end
 
 @implementation SPIGetLastTransactionRequest : NSObject

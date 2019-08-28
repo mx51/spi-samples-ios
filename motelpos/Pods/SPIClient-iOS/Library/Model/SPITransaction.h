@@ -115,6 +115,8 @@
 
 - (NSString *)getResponseValueWithAttribute:(NSString *)attribute;
 
+- (BOOL)wasTxnPastPointOfNoReturn;
+
 @end
 
 @interface SPIGetLastTransactionRequest : NSObject

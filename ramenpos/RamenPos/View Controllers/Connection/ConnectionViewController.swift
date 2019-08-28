@@ -45,13 +45,20 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return
         }
         
+        if (!areControlsValid(isPairing: true)) {
+            return
+        }
+        
         let settings = RamenApp.current.settings
+        settings.autoResolution = swchAutoResolution.isOn
+        settings.testMode = swchTestModeValue.isOn
         settings.posId = txtPosId.text
         settings.eftposAddress = txtPosAddress.text
         settings.serialNumber = txtSerialNumber.text
         settings.encriptionKey = nil
         settings.hmacKey = nil
         
+        client.autoAddressResolutionEnable = swchAutoResolution.isOn
         client.posId = txtPosId.text
         client.eftposAddress = txtPosAddress.text
         client.pair()
@@ -172,29 +179,29 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         
         if (state.deviceAddressStatus != nil) {
             switch state.deviceAddressStatus.deviceAddressResponseCode {
-            case .DeviceAddressResponceCodeSuccess:
+            case .DeviceAddressResponseCodeSuccess:
                 txtPosAddress.text = state.deviceAddressStatus.address
                 alertVC = UIAlertController(title: "Device Address Status", message: "- Device Address has been updated to \(state.deviceAddressStatus.address ?? "")", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")
                 }))
-            case .DeviceAddressResponceCodeInvalidSerialNumber:
+            case .DeviceAddressResponseCodeInvalidSerialNumber:
                 txtPosAddress.text = ""
                 alertVC = UIAlertController(title: "Device Address Error", message: "The serial number is invalid!", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")
                 }))
-            case .DeviceAddressResponceCodeAddressNotChanged:
+            case .DeviceAddressResponseCodeAddressNotChanged:
                 alertVC = UIAlertController(title: "Device Address Error", message: "The IP address have not changed!", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")
                 }))
-            case .DeviceAddressResponceCodeSerialNumberNotChanged:
+            case .DeviceAddressResponseCodeSerialNumberNotChanged:
                 alertVC = UIAlertController(title: "Device Address Error", message: "The serial number have not changed!", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")
                 }))
-            case .DeviceAddressResponceCodeDeviceError:
+            case .DeviceAddressResponseCodeDeviceError:
                 txtPosAddress.text = ""
                 alertVC = UIAlertController(title: "Device Address Error", message: "The device service error! \(state.deviceAddressStatus.responseCode)", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
@@ -291,7 +298,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return false
         }
         
-        if (RamenApp.current.settings.autoResolution! && (txtSerialNumber.text ?? "").isEmpty) {
+        if (!isPairing && RamenApp.current.settings.autoResolution! && (txtSerialNumber.text ?? "").isEmpty) {
             showError("Please provide a Serial Number")
             return false
         }

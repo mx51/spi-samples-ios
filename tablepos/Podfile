@@ -7,8 +7,8 @@ target 'TablePos' do
 
     # Pods for TablePos
     #pod 'SPIClient-iOS', '~> 2.5.0'
-    #pod 'SPIClient-iOS', :path => '~/Documents/GitHub/spi-client-ios/feature-v2.6.1'
-    pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios.git', :branch => 'feature/v2.6.1'
+    #pod 'SPIClient-iOS', :path => '~/Documents/GitHub/spi-client-ios/feature-v2.6.3'
+    pod 'SPIClient-iOS', :git => 'https://github.com/AssemblyPayments/spi-client-ios.git', :branch => 'feature/v2.6.3'
 
     target 'TablePosTests' do
         inherit! :search_paths

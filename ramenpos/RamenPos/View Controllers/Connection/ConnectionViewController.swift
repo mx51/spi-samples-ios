@@ -34,7 +34,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
         txtSerialNumber.text = RamenApp.current.settings.serialNumber
-        txtPosAddress.isEnabled = false
         RamenApp.current.settings.autoResolution = swchAutoResolution.isOn
         RamenApp.current.settings.testMode = swchAutoResolution.isOn
     }
@@ -95,12 +94,10 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             swchTestModeValue.isOn = false
             swchTestModeValue.isEnabled = false
             btnSave.isEnabled = false
-            txtPosAddress.isEnabled = true
         } else {
             swchTestModeValue.isOn = true
             swchTestModeValue.isEnabled = true
             btnSave.isEnabled = true
-            txtPosAddress.isEnabled = false
         }
         
         RamenApp.current.settings.autoResolution = sender.isOn

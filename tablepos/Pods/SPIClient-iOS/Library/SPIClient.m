@@ -176,6 +176,18 @@ static NSInteger retriesBeforePairing = 3; // How many retries before resolving 
         [NSException raise:@"Missing POS vendor ID and version" format:@"posVendorId and posVersion are required before starting"];
     }
     
+    if (![self isPosIdValid:_posId]) {
+        // continue, as they can set the posId later on
+        _posId = @"";
+        NSLog(@"Invalid parameter, please correct them before pairing");
+    }
+    
+    if (![self isEftposAddressValid:_eftposAddress]) {
+        // continue, as they can set the eftposAddress later on
+        _eftposAddress = @"";
+        NSLog(@"Invalid parameter, please correct them before pairing");
+    }
+    
     // Setup the Connection
     self.connection = [[SPIWebSocketConnection alloc] initWithDelegate:self];
     [self.connection setUrl:self.eftposAddress];
@@ -242,9 +254,17 @@ static NSInteger retriesBeforePairing = 3; // How many retries before resolving 
 #pragma mark - Pairing
 
 - (void)pair {
-    NSLog(@"pair");
+    NSLog(@"Trying to pair ....");
     
-    if (self.state.status != SPIStatusUnpaired) return;
+    if (self.state.status != SPIStatusUnpaired) {
+        NSLog(@"Tried to Pair, but we're already paired. Stop pairing.");
+        return;
+    }
+    
+    if (![self isPosIdValid:_posId] || ![self isEftposAddressValid:_eftposAddress]) {
+        NSLog(@"Invalid Pos Id or Eftpos address, stop pairing.");
+        return;
+    }
     
     SPIPairingFlowState *currentPairingFlowState = [SPIPairingFlowState new];
     currentPairingFlowState.message = @"Connecting...";
@@ -915,16 +935,16 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 #pragma mark - Connection
 
 - (void)setEftposAddress:(NSString *)url {
-    if (url.length == 0) {
-        [self.connection setUrl:nil];
-        return;
-    }
-    
     if (self.state.status == SPIStatusPairedConnected || _autoAddressResolutionEnable) {
         return;
     }
     
-    [self validateEftposAddress:url];
+    _eftposAddress = @"";
+    
+    if (![self isEftposAddressValid:url.copy]) {
+        NSLog(@"Eftpos Address set to null");
+        return;
+    }
     
     if (![url hasPrefix:@"ws://"]) {
         url = [NSString stringWithFormat:@"ws://%@", url];
@@ -937,12 +957,24 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 }
 
 - (void)setPosId:(NSString *)posId {
-    _posId = [self validatePosId:posId.copy];
-    NSLog(@"setPosId: %@ and set spiMessageStamp", _posId);
+    if (self.state.status != SPIStatusUnpaired) {
+        return;
+    }
+    
+    _posId = @"";
+    
+    if (![self isPosIdValid:posId.copy]) {
+        NSLog(@"Pos Id set to null");
+        return;
+    }
+    
+    _posId = posId;
+    
+    NSLog(@"setPosId: %@ and set spiMessageStamp", posId);
     
     if (_posId.length > 0) {
         // Our stamp for signing outgoing messages
-        self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:_posId secrets:nil serverTimeDelta:0];
+        self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:posId secrets:nil serverTimeDelta:0];
     }
 }
 
@@ -2094,27 +2126,42 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 #pragma mark - Internals for Validations
 
-- (NSString *)validatePosId:(NSString *)posId {
-    if (posId.length  > 16) {
-        posId = [posId substringWithRange:NSMakeRange(0, 16)];
-        NSLog(@"The Pos Id should be equal or less than 16 characters! It has been truncated");
+- (BOOL)isPosIdValid:(NSString *)posId {
+    if (posId.length == 0) {
+        NSLog(@"Pos Id cannot be null or empty");
+        return false;
+    }
+    
+    if (posId.length > 16) {
+        NSLog(@"Pos Id is greater than 16 characters");
+        return false;
     }
     
     NSUInteger match = [_posIdRegex numberOfMatchesInString:posId options:0 range:NSMakeRange(0, [posId length])];
     
     if (posId.length != 0 && match == 0) {
-        NSLog(@"The Pos Id can not include special characters!");
+        NSLog(@"The Pos Id can not include special characters");
+        return false;
     }
     
-    return posId;
+    return true;
 }
 
-- (void)validateEftposAddress:(NSString *)eftposAddress {
+- (BOOL)isEftposAddressValid:(NSString *)eftposAddress {
+    if (eftposAddress.length == 0) {
+        NSLog(@"The Eftpos Address cannot be null or empty");
+        return false;
+    }
+    
+    eftposAddress = [eftposAddress stringByReplacingOccurrencesOfString:@"ws://" withString:@""];
     NSUInteger match = [_eftposAddressRegex numberOfMatchesInString:eftposAddress options:0 range:NSMakeRange(0, [eftposAddress length])];
     
     if (eftposAddress.length != 0 && match == 0) {
-        NSLog(@"The Eftpos Address is not in correct format!");
+        NSLog(@"The Eftpos Address is not in right format");
+        return false;
     }
+    
+    return true;
 }
 
 @end

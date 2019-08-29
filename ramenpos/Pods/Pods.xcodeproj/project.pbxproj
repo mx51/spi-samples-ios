@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -191,9 +191,9 @@
 		1FF3DA459F7010FA925B45A7EE417C26 /* SPIWebSocketConnection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIWebSocketConnection.h; path = Library/Network/SPIWebSocketConnection.h; sourceTree = "<group>"; };
 		20F15553A4DF90273F0E9BE58B5436DB /* JKBigInteger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKBigInteger.h; path = Library/JKBigInteger/JKBigInteger.h; sourceTree = "<group>"; };
 		22688BF40D1126EC8900013794C96A2E /* SPIWebSocketConnection.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPIWebSocketConnection.m; path = Library/Network/SPIWebSocketConnection.m; sourceTree = "<group>"; };
-		2351A96ABD85A44CE8A25462AE73F773 /* SocketRocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SocketRocket.framework; path = SocketRocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2351A96ABD85A44CE8A25462AE73F773 /* SocketRocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SocketRocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2585A4403A00F7664C16BA881EC65E0A /* Pods-RamenPos-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-RamenPos-acknowledgements.plist"; sourceTree = "<group>"; };
-		25F0779582B79F161625F90B7BD678DE /* SPIClient_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SPIClient_iOS.framework; path = "SPIClient-iOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		25F0779582B79F161625F90B7BD678DE /* SPIClient_iOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SPIClient_iOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		271F1579B291B59172F02FE56FD7402F /* Pods-RamenPosTests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-RamenPosTests-umbrella.h"; sourceTree = "<group>"; };
 		2A917406980B629FEE9446693994C4A3 /* SPIClient_iOS.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIClient_iOS.h; path = Library/SPIClient_iOS.h; sourceTree = "<group>"; };
 		2A919E4BB3908412509036141352CCE9 /* SPIClient-iOS.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "SPIClient-iOS.modulemap"; sourceTree = "<group>"; };
@@ -206,7 +206,7 @@
 		358D187E826C7DB0504096C3BFD3C237 /* SPIPayAtTable.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPIPayAtTable.m; path = Library/Model/SPIPayAtTable.m; sourceTree = "<group>"; };
 		3A272C3FF6465548B42491D5E4B0D1A5 /* NSObject+Util.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSObject+Util.h"; path = "Library/Categories/NSObject+Util.h"; sourceTree = "<group>"; };
 		3A778386916F97810C34D68C7C71F081 /* SPILogger.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPILogger.m; path = Library/Util/SPILogger.m; sourceTree = "<group>"; };
-		3D517307F28695003D17F205150C9EA6 /* RNCryptor_objc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = RNCryptor_objc.framework; path = "RNCryptor-objc.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D517307F28695003D17F205150C9EA6 /* RNCryptor_objc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RNCryptor_objc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		40DF726F955F58263AB259AED366F2D4 /* Pods-RamenPosTests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-RamenPosTests-acknowledgements.plist"; sourceTree = "<group>"; };
 		4133608D84104E234894220338A09F06 /* RNCryptor_objc.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RNCryptor_objc.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		41F0FA133F83A5B11CD5637EDF6D8414 /* SPIKeyRollingHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIKeyRollingHelper.h; path = Library/Model/SPIKeyRollingHelper.h; sourceTree = "<group>"; };
@@ -255,8 +255,8 @@
 		8D6815816E0E76D55243CE4EC0640ACC /* RNCryptor+Private.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "RNCryptor+Private.h"; path = "RNCryptor/RNCryptor+Private.h"; sourceTree = "<group>"; };
 		8D98C3AF6F66B5F532C54896F2A2E24C /* SPIDeviceService.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIDeviceService.h; path = Library/Service/SPIDeviceService.h; sourceTree = "<group>"; };
 		8FAF3F9095374D9EA0D1316266EE24E8 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		91A1CC7C5D143CEE8E239546970CE2DF /* Pods_RamenPosUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_RamenPosUITests.framework; path = "Pods-RamenPosUITests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		91A1CC7C5D143CEE8E239546970CE2DF /* Pods_RamenPosUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RamenPosUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		950C815AFD1FD098F85A4DE6D830D598 /* SPIPurchaseHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIPurchaseHelper.h; path = Library/Model/SPIPurchaseHelper.h; sourceTree = "<group>"; };
 		95E42EFCE2C315CC8AF2C83E5A2F89B9 /* SPIModels.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPIModels.m; path = Library/SPIModels.m; sourceTree = "<group>"; };
 		99B0443D3CC21AF36C348E6BD0498ECB /* RNEncryptor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RNEncryptor.h; path = RNCryptor/RNEncryptor.h; sourceTree = "<group>"; };
@@ -272,7 +272,7 @@
 		B5A70AA293C264104792F714F92881FB /* SPIPayAtTable.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIPayAtTable.h; path = Library/Model/SPIPayAtTable.h; sourceTree = "<group>"; };
 		BA5C0C6D5F9092B730067CA7D46EFD14 /* SPICrypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPICrypto.h; path = Library/Crypto/SPICrypto.h; sourceTree = "<group>"; };
 		BAEB183A5D2844402020B4CFDD2637DD /* NSDateFormatter+Util.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSDateFormatter+Util.m"; path = "Library/Categories/NSDateFormatter+Util.m"; sourceTree = "<group>"; };
-		C207CD401B5040B1D944F0A37355F5F4 /* tommath.c */ = {isa = PBXFileReference; includeInIndex = 1; name = tommath.c; path = Library/JKBigInteger/LibTomMath/tommath.c; sourceTree = "<group>"; };
+		C207CD401B5040B1D944F0A37355F5F4 /* tommath.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = tommath.c; path = Library/JKBigInteger/LibTomMath/tommath.c; sourceTree = "<group>"; };
 		C2A7CAA50ADABA3338DE7BCE13A359FC /* SPIPairingHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIPairingHelper.h; path = Library/Model/SPIPairingHelper.h; sourceTree = "<group>"; };
 		C3AC345026545F97D785A68D8868B970 /* tommath_class.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = tommath_class.h; path = Library/JKBigInteger/LibTomMath/tommath_class.h; sourceTree = "<group>"; };
 		CA4ECADF7ABD02B59BC660022EC1260D /* Pods-RamenPosTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-RamenPosTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -284,14 +284,14 @@
 		D11D5BE9D76E43079AD0FFC10FFD30D9 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D4588759099F6ABF55F22326AADC00E1 /* SPITerminal.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPITerminal.m; path = Library/Model/SPITerminal.m; sourceTree = "<group>"; };
 		D602B193BD2B01C7C989E6C0762E7717 /* SPIPingHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIPingHelper.h; path = Library/Network/SPIPingHelper.h; sourceTree = "<group>"; };
-		DAB0CF0CADB50CEF1F0D7AA65AD3307E /* Pods_RamenPos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_RamenPos.framework; path = "Pods-RamenPos.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAB0CF0CADB50CEF1F0D7AA65AD3307E /* Pods_RamenPos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RamenPos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC102E2F7656834E4972F14A8C48D7DF /* SPITransaction.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPITransaction.h; path = Library/Model/SPITransaction.h; sourceTree = "<group>"; };
 		DC2607B9B2C60A81FB193ECA9DE2BEFE /* Pods-RamenPos-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-RamenPos-acknowledgements.markdown"; sourceTree = "<group>"; };
 		DC732089D517D489322A54336C3640F8 /* SPIPurchaseHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPIPurchaseHelper.m; path = Library/Model/SPIPurchaseHelper.m; sourceTree = "<group>"; };
 		DD6DA464BED536383CB3C68CFC83E406 /* SPIKeyRollingHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SPIKeyRollingHelper.m; path = Library/Model/SPIKeyRollingHelper.m; sourceTree = "<group>"; };
 		DDD2F5A1EF5764E877D2562DDA008ED3 /* RNCryptor-objc-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "RNCryptor-objc-dummy.m"; sourceTree = "<group>"; };
 		DE19EEF89937E9221DBCF88B9DE4BD6B /* tommath.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = tommath.h; path = Library/JKBigInteger/LibTomMath/tommath.h; sourceTree = "<group>"; };
-		DF9F20CCF0CAF9B11006E4D60E783090 /* Pods_RamenPosTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_RamenPosTests.framework; path = "Pods-RamenPosTests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF9F20CCF0CAF9B11006E4D60E783090 /* Pods_RamenPosTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RamenPosTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2D237011841DFC7FB41D41E23DD610F /* Pods-RamenPos-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-RamenPos-resources.sh"; sourceTree = "<group>"; };
 		E309218ACA14E1E37F471C5AE2AF6DB3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		E36C33E4B06F9F1A8165A82FF784D629 /* SPIDeviceInfo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SPIDeviceInfo.h; path = Library/Util/SPIDeviceInfo.h; sourceTree = "<group>"; };
@@ -386,7 +386,6 @@
 				ED3049BAF8BAD04DA4142434F820449A /* RNEncryptor.m */,
 				DA05F666C4945B526FC2E6ED4A1892F2 /* Support Files */,
 			);
-			name = "RNCryptor-objc";
 			path = "RNCryptor-objc";
 			sourceTree = "<group>";
 		};
@@ -411,7 +410,6 @@
 				4588786D208E3E2FFFA6BC2AD3AABBAE /* SRWebSocket.m */,
 				FFFE66281F3EACD69EB1D63A4C007F08 /* Support Files */,
 			);
-			name = SocketRocket;
 			path = SocketRocket;
 			sourceTree = "<group>";
 		};
@@ -528,7 +526,6 @@
 				6911338D575C26ED4CD5489E3AFC8363 /* tommath_superclass.h */,
 				AA70D5ABF95515075CAAC21E7450C75F /* Support Files */,
 			);
-			name = "SPIClient-iOS";
 			path = "SPIClient-iOS";
 			sourceTree = "<group>";
 		};
@@ -859,14 +856,15 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0930;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1030;
 			};
 			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
 			productRefGroup = 0DA2A1D0C9C45AD4C29F986E4E77500E /* Products */;
@@ -1035,11 +1033,7 @@
 				INFOPLIST_FILE = "Target Support Files/SPIClient-iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/SPIClient-iOS/SPIClient-iOS.modulemap";
 				PRODUCT_MODULE_NAME = SPIClient_iOS;
 				PRODUCT_NAME = SPIClient_iOS;
@@ -1057,6 +1051,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1133,11 +1128,7 @@
 				INFOPLIST_FILE = "Target Support Files/Pods-RamenPosUITests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-RamenPosUITests/Pods-RamenPosUITests.modulemap";
 				OTHER_LDFLAGS = "";
@@ -1171,11 +1162,7 @@
 				INFOPLIST_FILE = "Target Support Files/RNCryptor-objc/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/RNCryptor-objc/RNCryptor-objc.modulemap";
 				PRODUCT_MODULE_NAME = RNCryptor_objc;
 				PRODUCT_NAME = RNCryptor_objc;
@@ -1206,11 +1193,7 @@
 				INFOPLIST_FILE = "Target Support Files/Pods-RamenPosTests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-RamenPosTests/Pods-RamenPosTests.modulemap";
 				OTHER_LDFLAGS = "";
@@ -1244,11 +1227,7 @@
 				INFOPLIST_FILE = "Target Support Files/Pods-RamenPosTests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-RamenPosTests/Pods-RamenPosTests.modulemap";
 				OTHER_LDFLAGS = "";
@@ -1281,11 +1260,7 @@
 				INFOPLIST_FILE = "Target Support Files/RNCryptor-objc/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/RNCryptor-objc/RNCryptor-objc.modulemap";
 				PRODUCT_MODULE_NAME = RNCryptor_objc;
 				PRODUCT_NAME = RNCryptor_objc;
@@ -1317,11 +1292,7 @@
 				INFOPLIST_FILE = "Target Support Files/SPIClient-iOS/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/SPIClient-iOS/SPIClient-iOS.modulemap";
 				PRODUCT_MODULE_NAME = SPIClient_iOS;
 				PRODUCT_NAME = SPIClient_iOS;
@@ -1353,11 +1324,7 @@
 				INFOPLIST_FILE = "Target Support Files/SocketRocket/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/SocketRocket/SocketRocket.modulemap";
 				PRODUCT_MODULE_NAME = SocketRocket;
 				PRODUCT_NAME = SocketRocket;
@@ -1389,11 +1356,7 @@
 				INFOPLIST_FILE = "Target Support Files/SocketRocket/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/SocketRocket/SocketRocket.modulemap";
 				PRODUCT_MODULE_NAME = SocketRocket;
 				PRODUCT_NAME = SocketRocket;
@@ -1424,11 +1387,7 @@
 				INFOPLIST_FILE = "Target Support Files/Pods-RamenPos/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-RamenPos/Pods-RamenPos.modulemap";
 				OTHER_LDFLAGS = "";
@@ -1462,11 +1421,7 @@
 				INFOPLIST_FILE = "Target Support Files/Pods-RamenPos/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-RamenPos/Pods-RamenPos.modulemap";
 				OTHER_LDFLAGS = "";
@@ -1486,6 +1441,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1557,11 +1513,7 @@
 				INFOPLIST_FILE = "Target Support Files/Pods-RamenPosUITests/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-RamenPosUITests/Pods-RamenPosUITests.modulemap";
 				OTHER_LDFLAGS = "";

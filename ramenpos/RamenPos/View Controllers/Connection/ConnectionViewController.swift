@@ -72,6 +72,10 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     }
     
     @IBAction func saveButtonClicked(_ sender: Any) {
+        if (client.state.status == SPIStatus.pairedConnected) {
+            return
+        }
+        
         if (!areControlsValid(isPairing: false)) {
             return
         }

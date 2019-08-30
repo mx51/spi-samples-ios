@@ -34,8 +34,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
         txtSerialNumber.text = RamenApp.current.settings.serialNumber
-        RamenApp.current.settings.autoResolution = swchAutoResolution.isOn
-        RamenApp.current.settings.testMode = swchAutoResolution.isOn
+        swchAutoResolution.isOn = RamenApp.current.settings.autoResolution ?? false
+        swchTestModeValue.isOn = RamenApp.current.settings.testMode ?? false
     }
     
     @IBAction func pairButtonClicked(_ sender: Any) {
@@ -101,6 +101,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
         
         RamenApp.current.settings.autoResolution = sender.isOn
+        RamenApp.current.settings.testMode = swchTestModeValue.isOn
     }
     
     @objc

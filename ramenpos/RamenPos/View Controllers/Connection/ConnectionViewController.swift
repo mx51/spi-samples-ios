@@ -86,7 +86,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     }
     
     @IBAction func swchTestModeValueChanged(_ sender: UISwitch) {
-        RamenApp.current.settings.testMode = sender.isOn
+        RamenApp.current.settings.autoResolution = sender.isOn
+        RamenApp.current.settings.testMode = swchTestModeValue.isOn
     }
     
     @IBAction func swchAutoResolutionValueChanged(_ sender: UISwitch) {

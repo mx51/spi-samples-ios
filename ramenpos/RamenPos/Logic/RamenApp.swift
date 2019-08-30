@@ -24,8 +24,8 @@ class RamenApp: NSObject {
         client.eftposAddress = settings.eftposAddress
         client.posId = settings.posId
 
-        client.testMode = settings.testMode!
-        client.autoAddressResolutionEnable = settings.autoResolution!
+        client.testMode = settings.testMode ?? false
+        client.autoAddressResolutionEnable = settings.autoResolution ?? false
         client.serialNumber = settings.serialNumber
 
         client.config.signatureFlowOnEftpos = settings.customerSignatureFromEftpos ?? false

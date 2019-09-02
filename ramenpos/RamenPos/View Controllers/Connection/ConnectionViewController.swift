@@ -26,6 +26,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         return RamenApp.current.client
     }
     
+    var isUnnpaired = Bool()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,6 +48,13 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         
         if (!areControlsValid(isPairing: true)) {
             return
+        }
+        
+        if (isUnnpaired && swchAutoResolution.isOn) {
+            client.posId = ""
+            client.eftposAddress = ""
+            client.serialNumber = ""
+            isUnnpaired = false
         }
         
         let settings = RamenApp.current.settings
@@ -69,6 +78,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     @IBAction func unpair() {
         RamenApp.current.client.unpair()
+        isUnnpaired = true
     }
     
     @IBAction func saveButtonClicked(_ sender: Any) {

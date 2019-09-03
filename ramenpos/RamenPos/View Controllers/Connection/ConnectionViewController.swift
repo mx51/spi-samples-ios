@@ -50,13 +50,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return
         }
         
-        if (isUnnpaired && swchAutoResolution.isOn) {
-            client.posId = ""
-            client.eftposAddress = ""
-            client.serialNumber = ""
-            isUnnpaired = false
-        }
-        
         let settings = RamenApp.current.settings
         settings.autoResolution = swchAutoResolution.isOn
         settings.testMode = swchTestModeValue.isOn
@@ -88,6 +81,13 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         
         if (!areControlsValid(isPairing: false)) {
             return
+        }
+        
+        if (isUnnpaired && swchAutoResolution.isOn) {
+            client.posId = ""
+            client.eftposAddress = ""
+            client.serialNumber = ""
+            isUnnpaired = false
         }
         
         btnSave.isEnabled = false

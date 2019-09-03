@@ -14,7 +14,7 @@ extension MainViewController {
     @IBAction func btnOpenTableClicked(_ sender: Any) {         
         let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
     
-        let tableIdRegex = try! NSRegularExpression(pattern: "^[a-zA-Z0-9 ]*$")
+        let tableIdRegex = try! NSRegularExpression(pattern: "^[a-zA-Z0-9]*$")
         let match = tableIdRegex.numberOfMatches(in: tableId!, options: [], range: NSMakeRange(0, tableId!.count));
         
         if (tableId!.count != 0 && match == 0) {

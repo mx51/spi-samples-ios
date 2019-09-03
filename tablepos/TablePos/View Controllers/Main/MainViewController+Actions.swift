@@ -12,8 +12,7 @@ import SPIClient_iOS
 extension MainViewController {
     
     @IBAction func btnOpenTableClicked(_ sender: Any) {         
-        let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
-    
+        let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)        
         let tableIdRegex = try! NSRegularExpression(pattern: "^[a-zA-Z0-9]*$")
         let match = tableIdRegex.numberOfMatches(in: tableId!, options: [], range: NSMakeRange(0, tableId!.count));
         
@@ -65,11 +64,6 @@ extension MainViewController {
     
     @IBAction func btnLockUnlockTableClicked(_ sender: Any) {
         let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let tableIdInt:Int? = Int(tableId!)
-        if tableIdInt == nil || tableIdInt! <= 0 {
-            showMessage(title: "Lock/UnLock Table", msg: "Incorrect Table Id!", type: "ERROR", isShow: true)
-            return
-        }
         
         if (TableApp.current.tableToBillMapping[tableId!] == nil) {
             showMessage(title: "Lock/UnLock Table", msg: "Table not Open.", type: "WARNING", isShow: true)

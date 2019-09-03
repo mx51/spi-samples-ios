@@ -13,6 +13,14 @@ extension MainViewController {
     
     @IBAction func btnOpenTableClicked(_ sender: Any) {         
         let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
+    
+        let tableIdRegex = try! NSRegularExpression(pattern: "^[a-zA-Z0-9 ]*$")
+        let match = tableIdRegex.numberOfMatches(in: tableId!, options: [], range: NSMakeRange(0, tableId!.count));
+        
+        if (tableId!.count != 0 && match == 0) {
+            showMessage(title: "Open Table", msg: "The Pos Id can not include special characters", type: "WARNING", isShow: true)
+            return
+        }
         
         if TableApp.current.tableToBillMapping[tableId!] != nil {
             let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!

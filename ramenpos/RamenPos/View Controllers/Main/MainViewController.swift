@@ -94,7 +94,6 @@ class MainViewController: UITableViewController, NotificationListener {
     }
     
     @IBAction func swchPrintMerchantCopyValueChanged(_ sender: UISwitch) {
-        client.getTerminalConfiguration()
         client.config.printMerchantCopy = sender.isOn
         RamenApp.current.settings.printMerchantCopy = sender.isOn
     }

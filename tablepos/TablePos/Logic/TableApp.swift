@@ -20,6 +20,7 @@ class TableApp: NSObject {
     var billsStore = [String: Bill] ()
     var tableToBillMapping = [String: String] ()
     var assemblyBillDataStore = [String: String] ()
+    var allowedOperatorIds: Array<String> = Array()
     
     static var current: TableApp {
         return _instance
@@ -36,6 +37,7 @@ class TableApp: NSObject {
         
         client.delegate = self
         spiPat = client.enablePayAtTable()
+        enablePayAtTableConfig()
         spiPat.config.labelTableId = "Table Number"
         spiPat.delegate = self
         
@@ -79,5 +81,30 @@ class TableApp: NSObject {
         let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
         try? jsonString?.write(to: fileUrl, atomically: true, encoding: .utf8)
+    }
+    
+    func enablePayAtTableConfig() {
+        spiPat.config.payAtTableEnabled = true
+        spiPat.config.operatorIdEnabled = true
+        spiPat.config.allowedOperatorIds = allowedOperatorIds
+        spiPat.config.equalSplitEnabled = true
+        spiPat.config.splitByAmountEnabled = true
+        spiPat.config.summaryReportEnabled = true
+        spiPat.config.tippingEnabled = true
+        spiPat.config.labelOperatorId = "Operator ID"
+        spiPat.config.labelPayButton = "Pay at Table"
+        spiPat.config.labelTableId = "Table Number"
+        spiPat.config.tableRetrievalEnabled = true
+        
+        settings.patEnabled = spiPat.config.payAtTableEnabled
+        settings.operatorIdEnabled = spiPat.config.operatorIdEnabled
+        settings.equalSplit = spiPat.config.equalSplitEnabled
+        settings.splitByAmount = spiPat.config.splitByAmountEnabled
+        settings.tipping = spiPat.config.tippingEnabled
+        settings.summaryReport = spiPat.config.summaryReportEnabled
+        settings.tableRetrievalButton = spiPat.config.tableRetrievalEnabled
+        settings.labelPayButton = spiPat.config.labelPayButton
+        settings.labelTableId = spiPat.config.labelTableId
+        settings.labelOperatorId = spiPat.config.labelOperatorId
     }
 }

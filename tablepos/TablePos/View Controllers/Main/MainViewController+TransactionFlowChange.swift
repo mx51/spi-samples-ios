@@ -36,6 +36,8 @@ extension MainViewController {
         case .unpaired:
             lblStatus.text = "Not Connected"
             break
+        default:
+            break
         }
         
         lblPosId.text = TableApp.current.settings.posId
@@ -66,6 +68,8 @@ extension MainViewController {
             } else if (state.txFlowState.isFinished) {
                 ok()
             }
+        default:
+            break
         }
     }
     

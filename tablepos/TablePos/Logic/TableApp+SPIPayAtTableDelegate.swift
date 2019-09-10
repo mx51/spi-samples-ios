@@ -60,8 +60,9 @@ extension TableApp: SPIPayAtTableDelegate {
         let bill: Bill = billsStore[billPayment.billId]!
         bill.outstandingAmount! -= billPayment.purchaseAmount
         bill.tippedAmount! += billPayment.tipAmount
+        bill.surchargeAmount! += billPayment.surchargeAmount
         bill.locked = bill.outstandingAmount == 0 ? false: true
-
+        
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: "Updated Bill: \(bill.toString())", isShow: true))
         
         assemblyBillDataStore[billPayment.billId] = updatedBillData
@@ -81,7 +82,8 @@ extension TableApp: SPIPayAtTableDelegate {
         
         if tableToBillMapping.count > 0 {
             for item in tableToBillMapping {
-                if billsStore[item.value]!.operatorId == operatorId  && billsStore[item.value]!.outstandingAmount! > 0 {
+                if billsStore[item.value]!.operatorId == operatorId  && billsStore[item.value]!.outstandingAmount! > 0 &&
+                    !billsStore[item.value]!.locked!{
                     if !isOpenTables {
                         openTables = "Open Tables:\n"
                         isOpenTables = true
@@ -98,12 +100,12 @@ extension TableApp: SPIPayAtTableDelegate {
         }
         
         if !isOpenTables {
-            openTables = "No Open Tables."
-        }        
+            //No Open Tables.
+        } else {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: openTables, isShow: true))
+        }
         
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: openTables, isShow: true))
-        
-        response.openTablesData = openTablesArray
+        response.openTablesEntries = openTablesArray
         return response
     }
     
@@ -111,8 +113,8 @@ extension TableApp: SPIPayAtTableDelegate {
         let billPaymentFlowEndedResponse: SPIBillPaymentFlowEndedResponse = SPIBillPaymentFlowEndedResponse(message: message)
         var message: String = ""
         
-        if !(billsStore[billPaymentFlowEndedResponse.billId] != nil) {
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Flow Ended", type: "ERROR", message: "Incorrect Bill Id!", isShow: true))
+        if !(billsStore[billPaymentFlowEndedResponse.tableId] != nil) {
+            //Table Id not found
             return
         }
         

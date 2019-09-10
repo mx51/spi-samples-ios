@@ -11,14 +11,15 @@ import SPIClient_iOS
 
 extension MainViewController {
     
-    @IBAction func btnOpenTableClicked(_ sender: Any) {        
-        let tableIdInt:Int? = Int(txtTableId.text!)
-        if tableIdInt == nil || tableIdInt! <= 0 {
-            showMessage(title: "Open Table", msg: "Incorrect Table Id!", type: "ERROR", isShow: true)
+    @IBAction func btnOpenTableClicked(_ sender: Any) {         
+        let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)        
+        let tableIdRegex = try! NSRegularExpression(pattern: "^[a-zA-Z0-9]*$")
+        let match = tableIdRegex.numberOfMatches(in: tableId!, options: [], range: NSMakeRange(0, tableId!.count));
+        
+        if (tableId!.count != 0 && match == 0) {
+            showMessage(title: "Open Table", msg: "The Pos Id can not include special characters", type: "WARNING", isShow: true)
             return
         }
-        
-        let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
         
         if TableApp.current.tableToBillMapping[tableId!] != nil {
             let bill: Bill = TableApp.current.billsStore[TableApp.current.tableToBillMapping[tableId!]!]!
@@ -63,11 +64,6 @@ extension MainViewController {
     
     @IBAction func btnLockUnlockTableClicked(_ sender: Any) {
         let tableId = txtTableId.text?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let tableIdInt:Int? = Int(tableId!)
-        if tableIdInt == nil || tableIdInt! <= 0 {
-            showMessage(title: "Lock/UnLock Table", msg: "Incorrect Table Id!", type: "ERROR", isShow: true)
-            return
-        }
         
         if (TableApp.current.tableToBillMapping[tableId!] == nil) {
             showMessage(title: "Lock/UnLock Table", msg: "Table not Open.", type: "WARNING", isShow: true)
@@ -213,6 +209,45 @@ extension MainViewController {
         client.initiateSettleTx(id,
                                 options: options,
                                 completion: printResult)
+    }
+    
+    @IBAction func btnSetLabelOperatorIdClicked(_ sender:  Any) {
+        spiPat.config.labelOperatorId = txtLabelOperatorId.text
+        TableApp.current.settings.labelOperatorId = txtLabelOperatorId.text
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnSetLabelTableIdClicked(_ sender: Any) {
+        spiPat.config.labelTableId = txtLabelTableId.text
+        TableApp.current.settings.labelTableId = txtLabelTableId.text
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnSetLabelPayButtonClicked(_ sender: Any) {
+        spiPat.config.labelPayButton = txtLabelPayButton.text
+        TableApp.current.settings.labelPayButton = txtLabelPayButton.text
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnAddAllowedOperatorIdClicked(_ sender: Any) {
+        TableApp.current.allowedOperatorIds.append(txtAllowedOperatorId.text!)
+        spiPat.config.allowedOperatorIds = TableApp.current.allowedOperatorIds
+        spiPat.pushConfig()
+    }
+    
+    @IBAction func btnSetPatAllEnabledClicked(_ sender: Any) {
+        TableApp.current.enablePayAtTableConfig()
+        swchPatEnabled.isOn = TableApp.current.settings.patEnabled ?? false
+        swchOperatorIDEnabled.isOn = TableApp.current.settings.operatorIdEnabled ?? false
+        swchEqualSplit.isOn = TableApp.current.settings.equalSplit ?? false
+        swchSplitByAmount.isOn = TableApp.current.settings.splitByAmount ?? false
+        swchTipping.isOn = TableApp.current.settings.tipping ?? false
+        swchSummaryReport.isOn = TableApp.current.settings.summaryReport ?? false
+        swchTableRetrievalButton.isOn = TableApp.current.settings.tableRetrievalButton ?? false
+        txtLabelPayButton.text = TableApp.current.settings.labelPayButton
+        txtLabelTableId.text = TableApp.current.settings.labelTableId
+        txtLabelOperatorId.text = TableApp.current.settings.labelOperatorId
+        spiPat.pushConfig()
     }
     
     func newBillId() -> String {

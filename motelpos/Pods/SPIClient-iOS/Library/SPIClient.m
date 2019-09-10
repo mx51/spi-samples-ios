@@ -9,6 +9,7 @@
 #import "NSObject+Util.h"
 #import "NSString+Util.h"
 #import "NSDate+Util.h"
+#import "NSDateFormatter+Util.h"
 #import "SPICashout.h"
 #import "SPIClient.h"
 #import "SPIClient+Internal.h"
@@ -63,6 +64,12 @@
 
 @property (nonatomic, strong) NSObject *txLock;
 
+@property (nonatomic, assign) NSInteger retriesSinceLastPairing;
+
+@property (nonatomic, strong) NSRegularExpression *posIdRegex;
+
+@property (nonatomic, strong) NSRegularExpression *eftposAddressRegex;
+
 @end
 
 static NSTimeInterval txMonitorCheckFrequency = 1; // How often do we check on the tx state from our tx monitoring thread
@@ -73,7 +80,12 @@ static NSTimeInterval maxWaitForCancelTx = 10;  // How long do we wait for cance
 static NSTimeInterval pongTimeout = 5; // How long do we wait for a pong to come back
 static NSTimeInterval pingFrequency = 18; // How often we send pings
 static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before disconnecting
-static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries before resolving Device Address
+static NSInteger retriesBeforeResolvingDeviceAddress = 3; // How many retries before resolving Device Address
+
+static NSString *regexItemsForPosId = @"^[a-zA-Z0-9]*$";
+static NSString *regexItemsForEftposAddress = @"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$";
+
+static NSInteger retriesBeforePairing = 3; // How many retries before resolving Device Address
 
 @implementation SPIClient
 
@@ -84,6 +96,8 @@ static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries be
         _queue = dispatch_queue_create("com.assemblypayments", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0));
         _config = [[SPIConfig alloc] init];
         _state = [SPIState new];
+        _posIdRegex = [NSRegularExpression regularExpressionWithPattern:regexItemsForPosId options:NSRegularExpressionCaseInsensitive error:nil];
+        _eftposAddressRegex = [NSRegularExpression regularExpressionWithPattern:regexItemsForEftposAddress options:NSRegularExpressionCaseInsensitive error:nil];
         
         _txLock = [[NSObject alloc] init];
     }
@@ -105,12 +119,6 @@ static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries be
 
 - (SPIPayAtTable *)enablePayAtTable {
     _spiPat = [[SPIPayAtTable alloc] initWithClient:self];
-    return _spiPat;
-}
-
-- (SPIPayAtTable *)disablePayAtTable {
-    _spiPat = [[SPIPayAtTable alloc] initWithClient:self];
-    _spiPat.config.payAtTableEnabled = false;
     return _spiPat;
 }
 
@@ -166,6 +174,18 @@ static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries be
     if (self.posVendorId.length == 0 || self.posVersion.length == 0) {
         // POS information is now required to be set
         [NSException raise:@"Missing POS vendor ID and version" format:@"posVendorId and posVersion are required before starting"];
+    }
+    
+    if (![self isPosIdValid:_posId]) {
+        // continue, as they can set the posId later on
+        _posId = @"";
+        NSLog(@"Invalid parameter, please correct them before pairing");
+    }
+    
+    if (![self isEftposAddressValid:_eftposAddress]) {
+        // continue, as they can set the eftposAddress later on
+        _eftposAddress = @"";
+        NSLog(@"Invalid parameter, please correct them before pairing");
     }
     
     // Setup the Connection
@@ -234,9 +254,17 @@ static NSInteger retriesBeforeResolvingDeviceAddress = 5; // How many retries be
 #pragma mark - Pairing
 
 - (void)pair {
-    NSLog(@"pair");
+    NSLog(@"Trying to pair ....");
     
-    if (self.state.status != SPIStatusUnpaired) return;
+    if (self.state.status != SPIStatusUnpaired) {
+        NSLog(@"Tried to Pair, but we're already paired. Stop pairing.");
+        return;
+    }
+    
+    if (![self isPosIdValid:_posId] || ![self isEftposAddressValid:_eftposAddress]) {
+        NSLog(@"Invalid Pos Id or Eftpos address, stop pairing.");
+        return;
+    }
     
     SPIPairingFlowState *currentPairingFlowState = [SPIPairingFlowState new];
     currentPairingFlowState.message = @"Connecting...";
@@ -907,12 +935,14 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 #pragma mark - Connection
 
 - (void)setEftposAddress:(NSString *)url {
-    if (url.length == 0) {
-        [self.connection setUrl:nil];
+    if (self.state.status == SPIStatusPairedConnected || _autoAddressResolutionEnable) {
         return;
     }
     
-    if (self.state.status == SPIStatusPairedConnected || _autoAddressResolutionEnable) {
+    _eftposAddress = @"";
+    
+    if (![self isEftposAddressValid:url.copy]) {
+        NSLog(@"Eftpos Address set to null");
         return;
     }
     
@@ -927,8 +957,20 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 }
 
 - (void)setPosId:(NSString *)posId {
-    _posId = posId.copy;
-    NSLog(@"setPosId: %@ and set spiMessageStamp", _posId);
+    if (self.state.status != SPIStatusUnpaired) {
+        return;
+    }
+    
+    _posId = @"";
+    
+    if (![self isPosIdValid:posId.copy]) {
+        NSLog(@"Pos Id set to null");
+        return;
+    }
+    
+    _posId = posId;
+    
+    NSLog(@"setPosId: %@ and set spiMessageStamp", posId);
     
     if (_posId.length > 0) {
         // Our stamp for signing outgoing messages
@@ -998,13 +1040,20 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     NSString *was = _serialNumber;
     _serialNumber = serialNumber.copy;
     
-    if (_autoAddressResolutionEnable && [self hasSerialNumberChanged:was]) {
+    if ([self hasSerialNumberChanged:was]) {
         __weak __typeof(&*self) weakSelf = self;
         
         dispatch_async(self.queue, ^{
             // we're turning it on
             [weakSelf autoResolveEftposAddress];
         });
+    } else {
+        if (self.state.deviceAddressStatus == nil) {
+            self.state.deviceAddressStatus = [[SPIDeviceAddressStatus alloc] init];
+        }
+        
+        self.state.deviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponseCodeSerialNumberNotChanged;
+        [self deviceAddressChanged];
     }
 }
 
@@ -1078,11 +1127,34 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     }
     
     [[SPIDeviceService alloc] retrieveServiceWithSerialNumber:_serialNumber apiKey:_deviceApiKey acquirerCode:_acquirerCode isTestMode:_testMode completion:^(SPIDeviceAddressStatus *addressResponse) {
-        if (addressResponse.address.length == 0) {
+        
+        SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
+        
+        if (addressResponse == nil) {
+            currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponseCodeDeviceError;
+            self.state.deviceAddressStatus = currentDeviceAddressStatus;
+            [self deviceAddressChanged];
             return;
         }
         
+        if (addressResponse.address.length == 0) {
+            if (addressResponse.responseCode == 404) {
+                currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponseCodeInvalidSerialNumber;
+                self.state.deviceAddressStatus = currentDeviceAddressStatus;
+                [self deviceAddressChanged];
+                return;
+            } else {
+                currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponseCodeDeviceError;
+                self.state.deviceAddressStatus = currentDeviceAddressStatus;
+                [self deviceAddressChanged];
+                return;
+            }
+        }
+        
         if (![self hasEftposAddressChanged:addressResponse.address]) {
+            currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponseCodeAddressNotChanged;
+            self.state.deviceAddressStatus = currentDeviceAddressStatus;
+            [self deviceAddressChanged];
             return;
         }
         
@@ -1090,9 +1162,9 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
         self->_eftposAddress = [NSString stringWithFormat:@"ws://%@", addressResponse.address];
         [self->_connection setUrl:self->_eftposAddress];
         
-        SPIDeviceAddressStatus *currentDeviceAddressStatus = [SPIDeviceAddressStatus new];
         currentDeviceAddressStatus.address = addressResponse.address;
         currentDeviceAddressStatus.lastUpdated = addressResponse.lastUpdated;
+        currentDeviceAddressStatus.deviceAddressResponseCode = DeviceAddressResponseCodeSuccess;
         self.state.deviceAddressStatus = currentDeviceAddressStatus;
         [self deviceAddressChanged];
     }];
@@ -1375,8 +1447,16 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     
     if (self.state.flow != SPIFlowTransaction || txState.isFinished || !posRefIdMatched) {
         NSString *trace = checkPosRefId ? [@"Incoming Pos Ref ID: " stringByAppendingString:incomingPosRefId] : m.decryptedJson;
-        SPILog(@"ERROR: Received %@ response but I was not waiting for one. %@", typeName, trace);
-        return YES;
+        if ([typeName  isEqual: @"Cancel"]) {
+            SPICancelTransactionResponse *response = [[SPICancelTransactionResponse alloc] initWithMessage:m];
+            if (!response.wasTxnPastPointOfNoReturn) {
+                SPILog(@"ERROR: Received %@ response but I was not waiting for one. %@", typeName, trace);
+                return YES;
+            }
+        } else {
+            SPILog(@"ERROR: Received %@ response but I was not waiting for one. %@", typeName, trace);
+            return YES;
+        }
     }
     return NO;
 }
@@ -1486,7 +1566,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 [txState completed:gltResponse.successState response:m msg:@"Last transaction retrieved"];
             } else {
                 // TH-4A - Let's try to match the received last transaction against the current transaction
-                SPIMessageSuccessState successState = [self gltMatch:gltResponse posRefId:txState.posRefId];
+                SPIMessageSuccessState successState = [self gltMatch:gltResponse expectedAmount:txState.amountCents requestDate:txState.requestDate posRefId:txState.posRefId];
                 if (successState == SPIMessageSuccessStateUnknown) {
                     // TH-4N: Didn't Match our transaction. Consider unknown state.
                     SPILog(@"Did not match transaction");
@@ -1517,6 +1597,26 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
     
     if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    return gltResponse.getSuccessState;
+}
+
+- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
+                    expectedAmount:(NSInteger)expectedAmount
+                       requestDate:(NSDate *)requestDate
+                          posRefId:(NSString *)posRefId {
+    SPILog(@"GLT check: posRefId=%@->%@}", posRefId, [gltResponse getPosRefId]);
+    
+    NSDate *gltBankDate = [[NSDateFormatter dateFormaterWithFormatter:@"ddMMyyyyHHmmss"] dateFromString:[gltResponse getBankDateTimeString]];
+    BOOL compare = [requestDate compare:gltBankDate];
+    
+    if (![posRefId isEqualToString:gltResponse.getPosRefId]) {
+        return SPIMessageSuccessStateUnknown;
+    }
+    
+    if ([[[gltResponse getTxType] uppercaseString] isEqual: @"PURCHASE"] && [gltResponse getBankNonCashAmount] != expectedAmount && compare > 0) {
         return SPIMessageSuccessStateUnknown;
     }
     
@@ -1644,12 +1744,12 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     
     dispatch_async(self.queue, ^{
         switch (newConnectionState) {
-                case SPIConnectionStateConnecting:
+            case SPIConnectionStateConnecting:
                 SPILog(@"I'm connecting to the EFTPOS at %@...", weakSelf.eftposAddress);
                 break;
                 
-                case SPIConnectionStateConnected:
-                self->_retriesSinceLastDeviceAddressResolution = 0;
+            case SPIConnectionStateConnected:
+                self.retriesSinceLastDeviceAddressResolution = 0;
                 
                 if (weakSelf.state.flow == SPIFlowPairing && weakSelf.state.status == SPIStatusUnpaired) {
                     weakSelf.state.pairingFlowState.message = @"Requesting to pair...";
@@ -1664,7 +1764,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 }
                 break;
                 
-                case SPIConnectionStateDisconnected:
+            case SPIConnectionStateDisconnected:
                 SPILog(@"I'm disconnected from %@", weakSelf.eftposAddress);
                 // Let's reset some lifecycle related state, ready for next connection
                 weakSelf.mostRecentPingSent = nil;
@@ -1685,12 +1785,12 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                         if (weakSelf.connection == nil) return;
                         
-                        if (self->_autoAddressResolutionEnable) {
-                            if (self->_retriesSinceLastDeviceAddressResolution >= retriesBeforeResolvingDeviceAddress) {
+                        if (self.autoAddressResolutionEnable) {
+                            if (self.retriesSinceLastDeviceAddressResolution >= retriesBeforeResolvingDeviceAddress) {
                                 [self autoResolveEftposAddress];
-                                self->_retriesSinceLastDeviceAddressResolution = 0;
+                                self.retriesSinceLastDeviceAddressResolution = 0;
                             } else {
-                                self->_retriesSinceLastDeviceAddressResolution += 1;
+                                self.retriesSinceLastDeviceAddressResolution += 1;
                             }
                         }
                         
@@ -1702,12 +1802,26 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                         }
                     });
                 } else if (weakSelf.state.flow == SPIFlowPairing) {
-                    SPILog(@"Lost connection during pairing.");
-                    weakSelf.state.pairingFlowState.message = @"Could not connect to pair. Check network/EFTPOS and try again...";
-                    [weakSelf onPairingFailed];
-                    [weakSelf pairingFlowStateChanged];
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                        if (weakSelf.state.pairingFlowState.isFinished) return;
+                        
+                        if (self.retriesSinceLastPairing >= retriesBeforePairing) {
+                            self.retriesSinceLastPairing = 0;
+                            SPILog(@"Lost connection during pairing.");
+                            [weakSelf onPairingFailed];
+                            [weakSelf pairingFlowStateChanged];
+                            return;
+                        } else {
+                            SPILog(@"Will try to re-pair in 3s...");
+                            sleep(3);
+                            
+                            if (weakSelf.state.status != SPIStatusPairedConnected) {
+                                [weakSelf.connection connect];
+                            }
+                            self.retriesSinceLastPairing += 1;
+                        }
+                    });
                 }
-                
                 break;
         }
     });
@@ -2008,6 +2122,46 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     dispatch_async(self.queue, ^{
         SPILog(@"ERROR: Received WS error: %@", error);
     });
+}
+
+#pragma mark - Internals for Validations
+
+- (BOOL)isPosIdValid:(NSString *)posId {
+    if (posId.length == 0) {
+        NSLog(@"Pos Id cannot be null or empty");
+        return false;
+    }
+    
+    if (posId.length > 16) {
+        NSLog(@"Pos Id is greater than 16 characters");
+        return false;
+    }
+    
+    NSUInteger match = [_posIdRegex numberOfMatchesInString:posId options:0 range:NSMakeRange(0, [posId length])];
+    
+    if (posId.length != 0 && match == 0) {
+        NSLog(@"The Pos Id can not include special characters");
+        return false;
+    }
+    
+    return true;
+}
+
+- (BOOL)isEftposAddressValid:(NSString *)eftposAddress {
+    if (eftposAddress.length == 0) {
+        NSLog(@"The Eftpos Address cannot be null or empty");
+        return false;
+    }
+    
+    eftposAddress = [eftposAddress stringByReplacingOccurrencesOfString:@"ws://" withString:@""];
+    NSUInteger match = [_eftposAddressRegex numberOfMatchesInString:eftposAddress options:0 range:NSMakeRange(0, [eftposAddress length])];
+    
+    if (eftposAddress.length != 0 && match == 0) {
+        NSLog(@"The Eftpos Address is not in right format");
+        return false;
+    }
+    
+    return true;
 }
 
 @end

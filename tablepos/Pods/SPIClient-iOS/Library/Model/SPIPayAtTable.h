@@ -89,13 +89,15 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 @property (nonatomic, copy) NSString *label;
 @property (nonatomic) NSInteger outstandingAmount;
 
+- (instancetype)initWithDictionary:(NSDictionary *)data;
+
 - (NSDictionary *)toJsonObject;
 
 @end
 
 @interface SPIGetOpenTablesResponse : NSObject
 
-@property (nonatomic, copy) NSMutableArray *openTablesData;
+@property (nonatomic, copy) NSMutableArray<SPIOpenTablesEntry *> *openTablesEntries;
 
 - (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables;
 
@@ -111,6 +113,7 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 @property (nonatomic) SPIPaymentType paymentType;
 @property (nonatomic) NSInteger purchaseAmount;
 @property (nonatomic) NSInteger tipAmount;
+@property (nonatomic) NSInteger surchargeAmount;
 @property (nonatomic, readonly, copy) SPIPurchaseResponse *purchaseResponse;
 @property (nonatomic) BOOL paymentFlowStarted;
 
@@ -132,6 +135,7 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 @property (nonatomic, copy) NSString *labelOperatorId;
 @property (nonatomic, copy) NSString *labelTableId;
 @property (nonatomic, copy) NSArray<NSString *> *allowedOperatorIds;
+@property (nonatomic) BOOL tableRetrievalEnabled;
 
 - (SPIMessage *)toMessage:(NSString *)messageId;
 

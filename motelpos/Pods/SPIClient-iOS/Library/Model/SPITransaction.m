@@ -231,6 +231,10 @@
     return [self.message getDataStringValue:attribute];
 }
 
+- (BOOL)wasTxnPastPointOfNoReturn {
+    return [self.message.error hasPrefix:@"TXN_PAST_POINT_OF_NO_RETURN"];
+}
+
 @end
 
 @implementation SPIGetLastTransactionRequest : NSObject
@@ -282,7 +286,7 @@
 }
 
 - (BOOL)isStillInProgress:(NSString *)posRefId {
-    return ([self wasOperationInProgressError] && [posRefId isEqualToString:[self getPosRefId]]);
+    return ([self wasOperationInProgressError] && ([posRefId isEqualToString:[self getPosRefId]] || [self getPosRefId] == nil));
 }
 
 - (SPIMessageSuccessState)getSuccessState {
@@ -299,6 +303,10 @@
 
 - (NSString *)getPosRefId {
     return [self.message getDataStringValue:@"pos_ref_id"];
+}
+
+- (NSInteger)getBankNonCashAmount {
+    return [self.message getDataIntegerValue:@"bank_noncash_amount"];
 }
 
 - (NSString *)getSchemeApp {

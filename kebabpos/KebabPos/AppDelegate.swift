@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SPILogDelegate {
     
     private var lastLogMessage: String?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         KebabApp.current.initialize()
         
         // Observe SPI logs from the library

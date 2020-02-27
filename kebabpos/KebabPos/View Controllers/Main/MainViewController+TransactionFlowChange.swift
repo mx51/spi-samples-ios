@@ -27,7 +27,7 @@ extension MainViewController {
         switch state.status {
         case .pairedConnected:
             lblStatus.text = "Connected"
-            lblStatus.font = UIFont.systemFont(ofSize: 14, weight: UIFontWeightSemibold)
+            lblStatus.font = UIFont.systemFont(ofSize: 14, weight: UIFont.Weight.semibold)
             lblStatus.textColor = UIColor(red: 23.0/256, green: 156.0/255, blue: 63.0/255, alpha: 1.0)
             btnConnection.title = "Connection"
         case .pairedConnecting:

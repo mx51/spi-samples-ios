@@ -3,7 +3,7 @@
 //  TablePos
 //
 //  Created by Amir Kamali on 29/5/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 import Foundation
@@ -97,7 +97,7 @@ extension MainViewController {
         }
         
         TableApp.current.tableToBillMapping.removeValue(forKey: tableId!)
-        TableApp.current.assemblyBillDataStore.removeValue(forKey: (bill.billId)!)
+        TableApp.current.mx51BillDataStore.removeValue(forKey: (bill.billId)!)
         showMessage(title: "Close Table", msg: "Closed: \(bill.toString())", type: "INFO", isShow: true)
     }
     
@@ -131,17 +131,17 @@ extension MainViewController {
             listTables += "# My Bills Store:\n\(openBills)\n"
         }
         
-        if TableApp.current.assemblyBillDataStore.count > 0 {
-            var openAssemblyBills: String = ""
-            for key in TableApp.current.assemblyBillDataStore.keys {
-                if openAssemblyBills != "" {
-                    openAssemblyBills += ",\n"
+        if TableApp.current.mx51BillDataStore.count > 0 {
+            var openBills: String = ""
+            for key in TableApp.current.mx51BillDataStore.keys {
+                if openBills != "" {
+                    openBills += ",\n"
                 }
                 
-                openAssemblyBills += key
+                openBills += key
             }
             
-            listTables = "# Assembly Bills Data:\n\(openAssemblyBills)"
+            listTables = "# mx51 Bills Data:\n\(openBills)"
         }
         
         showMessage(title: "List Tables", msg: "\(listTables)", type: "INFO", isShow: true)

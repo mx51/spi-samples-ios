@@ -243,7 +243,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1020;
-				ORGANIZATIONNAME = "Assembly Payments";
+				ORGANIZATIONNAME = mx51;
 				TargetAttributes = {
 					3FFE2EFF1FC82F4D00C5D79B = {
 						CreatedOnToolsVersion = 9.2;
@@ -561,7 +561,7 @@
 				INFOPLIST_FILE = AcmePos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.AcmePos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.AcmePos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "AcmePos/AcmePos-Bridging-Header.h";
@@ -582,7 +582,7 @@
 				INFOPLIST_FILE = AcmePos/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.AcmePos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.AcmePos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "AcmePos/AcmePos-Bridging-Header.h";
@@ -601,7 +601,7 @@
 				DEVELOPMENT_TEAM = 862DX7386G;
 				INFOPLIST_FILE = AcmePosTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.AcmePosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.AcmePosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -619,7 +619,7 @@
 				DEVELOPMENT_TEAM = 862DX7386G;
 				INFOPLIST_FILE = AcmePosTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.AcmePosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.AcmePosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

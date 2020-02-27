@@ -359,7 +359,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = "Assembly Payments";
+				ORGANIZATIONNAME = mx51;
 				TargetAttributes = {
 					29B0139F20BAB40C00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
@@ -702,7 +702,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.TablePos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.TablePos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "tablepos/Resources/Bridging-Header.h";
@@ -726,7 +726,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.TablePos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.TablePos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "tablepos/Resources/Bridging-Header.h";
@@ -749,7 +749,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.TablePosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.TablePosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TablePos.app/TablePos";
@@ -770,7 +770,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.TablePosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.TablePosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TablePos.app/TablePos";
@@ -789,7 +789,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.TablePosUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.TablePosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = TablePos;
@@ -808,7 +808,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.TablePosUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.TablePosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = TablePos;

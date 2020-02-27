@@ -3,7 +3,7 @@
 //  TablePos
 //
 //  Created by Amir Kamali on 28/5/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ class TableApp: NSObject {
     
     var billsStore = [String: Bill] ()
     var tableToBillMapping = [String: String] ()
-    var assemblyBillDataStore = [String: String] ()
+    var mx51BillDataStore = [String: String] ()
     var allowedOperatorIds: Array<String> = Array()
     
     static var current: TableApp {
@@ -32,7 +32,7 @@ class TableApp: NSObject {
         client.config.signatureFlowOnEftpos = settings.customerSignatureromEftpos ?? false
         client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEftpos ?? false
         
-        client.posVendorId = "assembly"
+        client.posVendorId = "mx51"
         client.posVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         
         client.delegate = self
@@ -50,7 +50,7 @@ class TableApp: NSObject {
         let docsBaseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let tableToBillMappingUrl = docsBaseURL.appendingPathComponent("tableToBillMapping.bin")
         let billsStoreUrl = docsBaseURL.appendingPathComponent("billsStore.bin")
-        let assemblyBillDataStoreUrl = docsBaseURL.appendingPathComponent("assemblyBillDataStore.bin")
+        let mx51BillDataStoreUrl = docsBaseURL.appendingPathComponent("mx51BillDataStore.bin")
         
         let filePath = tableToBillMappingUrl.path
         let fileManager = FileManager.default       
@@ -58,7 +58,7 @@ class TableApp: NSObject {
         if fileManager.fileExists(atPath: filePath) {
             tableToBillMapping = NSKeyedUnarchiver.unarchiveObject(withFile: tableToBillMappingUrl.path) as! [String : String]
             billsStore = (NSKeyedUnarchiver.unarchiveObject(withFile: billsStoreUrl.path) as? [String : Bill])!
-            assemblyBillDataStore = NSKeyedUnarchiver.unarchiveObject(withFile: assemblyBillDataStoreUrl.path) as! [String : String]
+            mx51BillDataStore = NSKeyedUnarchiver.unarchiveObject(withFile: mx51BillDataStoreUrl.path) as! [String : String]
         }
     } 
     
@@ -70,11 +70,11 @@ class TableApp: NSObject {
         let docsBaseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let tableToBillMappingUrl = docsBaseURL.appendingPathComponent("tableToBillMapping.bin")
         let billsStoreUrl = docsBaseURL.appendingPathComponent("billsStore.bin")
-        let assemblyBillDataStoreUrl = docsBaseURL.appendingPathComponent("assemblyBillDataStore.bin")
+        let mx51BillDataStoreUrl = docsBaseURL.appendingPathComponent("mx51BillDataStore.bin")
         
         NSKeyedArchiver.archiveRootObject(tableToBillMapping as NSDictionary, toFile: tableToBillMappingUrl.path)
         NSKeyedArchiver.archiveRootObject(billsStore as NSDictionary, toFile: billsStoreUrl.path)
-        NSKeyedArchiver.archiveRootObject(assemblyBillDataStore as NSDictionary, toFile: assemblyBillDataStoreUrl.path)
+        NSKeyedArchiver.archiveRootObject(mx51BillDataStore as NSDictionary, toFile: mx51BillDataStoreUrl.path)
     }
     
     func writeToFile(fileUrl: URL, dict: NSDictionary) {

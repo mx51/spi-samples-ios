@@ -3,7 +3,7 @@
 //  TablePos
 //
 //  Created by Metin Avci on 21/2/19.
-//  Copyright © 2019 Assembly Payments. All rights reserved.
+//  Copyright © 2019 mx51. All rights reserved.
 //
 
 import Foundation

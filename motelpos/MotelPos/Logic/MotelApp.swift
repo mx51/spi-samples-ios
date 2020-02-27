@@ -3,7 +3,7 @@
 //  MotelPos
 //
 //  Created by Amir Kamali on 28/5/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 import Foundation
@@ -27,7 +27,7 @@ class MotelApp: NSObject {
         client.config.signatureFlowOnEftpos = settings.customerSignatureromEftpos ?? false
         client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEftpos ?? false
         
-        client.posVendorId = "assembly"
+        client.posVendorId = "mx51"
         client.posVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         
         client.delegate = self

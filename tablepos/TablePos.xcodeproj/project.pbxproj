@@ -428,21 +428,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-TablePos/Pods-TablePos-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/RNCryptor-objc/RNCryptor_objc.framework",
-				"${BUILT_PRODUCTS_DIR}/SPIClient-iOS/SPIClient_iOS.framework",
-				"${BUILT_PRODUCTS_DIR}/SocketRocket/SocketRocket.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TablePos/Pods-TablePos-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RNCryptor_objc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SPIClient_iOS.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TablePos/Pods-TablePos-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TablePos/Pods-TablePos-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TablePos/Pods-TablePos-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7D69F218B1677C1A89B02656 /* [CP] Check Pods Manifest.lock */ = {

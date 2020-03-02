@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-28.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import "NSObject+Util.h"
@@ -93,7 +93,7 @@ static NSInteger retriesBeforePairing = 3; // How many retries before resolving 
     self = [super init];
     
     if (self) {
-        _queue = dispatch_queue_create("com.assemblypayments", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0));
+        _queue = dispatch_queue_create("com.mx51", dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, 0));
         _config = [[SPIConfig alloc] init];
         _state = [SPIState new];
         _posIdRegex = [NSRegularExpression regularExpressionWithPattern:regexItemsForPosId options:NSRegularExpressionCaseInsensitive error:nil];
@@ -194,7 +194,7 @@ static NSInteger retriesBeforePairing = 3; // How many retries before resolving 
     
     // Set up a weakly repeating timer that avoids memory leaks and automatically invalidates when dereferenced.
     __weak SPIClient* weakSelf = self;
-    _transactionMonitoringTimer = [[SPIRepeatingTimer alloc] initWithQueue:"com.assemblypayments.txMonitor"
+    _transactionMonitoringTimer = [[SPIRepeatingTimer alloc] initWithQueue:"com.mx51.txMonitor"
                                                                   interval:txMonitorCheckFrequency
                                                                      block:^{
                                                                          [weakSelf transactionMonitoring];
@@ -1016,14 +1016,14 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 #pragma mark - Device Management
 
 /**
- Set the acquirer code of your bank, please contact Assembly's Integration Engineers for acquirer code.
+ Set the acquirer code of your bank, please contact mx51's Integration Engineers for acquirer code.
  */
 - (void)setAcquirerCode:(NSString *)acquirerCode {
     _acquirerCode = acquirerCode.copy;
 }
 
 /**
- Set the api key used for auto address discovery feature, please contact Assembly's Integration Engineers for Api key.
+ Set the api key used for auto address discovery feature, please contact mx51's Integration Engineers for Api key.
  */
 - (void)setDeviceApiKey:(NSString *)deviceApiKey {
     _deviceApiKey = deviceApiKey.copy;
@@ -1837,7 +1837,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 - (void)startPeriodicPing {
     __weak __typeof(&*self) weakSelf = self;
     
-    _pingTimer = [[SPIRepeatingTimer alloc] initWithQueue:"com.assemblypayments.ping"
+    _pingTimer = [[SPIRepeatingTimer alloc] initWithQueue:"com.mx51.ping"
                                                  interval:0
                                                     block:^{
                                                         if (!weakSelf.connection.isConnected || weakSelf.secrets == nil) {

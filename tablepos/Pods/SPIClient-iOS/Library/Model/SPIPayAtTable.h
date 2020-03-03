@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Amir Kamali on 20/5/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 #import "SPIMessage.h"

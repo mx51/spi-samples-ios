@@ -6,7 +6,7 @@ target 'RamenPos' do
     use_frameworks!
     
     # Pods for RamenPos
-    pod 'SPIClient-iOS', '~> 2.6.3'
+    pod 'SPIClient-iOS', '~> 2.6.4'
     
     target 'RamenPosTests' do
         inherit! :search_paths

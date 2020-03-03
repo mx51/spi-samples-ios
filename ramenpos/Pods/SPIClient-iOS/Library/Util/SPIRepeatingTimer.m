@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Chris Hulbert on 14/9/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 #import "SPIRepeatingTimer.h"

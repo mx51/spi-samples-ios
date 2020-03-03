@@ -342,11 +342,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = "Assembly Payments";
+				ORGANIZATIONNAME = mx51;
 				TargetAttributes = {
 					29B0139F20BAB40C00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1010;
 					};
 					29B013B720BAB40E00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
@@ -681,11 +681,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.KebabPos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.KebabPos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "kebabpos/Resources/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -703,10 +703,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.KebabPos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.KebabPos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "kebabpos/Resources/Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -724,7 +724,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.KebabPosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.KebabPosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KebabPos.app/KebabPos";
@@ -744,7 +744,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.KebabPosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.KebabPosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KebabPos.app/KebabPos";
@@ -763,7 +763,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.KebabPosUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.KebabPosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = KebabPos;
@@ -782,7 +782,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.KebabPosUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.KebabPosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = KebabPos;

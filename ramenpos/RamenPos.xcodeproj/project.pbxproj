@@ -342,7 +342,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = "Assembly Payments";
+				ORGANIZATIONNAME = mx51;
 				TargetAttributes = {
 					29B0139F20BAB40C00F93AAF = {
 						CreatedOnToolsVersion = 9.3.1;
@@ -465,21 +465,16 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/RNCryptor-objc/RNCryptor_objc.framework",
-				"${BUILT_PRODUCTS_DIR}/SPIClient-iOS/SPIClient_iOS.framework",
-				"${BUILT_PRODUCTS_DIR}/SocketRocket/SocketRocket.framework",
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RNCryptor_objc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SPIClient_iOS.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SocketRocket.framework",
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -682,7 +677,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.RamenPos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.RamenPos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "ramenpos/Resources/Bridging-Header.h";
@@ -706,7 +701,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.RamenPos;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.RamenPos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "ramenpos/Resources/Bridging-Header.h";
@@ -728,7 +723,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.RamenPosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.RamenPosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RamenPos.app/RamenPos";
@@ -748,7 +743,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.RamenPosTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.RamenPosTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RamenPos.app/RamenPos";
@@ -767,7 +762,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.RamenPosUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.RamenPosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = RamenPos;
@@ -786,7 +781,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.assemblypayments.RamenPosUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mx51.RamenPosUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = RamenPos;

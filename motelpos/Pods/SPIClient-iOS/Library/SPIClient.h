@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-28.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -115,14 +115,14 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 @property (nonatomic, copy) NSString *serialNumber;
 
 /**
- Set the acquirer code of your bank, please contact Assembly's Integration
+ Set the acquirer code of your bank, please contact mx51's Integration
  Engineers for acquirer code.
  */
 @property (nonatomic, retain) NSString *acquirerCode;
 
 /**
  Set the api key used for auto address discovery feature, please contact
- Assembly's Integration Engineers for Api key.
+ mx51's Integration Engineers for Api key.
  */
 @property (nonatomic, retain) NSString *deviceApiKey;
 

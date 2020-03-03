@@ -3,7 +3,7 @@
 //  TablePos
 //
 //  Created by Metin Avci on 15/8/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 import Foundation
@@ -43,7 +43,7 @@ extension TableApp: SPIPayAtTableDelegate {
         response.operatorId = operatorId
         response.totalAmount = (myBill?.totalAmount)!
         response.outstandingAmount = (myBill?.outstandingAmount)!
-        response.billData = assemblyBillDataStore[billId!]
+        response.billData = mx51BillDataStore[billId!]
         return response
     }
     
@@ -65,7 +65,7 @@ extension TableApp: SPIPayAtTableDelegate {
         
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.payAtTableGetBillStatus.rawValue), object: MessageInfo(title: "Bill Payment Received", type: "INFO", message: "Updated Bill: \(bill.toString())", isShow: true))
         
-        assemblyBillDataStore[billPayment.billId] = updatedBillData
+        mx51BillDataStore[billPayment.billId] = updatedBillData
         
         response.result = SPIBillRetrievalResult.BillRetrievalResultSuccess
         response.outstandingAmount = bill.outstandingAmount!

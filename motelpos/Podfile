@@ -6,7 +6,7 @@ target 'MotelPos' do
     use_frameworks!
     
     # Pods for MotelPos
-    pod 'SPIClient-iOS', '~> 2.6.3'
+    pod 'SPIClient-iOS', '~> 2.6.4'
     
     target 'MotelPosTests' do
         inherit! :search_paths

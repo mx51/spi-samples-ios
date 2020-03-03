@@ -6,7 +6,7 @@ target 'TablePos' do
     use_frameworks!
 
     # Pods for TablePos
-    pod 'SPIClient-iOS', '~> 2.6.3'
+    pod 'SPIClient-iOS', '~> 2.6.4'
 
     target 'TablePosTests' do
         inherit! :search_paths

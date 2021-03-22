@@ -12,6 +12,8 @@ import SPIClient_iOS
 class ConnectionViewController: UITableViewController, NotificationListener {
     
     @IBOutlet weak var txtOutput: UITextView!
+    @IBOutlet weak var txtTenant: UITextField!
+    @IBOutlet weak var txtOtherTenant: UITextField!
     @IBOutlet weak var txtPosId: UITextField!
     @IBOutlet weak var txtPosAddress: UITextField!
     @IBOutlet weak var txtSerialNumber: UITextField!
@@ -22,6 +24,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var btnCancelPair: UIButton!
     @IBOutlet weak var btnSave: UIButton!
     
+    private var pkrTenant = UIPickerView()
+
     var client: SPIClient {
         return RamenApp.current.client
     }
@@ -30,9 +34,29 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         registerForEvents(appEvents: [.connectionStatusChanged, .pairingFlowChanged, .transactionFlowStateChanged, .secretsDropped, .deviceAddressChanged])
         
+        let settings = RamenApp.current.settings
+        
+        pkrTenant.delegate = self
+        pkrTenant.dataSource = self
+        txtTenant.inputView = pkrTenant
+        
+        if (settings.tenant != nil) {
+            let tenantName = settings.tenantList.first(where:{$0["code"] == settings.tenant})?["name"]
+
+            if (tenantName != nil) {
+                txtTenant.text = tenantName
+                txtOtherTenant.isEnabled = false
+                pkrTenant.selectRow(settings.tenantList.firstIndex(where:{$0["code"] == settings.tenant}) ?? 0, inComponent: 0, animated: false)
+            } else {
+                txtTenant.text = "Other"
+                txtOtherTenant.isEnabled = true
+                txtOtherTenant.text = settings.tenant
+                pkrTenant.selectRow(settings.tenantList.firstIndex(where:{$0["code"] == "other"}) ?? 0, inComponent: 0, animated: false)
+            }
+        }
+
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
         txtSerialNumber.text = RamenApp.current.settings.serialNumber
@@ -53,6 +77,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         let settings = RamenApp.current.settings
         settings.autoResolution = swchAutoResolution.isOn
         settings.testMode = swchTestModeValue.isOn
+        settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         settings.posId = txtPosId.text
         settings.eftposAddress = txtPosAddress.text
         settings.serialNumber = txtSerialNumber.text
@@ -91,6 +116,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
         
         btnSave.isEnabled = false
+        RamenApp.current.client.acquirerCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.client.testMode = swchTestModeValue.isOn
         RamenApp.current.client.autoAddressResolutionEnable = swchAutoResolution.isOn
         RamenApp.current.client.serialNumber = txtSerialNumber.text
@@ -301,6 +327,16 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     }
     
     func areControlsValid(isPairing: Bool) -> Bool {
+        if ((txtTenant.text ?? "").isEmpty) {
+            showError("Please select a Payment Provider")
+            return false
+        }
+        
+        if (txtTenant.text == "Other" && (txtOtherTenant.text ?? "").isEmpty) {
+            showError("Please enter an other payment provider code")
+            return false
+        }
+
         if (isPairing && (txtPosAddress.text ?? "").isEmpty) {
             showError("Please enable auto address resolution or enter a device address!")
             return false
@@ -317,5 +353,35 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
         
         return true
+    }
+    
+    func getTenantCode(tenantName: String) -> String? {
+        return RamenApp.current.settings.tenantList.first(where:{$0["name"] == tenantName})!["code"]
+    }
+}
+
+extension ConnectionViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return RamenApp.current.settings.tenantList.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return RamenApp.current.settings.tenantList[row]["name"]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let selectedTenantName = RamenApp.current.settings.tenantList[row]["name"]
+        let isOtherTenantSelected = selectedTenantName == "Other"
+
+        txtTenant.text = RamenApp.current.settings.tenantList[row]["name"]
+
+        if (!isOtherTenantSelected) { txtOtherTenant.text = "" }
+        txtOtherTenant.isEnabled = isOtherTenantSelected
+
+        txtTenant.resignFirstResponder()
     }
 }

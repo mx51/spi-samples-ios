@@ -21,6 +21,17 @@ class RamenApp: NSObject {
     }
     
     func initialize() {
+        let posVendorId = "mx51"
+        let deviceApiKey = "RamenPosDeviceAddressApiKey"
+        let countryCode = "AU"
+        
+        SPIClient.getAvailableTenants(posVendorId, apiKey: deviceApiKey, countryCode: countryCode) { (data) in
+            if (data != nil) {
+                self.settings.tenantList = (data as? Array<Dictionary<String, String>>)!
+                self.settings.tenantList.append(["code": "other", "name": "Other"])
+            }
+        }
+
         client.eftposAddress = settings.eftposAddress
         client.posId = settings.posId
 
@@ -31,10 +42,10 @@ class RamenApp: NSObject {
         client.config.signatureFlowOnEftpos = settings.customerSignatureFromEftpos ?? false
         client.config.promptForCustomerCopyOnEftpos = settings.customerReceiptFromEftpos ?? false
 
-        client.posVendorId = "mx51"
+        client.posVendorId = posVendorId
         client.posVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        client.acquirerCode = "wbc"
-        client.deviceApiKey = "RamenPosDeviceAddressApiKey"
+        client.acquirerCode = settings.tenant
+        client.deviceApiKey = deviceApiKey
 
         client.delegate = self
 

@@ -32,6 +32,7 @@
 		496C984B2122892500E0AD76 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496C984A2122892500E0AD76 /* AppDelegate.swift */; };
 		49756FCA221E1BD10056C53C /* MessageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49756FC9221E1BD10056C53C /* MessageInfo.swift */; };
 		995D443E0279A3765BA7A36F /* Pods_TablePosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 24394C3AA575631CC2164B7C /* Pods_TablePosTests.framework */; };
+		C979FA31261596D200DE8B94 /* TenantPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C979FA30261596D200DE8B94 /* TenantPickerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 		7874A3E79A772DF427575D4A /* Pods-TablePos.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePos.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TablePos/Pods-TablePos.debug.xcconfig"; sourceTree = "<group>"; };
 		95DE8A96F3F723746C81A6AF /* Pods-TablePosTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePosTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TablePosTests/Pods-TablePosTests.release.xcconfig"; sourceTree = "<group>"; };
 		AC8652D520AED5B3BB3CF430 /* Pods_TablePos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TablePos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C979FA30261596D200DE8B94 /* TenantPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TenantPickerViewController.swift; sourceTree = "<group>"; };
 		D05AFA02523887352F65709C /* Pods-TablePos.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePos.release.xcconfig"; path = "Pods/Target Support Files/Pods-TablePos/Pods-TablePos.release.xcconfig"; sourceTree = "<group>"; };
 		EB2173C291382058A5979D16 /* Pods-TablePosUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TablePosUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TablePosUITests/Pods-TablePosUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -151,6 +153,7 @@
 		298DCCF120BAED220081940A /* Connection */ = {
 			isa = PBXGroup;
 			children = (
+				C979FA30261596D200DE8B94 /* TenantPickerViewController.swift */,
 				298DCCF520BAED630081940A /* ConnectionViewController.swift */,
 			);
 			path = Connection;
@@ -501,6 +504,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C979FA31261596D200DE8B94 /* TenantPickerViewController.swift in Sources */,
 				2998F79F20C41EAB00431BE1 /* MainViewController+TransactionFlowChange.swift in Sources */,
 				298DCD0120BAF20D0081940A /* TableApp.swift in Sources */,
 				29534F5820BD8CE30048C0E0 /* MainViewController+Actions.swift in Sources */,

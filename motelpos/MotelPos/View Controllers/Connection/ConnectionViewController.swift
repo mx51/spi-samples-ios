@@ -17,8 +17,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var txtPosId: UITextField!
     @IBOutlet weak var txtPosAddress: UITextField!
 
-    private var pkrTenant = UIPickerView()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -26,8 +24,10 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
         let settings = MotelApp.current.settings
 
-        pkrTenant.delegate = self
-        pkrTenant.dataSource = self
+        let pkrTenant = TenantPickerViewController()
+        pkrTenant.connectionViewController = self
+        pkrTenant.dataSource = pkrTenant
+        pkrTenant.delegate = pkrTenant
         txtTenant.inputView = pkrTenant
 
         if (settings.tenant != nil) {
@@ -207,31 +207,5 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     func getTenantCode(tenantName: String) -> String? {
         return MotelApp.current.settings.tenantList.first(where:{$0["name"] == tenantName})!["code"]
-    }
-}
-
-extension ConnectionViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return MotelApp.current.settings.tenantList.count
-    }
-
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return MotelApp.current.settings.tenantList[row]["name"]
-    }
-
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let selectedTenantName = MotelApp.current.settings.tenantList[row]["name"]
-        let isOtherTenantSelected = selectedTenantName == "Other"
-
-        txtTenant.text = MotelApp.current.settings.tenantList[row]["name"]
-
-        if (!isOtherTenantSelected) { txtOtherTenant.text = "" }
-        txtOtherTenant.isEnabled = isOtherTenantSelected
-
-        txtTenant.resignFirstResponder()
     }
 }

@@ -23,8 +23,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var btnUnpair: UIButton!
     @IBOutlet weak var btnCancelPair: UIButton!
     @IBOutlet weak var btnSave: UIButton!
-    
-    private var pkrTenant = UIPickerView()
 
     var client: SPIClient {
         return RamenApp.current.client
@@ -37,9 +35,11 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         registerForEvents(appEvents: [.connectionStatusChanged, .pairingFlowChanged, .transactionFlowStateChanged, .secretsDropped, .deviceAddressChanged])
         
         let settings = RamenApp.current.settings
-        
-        pkrTenant.delegate = self
-        pkrTenant.dataSource = self
+
+        let pkrTenant = TenantPickerViewController()
+        pkrTenant.connectionViewController = self
+        pkrTenant.dataSource = pkrTenant
+        pkrTenant.delegate = pkrTenant
         txtTenant.inputView = pkrTenant
         
         if (settings.tenant != nil) {
@@ -357,31 +357,5 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     
     func getTenantCode(tenantName: String) -> String? {
         return RamenApp.current.settings.tenantList.first(where:{$0["name"] == tenantName})!["code"]
-    }
-}
-
-extension ConnectionViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return RamenApp.current.settings.tenantList.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return RamenApp.current.settings.tenantList[row]["name"]
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let selectedTenantName = RamenApp.current.settings.tenantList[row]["name"]
-        let isOtherTenantSelected = selectedTenantName == "Other"
-
-        txtTenant.text = RamenApp.current.settings.tenantList[row]["name"]
-
-        if (!isOtherTenantSelected) { txtOtherTenant.text = "" }
-        txtOtherTenant.isEnabled = isOtherTenantSelected
-
-        txtTenant.resignFirstResponder()
     }
 }

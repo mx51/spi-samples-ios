@@ -1,33 +1,24 @@
 PODS:
   - RNCryptor-objc (3.0.6)
   - SocketRocket (0.5.1)
-  - SPIClient-iOS (2.6.5):
+  - SPIClient-iOS (2.6.6):
     - RNCryptor-objc
     - SocketRocket
 
 DEPENDENCIES:
-  - SPIClient-iOS (from `https://github.com/mx51/spi-client-ios.git`, branch `feature/v2.6.6`)
+  - SPIClient-iOS (~> 2.6.6)
 
 SPEC REPOS:
   trunk:
     - RNCryptor-objc
     - SocketRocket
-
-EXTERNAL SOURCES:
-  SPIClient-iOS:
-    :branch: feature/v2.6.6
-    :git: https://github.com/mx51/spi-client-ios.git
-
-CHECKOUT OPTIONS:
-  SPIClient-iOS:
-    :commit: f9e4b44254c32bef41d5e8f4d33b415f45778ac2
-    :git: https://github.com/mx51/spi-client-ios.git
+    - SPIClient-iOS
 
 SPEC CHECKSUMS:
   RNCryptor-objc: d1b228f9c02e2173df063f0617684c134aed890e
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
-  SPIClient-iOS: 1759d8a986358b3d5bfca84d3e246aa21aa22b3e
+  SPIClient-iOS: eae13185141088909b4b40586f1255c20a50df09
 
-PODFILE CHECKSUM: 851ba0ac25ddcf22dffedc357cccdff93a7d9435
+PODFILE CHECKSUM: 9a3dd798c5f6fbafddd0e7ca0277e4a6ed9c484f
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

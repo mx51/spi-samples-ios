@@ -600,9 +600,9 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 /**
  * Static call to retrieve the available tenants (payment providers) for mx51. This is used to display the payment providers available in your Simple Payments Integration setup.
- * @param posVendorId NSString
- * @param apiKey NSString
- * @param countryCode NSString
+ * @param posVendorId Unique identifier for the POS vendor
+ * @param apiKey Device API key that was provided by mx51 to identify the POS
+ * @param countryCode An ISO 3166-1 alpha-2 country code. i.e for Australia - AU
  */
 + (void)getAvailableTenants:(NSString *)posVendorId
                      apiKey:(NSString *)apiKey

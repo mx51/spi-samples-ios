@@ -1173,13 +1173,6 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 #pragma Static Methods
 
-/**
- * Static call to retrieve the available tenants (payment providers) for mx51. This is used to display the payment providers available in your Simple Payments Integration setup.
- * @param posVendorId NSString
- * @param apiKey NSString
- * @param countryCode NSString
- * @param completion SPITenantResult
- */
 + (void)getAvailableTenants:(NSString *)posVendorId
                      apiKey:(NSString *)apiKey
                 countryCode:(NSString *)countryCode

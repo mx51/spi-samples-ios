@@ -6,10 +6,7 @@ target 'MotelPos' do
     use_frameworks!
     
     # Pods for MotelPos
-    # pod 'SPIClient-iOS', '~> 2.6.6'
-    pod 'SPIClient-iOS', :git => 'https://github.com/mx51/spi-client-ios.git', :branch => 'feature/v2.6.6'
-
-
+    pod 'SPIClient-iOS', '~> 2.6.6'
     
     target 'MotelPosTests' do
         inherit! :search_paths

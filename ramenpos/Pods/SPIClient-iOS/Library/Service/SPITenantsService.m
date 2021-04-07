@@ -19,10 +19,9 @@ static NSTimeInterval connectionTimeout = 8; // HTTP connection timeout
              completion:(SPITenantsResult)completion {
     NSString *tenantServiceUrl = [NSString stringWithFormat: @"https://spi.integration.mspenv.io/tenants?country-code=%@&pos-vendor-id=%@&api-key=%@", countryCode, posVendorId, apiKey];
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:tenantServiceUrl]];
     [request setTimeoutInterval:connectionTimeout];
     [request setHTTPMethod:@"GET"];
-    [request setURL:[NSURL URLWithString:tenantServiceUrl]];
     
     NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable urlResponse, NSError * _Nullable error) {
         NSString *decodedString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
@@ -41,16 +40,16 @@ static NSTimeInterval connectionTimeout = 8; // HTTP connection timeout
             return;
         }
         
-        NSError *JSONError = nil;
-        NSData *JSONData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary *JSONDictionary = [NSJSONSerialization JSONObjectWithData:JSONData options:0 error:&JSONError];
+        NSError *jsonError = nil;
+        NSData *jsonData = [decodedString dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *jsonDictionary = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:&jsonError];
 
-        if (JSONError) {
+        if (jsonError) {
             completion(nil);
             return;
         }
         
-        NSArray *tenantsList = JSONDictionary[@"data"];
+        NSArray *tenantsList = jsonDictionary[@"data"];
         completion(tenantsList);
     }];
     [task resume];

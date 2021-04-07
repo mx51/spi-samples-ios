@@ -11,6 +11,7 @@
 #import "SPIModels.h"
 #import "SPITransaction.h"
 #import "SPISettlement.h"
+#import "SPITenantsService.h"
 
 @class SPIClient;
 @class SPIPreAuth;
@@ -596,5 +597,16 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
  Get Terminal Configuration - Comms Selected, Merchant Id, PA Version, Payment Interface Version, Plugin Version, Serial Number, Terminal Id, Terminal Model
  */
 - (void)getTerminalConfiguration;
+
+/**
+ * Static call to retrieve the available tenants (payment providers) for mx51. This is used to display the payment providers available in your Simple Payments Integration setup.
+ * @param posVendorId Unique identifier for the POS vendor
+ * @param apiKey Device API key that was provided by mx51 to identify the POS
+ * @param countryCode An ISO 3166-1 alpha-2 country code. i.e for Australia - AU
+ */
++ (void)getAvailableTenants:(NSString *)posVendorId
+                     apiKey:(NSString *)apiKey
+                countryCode:(NSString *)countryCode
+                 completion:(SPITenantsResult)completion;
 
 @end

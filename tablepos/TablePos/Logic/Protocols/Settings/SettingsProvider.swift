@@ -11,6 +11,8 @@ import Foundation
 class SettingsProvider {
     
     enum SettingKeys: String {
+        case apiKey
+        case countryCode
         case posId
         case eftposAddress
         case encriptionKey
@@ -31,8 +33,17 @@ class SettingsProvider {
         case labelOperatorId
         case labelTableId
         case labelPayButton
+        case tenant
+        case tenantList
+
     }
     
+    private var defaultTenants = [
+        ["code": "wbc", "name": "Westpac Presto"],
+        ["code": "till", "name": "Till Payments"],
+        ["code": "other", "name": "Other"]
+    ]
+
     init() {
         restoreDefaultValues()
     }
@@ -48,11 +59,23 @@ class SettingsProvider {
     
     func restoreDefaultValues() {
         if (UserDefaults.standard.value(forKey: SettingKeys.posId.rawValue) == nil) {
+            countryCode = "AU"
             posId = "TABLEPOS1"
             eftposAddress = "emulator-prod.herokuapp.com"
+            tenantList = defaultTenants
         }
     }
     
+    var apiKey: String? {
+        get { return readSettingsFrom(key: .apiKey) as? String }
+        set { setSettingsForKey(key: .apiKey, value: newValue) }
+    }
+
+    var countryCode: String? {
+        get { return readSettingsFrom(key: .countryCode) as? String }
+        set { setSettingsForKey(key: .countryCode, value: newValue) }
+    }
+
     var encriptionKey: String? {
         get { return readSettingsFrom(key: .encriptionKey) as? String }
         set { setSettingsForKey(key: .encriptionKey, value: newValue) }
@@ -151,5 +174,15 @@ class SettingsProvider {
     var labelPayButton: String? {
         get { return readSettingsFrom(key: .labelPayButton) as? String }
         set { setSettingsForKey(key: .labelPayButton, value: newValue) }
+    }
+
+    var tenant: String? {
+        get { return readSettingsFrom(key: .tenant) as? String }
+        set { setSettingsForKey(key: .tenant, value: newValue) }
+    }
+
+    var tenantList: Array<Dictionary<String, String>> {
+        get { return readSettingsFrom(key: .tenantList) as? Array<Dictionary<String, String>> ?? defaultTenants }
+        set { setSettingsForKey(key: .tenantList, value: newValue) }
     }
 }

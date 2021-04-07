@@ -12,14 +12,39 @@ import SPIClient_iOS
 class ConnectionViewController: UITableViewController, NotificationListener {
     
     @IBOutlet weak var txtOutput: UITextView!
+    @IBOutlet weak var txtTenant: UITextField!
+    @IBOutlet weak var txtOtherTenant: UITextField!
     @IBOutlet weak var txtPosId: UITextField!
     @IBOutlet weak var txtPosAddress: UITextField!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         registerForEvents(appEvents: [.connectionStatusChanged, .pairingFlowChanged, .transactionFlowStateChanged, .secretsDropped])
         
+        let settings = TableApp.current.settings
+
+        let pkrTenant = TenantPickerViewController()
+        pkrTenant.connectionViewController = self
+        pkrTenant.dataSource = pkrTenant
+        pkrTenant.delegate = pkrTenant
+        txtTenant.inputView = pkrTenant
+
+        if (settings.tenant != nil) {
+            let tenantName = settings.tenantList.first(where:{$0["code"] == settings.tenant})?["name"]
+
+            if (tenantName != nil) {
+                txtTenant.text = tenantName
+                txtOtherTenant.isEnabled = false
+                pkrTenant.selectRow(settings.tenantList.firstIndex(where:{$0["code"] == settings.tenant}) ?? 0, inComponent: 0, animated: false)
+            } else {
+                txtTenant.text = "Other"
+                txtOtherTenant.isEnabled = true
+                txtOtherTenant.text = settings.tenant
+                pkrTenant.selectRow(settings.tenantList.firstIndex(where:{$0["code"] == "other"}) ?? 0, inComponent: 0, animated: false)
+            }
+        }
+
         txtPosId.text = TableApp.current.settings.posId
         txtPosAddress.text = TableApp.current.settings.eftposAddress
     }
@@ -33,11 +58,13 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
         
         let settings = TableApp.current.settings
+        settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         settings.posId = txtPosId.text
         settings.eftposAddress = txtPosAddress.text
         settings.encriptionKey = nil
         settings.hmacKey = nil
         
+        client.acquirerCode = settings.tenant
         client.posId = txtPosId.text
         client.eftposAddress = txtPosAddress.text
         client.pair()
@@ -177,5 +204,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             self.txtOutput.text = msg + "\n================\n" + self.txtOutput.text
         }
     }
-    
+
+    func getTenantCode(tenantName: String) -> String? {
+        return TableApp.current.settings.tenantList.first(where:{$0["name"] == tenantName})!["code"]
+    }
 }

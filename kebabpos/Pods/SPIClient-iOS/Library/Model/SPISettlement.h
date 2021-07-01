@@ -3,16 +3,20 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-29.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
 @class SPIMessage;
+@class SPIConfig;
+@class SPITransactionOptions;
 
 @interface SPISettleRequest : NSObject
 
 @property (nonatomic, readonly, copy) NSString *settleId;
+@property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithSettleId:(NSString *)settleId;
 
@@ -23,7 +27,7 @@
 @interface SPISchemeSettlementEntry : NSObject
 
 @property (nonatomic, readonly, copy) NSString *schemeName;
-@property (nonatomic) bool settleByAcquirer;
+@property (nonatomic) BOOL settleByAcquirer;
 @property (nonatomic) NSInteger totalCount;
 @property (nonatomic) NSInteger totalValue;
 
@@ -60,7 +64,7 @@
 
 - (NSString *)getResponseText;
 
-- (NSString *)getReceipt;
+- (NSString *)getMerchantReceipt;
 
 - (NSString *)getTransactionRange;
 
@@ -68,11 +72,15 @@
 
 - (NSArray<SPISchemeSettlementEntry *> *)getSchemeSettlementEntries;
 
+- (BOOL)wasMerchantReceiptPrinted;
+
 @end
 
 @interface SPISettlementEnquiryRequest : NSObject
 
 @property (nonatomic, readonly, copy) NSString *requestId;
+@property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithRequestId:(NSString *)requestId;
 

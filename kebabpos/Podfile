@@ -6,7 +6,7 @@ target 'KebabPos' do
   use_frameworks!
 
   # Pods for KebabPos
-  pod 'SPIClient-iOS', '~> 2.3.4'
+  pod 'SPIClient-iOS', :git => 'https://github.com/mx51/spi-client-ios.git', :branch => 'SP-714-reversals'
 
   target 'KebabPosTests' do
     inherit! :search_paths

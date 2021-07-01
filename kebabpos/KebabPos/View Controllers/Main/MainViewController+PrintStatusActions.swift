@@ -73,16 +73,33 @@ extension MainViewController {
                 case .settleEnquiry:
                     handleFinishedSettlementEnquiry(txState: txState)
                     break
-                    
                 case .getLastTransaction:
                     handleFinishedGetLastTransaction(txState: txState)
                     break
+                case .reversal:
+                    handleFinishedReversal(txState: txState)
                 default:
                     logMessage(String(format: "# CAN'T HANDLE TX TYPE: {txState.Type}"))
                     break
                 }
             }
         case .idle:
+            break
+        }
+    }
+    
+    func handleFinishedReversal(txState: SPITransactionFlowState) {
+        switch (txState.successState) {
+        case .success:
+            logMessage(String(format: "# NOICE - TRANSACTION REVERSED!"))
+        case .failed:
+            logMessage(String(format: "# WE DID NOT GET OUR MONEY BACK :("))
+            logMessage(String(format: "# Error: %@", txState.response.error))
+            logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
+        case .unknown:
+            logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE REVERSAL WENT THROUGH OR NOT :/"))
+            logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
+            logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
             break
         }
     }
@@ -269,7 +286,7 @@ extension MainViewController {
             if let settleResponse = SPISettlement(message: txState.response) {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(String(settleResponse.getReceipt()))
+                logMessage(String(settleResponse.getMerchantReceipt()))
                 logMessage(String(format: "# Period start: %@", settleResponse.getPeriodStartTime().toString()))
                 logMessage(String(format: "# Period end: %@", settleResponse.getPeriodEndTime().toString()))
                 logMessage(String(format: "# Settlement time: %@", settleResponse.getTriggeredTime().toString()))
@@ -293,7 +310,7 @@ extension MainViewController {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Error: %@", txState.response.error))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(settleResponse.getReceipt())
+                logMessage(settleResponse.getMerchantReceipt())
             }
             break
         case .unknown:
@@ -309,7 +326,7 @@ extension MainViewController {
             if let settleResponse = SPISettlement(message: txState.response) {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(settleResponse.getReceipt())
+                logMessage(settleResponse.getMerchantReceipt())
                 logMessage(String(format: "# Period start: %@", settleResponse.getPeriodStartTime().toString()))
                 logMessage(String(format: "# Period end: %@", settleResponse.getPeriodEndTime().toString()))
                 logMessage(String(format: "# Settlement time: %@", settleResponse.getTriggeredTime().toString()))
@@ -333,7 +350,7 @@ extension MainViewController {
                 logMessage(String(format: "# Response: %@", settleResponse.getResponseText()))
                 logMessage(String(format: "# Error: %@", txState.response.error))
                 logMessage(String(format: "# Merchant receipt:"))
-                logMessage(settleResponse.getReceipt())
+                logMessage(settleResponse.getMerchantReceipt())
             }
             break
         case .unknown:

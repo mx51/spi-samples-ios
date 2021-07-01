@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Amir Kamali on 20/5/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 #import "SPIMessage.h"
@@ -58,7 +58,8 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
  * The waiter will enter it on the Eftpos at the start of the PayAtTable flow
  * and the Eftpos will retrieve the bill using the table id.
  */
-@property (nonatomic, retain) NSString *tableId; //
+@property (nonatomic, retain) NSString *tableId;
+@property (nonatomic, retain) NSString *operatorId;
 
 /**
  * Your POS is required to persist some state on behalf of the Eftpos so the
@@ -82,9 +83,29 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 
 @end
 
-@interface SPIBillPayment : NSObject
+@interface SPIOpenTablesEntry : NSObject
 
-- (instancetype)initWithMessage:(SPIMessage *)message;
+@property (nonatomic, copy) NSString *tableId;
+@property (nonatomic, copy) NSString *label;
+@property (nonatomic) NSInteger outstandingAmount;
+
+- (instancetype)initWithDictionary:(NSDictionary *)data;
+
+- (NSDictionary *)toJsonObject;
+
+@end
+
+@interface SPIGetOpenTablesResponse : NSObject
+
+@property (nonatomic, copy) NSMutableArray<SPIOpenTablesEntry *> *openTablesEntries;
+
+- (NSMutableArray<SPIOpenTablesEntry *> *)getOpenTables;
+
+- (SPIMessage *)toMessage:(NSString *)messageId;
+
+@end
+
+@interface SPIBillPayment : NSObject
 
 @property (nonatomic, retain) NSString *billId;
 @property (nonatomic, retain) NSString *tableId;
@@ -92,7 +113,11 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 @property (nonatomic) SPIPaymentType paymentType;
 @property (nonatomic) NSInteger purchaseAmount;
 @property (nonatomic) NSInteger tipAmount;
+@property (nonatomic) NSInteger surchargeAmount;
 @property (nonatomic, readonly, copy) SPIPurchaseResponse *purchaseResponse;
+@property (nonatomic) BOOL paymentFlowStarted;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
 
 + (NSString *)paymentTypeString:(SPIPaymentType)ptype;
 
@@ -100,15 +125,17 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 
 @interface SPIPayAtTableConfig : NSObject
 
+@property (nonatomic) BOOL payAtTableEnabled;
 @property (nonatomic) BOOL operatorIdEnabled;
 @property (nonatomic) BOOL splitByAmountEnabled;
 @property (nonatomic) BOOL equalSplitEnabled;
 @property (nonatomic) BOOL tippingEnabled;
 @property (nonatomic) BOOL summaryReportEnabled;
-@property (nonatomic, readonly, copy) NSString *labelPayButton;
-@property (nonatomic, readonly, copy) NSString *labelOperatorId;
-@property (nonatomic, readonly, copy) NSString *labelTableId;
-@property (nonatomic, readonly, copy) NSArray<NSString *> *allowedOperatorIds;
+@property (nonatomic, copy) NSString *labelPayButton;
+@property (nonatomic, copy) NSString *labelOperatorId;
+@property (nonatomic, copy) NSString *labelTableId;
+@property (nonatomic, copy) NSArray<NSString *> *allowedOperatorIds;
+@property (nonatomic) BOOL tableRetrievalEnabled;
 
 - (SPIMessage *)toMessage:(NSString *)messageId;
 
@@ -120,10 +147,15 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 
 - (SPIBillStatusResponse *)payAtTableGetBillStatus:(NSString *)billId
                                            tableId:(NSString *)tableId
-                                        operatorId:(NSString *)operatorId;
+                                        operatorId:(NSString *)operatorId
+                                paymentFlowStarted:(BOOL)paymentFlowStarted;
 
 - (SPIBillStatusResponse *)payAtTableBillPaymentReceived:(SPIBillPayment *)billPayment
                                          updatedBillData:(NSString *)updatedBillData;
+
+- (SPIGetOpenTablesResponse *)payAtTableGetOpenTables:(NSString *)operatorId;
+
+- (void)payAtTableBillPaymentFlowEnded:(SPIMessage *)message;
 
 @end
 
@@ -141,5 +173,25 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 - (void)handleGetBillDetailsRequest:(SPIMessage *)message;
 
 - (void)handleBillPaymentAdvice:(SPIMessage *)message;
+
+- (void)handleBillPaymentFlowEnded:(SPIMessage *)message;
+
+- (void)handleGetOpenTablesRequest:(SPIMessage *)message;
+
+@end
+
+@interface SPIBillPaymentFlowEndedResponse : NSObject
+
+@property (nonatomic, copy) NSString *billId;
+@property (nonatomic, copy) NSString *tableId;
+@property (nonatomic, copy) NSString *operatorId;
+@property (nonatomic) NSInteger billTotalAmount;
+@property (nonatomic) NSInteger billOutstandingAmount;
+@property (nonatomic) NSInteger cardTotalCount;
+@property (nonatomic) NSInteger cardTotalAmount;
+@property (nonatomic) NSInteger cashTotalCount;
+@property (nonatomic) NSInteger cashTotalAmount;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
 
 @end

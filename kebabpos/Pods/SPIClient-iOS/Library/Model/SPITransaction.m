@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-29.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import "NSDateFormatter+Util.h"
@@ -37,11 +37,12 @@
                                    @"purchase_amount" : @(self.purchaseAmount),
                                    @"tip_amount" : @(self.tipAmount),
                                    @"cash_amount" : @(self.cashoutAmount),
-                                   @"prompt_for_cashout" : @(self.promptForCashout)
+                                   @"prompt_for_cashout" : @(self.promptForCashout),
+                                   @"surcharge_amount" : @(self.surchargeAmount),
                                    };
     
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
-    [_config addReceiptConfig:data];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
     [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"prchs"]
@@ -51,10 +52,11 @@
 }
 
 - (NSString *)amountSummary {
-    return [NSString stringWithFormat:@"Purchase: %.2f; Tip: %.2f; Cashout: %.2f;",
+    return [NSString stringWithFormat:@"Purchase: %.2f; Tip: %.2f; Cashout: %.2f; Surcharge: %.2f;",
             ((float)_purchaseAmount / 100.0),
             ((float)_tipAmount / 100.0),
-            ((float)_cashoutAmount / 100.0)];
+            ((float)_cashoutAmount / 100.0),
+            ((float)_surchargeAmount / 100.0)];
 }
 
 @end
@@ -229,6 +231,10 @@
     return [self.message getDataStringValue:attribute];
 }
 
+- (BOOL)wasTxnPastPointOfNoReturn {
+    return [self.message.error hasPrefix:@"TXN_PAST_POINT_OF_NO_RETURN"];
+}
+
 @end
 
 @implementation SPIGetLastTransactionRequest : NSObject
@@ -263,6 +269,10 @@
     return !(code == nil || code.length == 0);
 }
 
+- (BOOL)wasTimeOutOfSyncError {
+    return [self.message.error hasPrefix:@"TIME_OUT_OF_SYNC"];
+}
+
 - (BOOL)wasOperationInProgressError {
     return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS"];
 }
@@ -276,7 +286,7 @@
 }
 
 - (BOOL)isStillInProgress:(NSString *)posRefId {
-    return ([self wasOperationInProgressError] && [posRefId isEqualToString:[self getPosRefId]]);
+    return ([self wasOperationInProgressError] && ([posRefId isEqualToString:[self getPosRefId]] || [self getPosRefId] == nil));
 }
 
 - (SPIMessageSuccessState)getSuccessState {
@@ -293,6 +303,10 @@
 
 - (NSString *)getPosRefId {
     return [self.message getDataStringValue:@"pos_ref_id"];
+}
+
+- (NSInteger)getBankNonCashAmount {
+    return [self.message getDataIntegerValue:@"bank_noncash_amount"];
 }
 
 - (NSString *)getSchemeApp {
@@ -347,6 +361,71 @@
 
 @end
 
+@implementation SPIReversalRequest : NSObject
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId {
+    
+    self = [super init];
+    
+    if (self) {
+        _posRefId = posRefId;
+    }
+    
+    return self;
+}
+
+- (SPIMessage *)toMessage {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    [data setValue:_posRefId forKey:@"pos_ref_id"];
+    
+    return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"rev"]
+                                       eventName:SPIReversalRequestKey
+                                            data:data
+                                 needsEncryption:true];
+}
+
+@end
+
+@implementation SPIReversalResponse : NSObject
+
+- (instancetype)initWithMessage:(SPIMessage *)message {
+    self = [super init];
+    
+    if (self) {
+        _message = message;
+        _posRefId = [message getDataStringValue:@"pos_ref_id"];
+        _isSuccess = message.isSuccess;
+    }
+    
+    return self;
+}
+
+- (BOOL)wasOperationInProgressError {
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS"];
+}
+
+- (BOOL)wasTransactionInProgressError {
+    return [self.message.error hasPrefix:@"TRANSACTION_IN_PROGRESS"];
+}
+
+- (BOOL)wasRefIdNotFoundError {
+    return [self.message.error hasPrefix:@"POS_REF_ID_NOT_FOUND"];
+}
+
+- (BOOL)couldNotBeReversedError {
+    return [self.message.error hasPrefix:@"INTERNAL_ERROR"];
+}
+
+- (NSString *)getErrorReason {
+    return [self.message getDataStringValue:@"error_reason"];
+}
+
+- (NSString *)getErrorDetail {
+    return [self.message getDataStringValue:@"error_detail"];
+}
+
+@end
+
 @implementation SPIRefundRequest : NSObject
 
 - (instancetype)initWithPosRefId:(NSString *)posRefId
@@ -364,12 +443,19 @@
 }
 
 - (SPIMessage *)toMessage {
+    NSDictionary *originalData = @{
+                                   @"refund_amount": @(self.amountCents),
+                                   @"pos_ref_id": self.posRefId,
+                                   @"suppress_merchant_password":@(self.suppressMerchantPassword)
+                                   };
+    
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+    
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"refund"]
                                        eventName:SPIRefundRequestKey
-                                            data:@{
-                                                   @"refund_amount": @(self.amountCents),
-                                                   @"pos_ref_id": self.posRefId
-                                                   }
+                                            data:data
                                  needsEncryption:true];
 }
 
@@ -573,8 +659,11 @@
 - (SPIMessage *)toMessage {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
-    [data setValue:[NSNumber numberWithInteger:_purchaseAmount] forKey:@"purchase_amount"];
-    [_config addReceiptConfig:data];
+    [data setValue:@(_purchaseAmount) forKey:@"purchase_amount"];
+    [data setValue:@(_surchargeAmount) forKey:@"surcharge_amount"];
+    [data setValue:@(_suppressMerchantPassword) forKey:@"suppress_merchant_password"];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"moto"]
                                        eventName:SPIMotoPurchaseRequestKey

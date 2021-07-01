@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-29.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import "NSDateFormatter+Util.h"
@@ -11,6 +11,7 @@
 #import "SPIMessage.h"
 #import "SPIRequestIdHelper.h"
 #import "SPISettlement.h"
+#import "SPIClient.h"
 
 @implementation SPISettleRequest
 
@@ -19,15 +20,20 @@
     
     if (self) {
         _settleId = [settleId copy];
+        _config = [[SPIConfig alloc] init];
     }
     
     return self;
 }
 
 - (SPIMessage *)toMessage {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:false enabledSignatureFlowOnEftpos:false enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+    
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"stl"]
                                        eventName:SPISettleRequestKey
-                                            data:nil
+                                            data:data
                                  needsEncryption:YES];
 }
 
@@ -57,9 +63,9 @@
     
     if (self) {
         _schemeName = [dictionary valueForKey:@"scheme_name"];
-        _settleByAcquirer = [[[dictionary valueForKey:@"scheme_name"] lowercaseString] isEqualToString:@"yes"];
-        _totalValue = [NSNumber numberWithInteger:(int)[dictionary valueForKey:@"total_value"]].integerValue;
-        _totalCount = [NSNumber numberWithInteger:(int)[dictionary valueForKey:@"total_count"]].integerValue;
+        _settleByAcquirer = [[[dictionary valueForKey:@"settle_by_acquirer"] lowercaseString] isEqualToString:@"yes"];
+        _totalValue = [[dictionary valueForKey:@"total_value"] integerValue];
+        _totalCount = [[dictionary valueForKey:@"total_count"] integerValue];
     }
     
     return self;
@@ -121,7 +127,7 @@
     return [self.message getDataStringValue:@"host_response_text"];
 }
 
-- (NSString *)getReceipt {
+- (NSString *)getMerchantReceipt {
     return [self.message getDataStringValue:@"merchant_receipt"];
 }
 
@@ -142,6 +148,10 @@
     return entries;
 }
 
+- (BOOL)wasMerchantReceiptPrinted {
+    return [self.message getDataBoolValue:@"merchant_receipt_printed" defaultIfNotFound:false];
+}
+
 @end
 
 @implementation SPISettlementEnquiryRequest
@@ -151,15 +161,20 @@
     
     if (self) {
         _requestId = requestId;
+        _config = [[SPIConfig alloc] init];
     }
     
     return self;
 }
 
 - (SPIMessage *)toMessage {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:false enabledSignatureFlowOnEftpos:false enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
+    
     return [[SPIMessage alloc] initWithMessageId:_requestId
                                        eventName:SPISettlementEnquiryRequestKey
-                                            data:nil
+                                            data:data
                                  needsEncryption:true];
 }
 

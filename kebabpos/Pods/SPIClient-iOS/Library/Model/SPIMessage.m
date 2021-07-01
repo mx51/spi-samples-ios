@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-24.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import "NSDate+Util.h"
@@ -34,6 +34,9 @@ NSString *const SPICancelTransactionResponseKey = @"cancel_response";
 
 NSString *const SPIGetLastTransactionRequestKey = @"get_last_transaction";
 NSString *const SPIGetLastTransactionResponseKey = @"last_transaction";
+
+NSString *const SPIReversalRequestKey = @"reverse_transaction";
+NSString *const SPIReversalResponseKey = @"reverse_transaction_response";
 
 NSString *const SPIRefundRequestKey = @"refund";
 NSString *const SPIRefundResponseKey = @"refund_response";
@@ -70,22 +73,52 @@ NSString *const SPIPayAtTableSetTableConfigKey = @"set_table_config"; // outgoin
 NSString *const SPIPayAtTableGetBillDetailsKey = @"get_bill_details"; // incoming. When eftpos wants to aretrieve the bill for a table.
 NSString *const SPIPayAtTableBillDetailsKey = @"bill_details";        // outgoing. We reply with this when eftpos requests to us get_bill_details.
 NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incoming. When the eftpos advices
+NSString *const SPIPayAtTableBillPaymentFlowEndedKey = @"bill_payment_flow_ended";
+NSString *const SPIPayAtTableGetOpenTablesKey = @"get_open_tables";
+NSString *const SPIPayAtTableOpenTablesKey = @"open_tables";
+
+NSString *const SPIPrintingRequestKey = @"print";
+NSString *const SPIPrintingResponseKey = @"print_response";
+
+NSString *const SPITerminalStatusRequestKey = @"get_terminal_status";
+NSString *const SPITerminalStatusResponseKey = @"terminal_status";
+
+NSString *const SPITerminalConfigurationRequestKey = @"get_terminal_configuration";
+NSString *const SPITerminalConfigurationResponseKey = @"terminal_configuration";
+
+NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
 
 @implementation SPIMessageStamp
 
 - (instancetype)initWithPosId:(NSString *)posId
-                      secrets:(SPISecrets *)secrets
-              serverTimeDelta:(NSTimeInterval)serverTimeDelta {
+                      secrets:(SPISecrets *)secrets {
     
     self = [super init];
     
     if (self) {
         _posId = posId.copy;
         self.secrets = secrets;
-        _serverTimeDelta = serverTimeDelta;
+        self.connID = @"";
+        self.posCounter = 0;
     }
     
     return self;
+}
+
+- (void)resetConnection {
+    
+    NSInteger min = 100;
+    NSInteger max = 99999;
+    
+    [self setConnectionId: @""];
+    self.posCounter = min + arc4random() % (max - min);
+    
+}
+
+-  (void)setConnectionId:(NSString *)connID {
+    
+    self.connID = connID;
+    
 }
 
 @end
@@ -102,6 +135,8 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
         _dateTimeStamp = dict[@"datetime"];
         _posId = dict[@"pos_id"];
         _needsEncryption = NO;
+        _connID = dict[@"conn_id"];
+        _posCounter = [dict[@"pos_counter"] integerValue];
     }
     
     return self;
@@ -119,6 +154,8 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
         _eventName = eventName.copy;
         _data = data.copy;
         _needsEncryption = needsEncryption;
+        _connID = 0;
+        _posCounter = 0;
     }
     
     return self;
@@ -136,11 +173,6 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
     return [self getDataStringValue:@"error_detail"];
 }
 
-- (NSTimeInterval)serverTimeDelta {
-    NSDate *now = [NSDate date];
-    NSDate *serverDate = [self.dateTimeStamp toDate];
-    return [serverDate timeIntervalSinceDate:now];
-}
 
 - (SPIMessageSuccessState)successState {
     if (!_successState) {
@@ -156,8 +188,10 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
 
 - (NSString *)toJson:(SPIMessageStamp *)stamp {
     NSDate *currentDate = [NSDate date];
-    NSDate *adjustedDate = [currentDate dateByAddingTimeInterval:stamp.serverTimeDelta];
-    self.dateTimeStamp = [adjustedDate toString];
+    
+    self.dateTimeStamp = [currentDate toString];
+    self.connID = stamp.connID;
+    self.posCounter = stamp.posCounter++;
     
     if (!self.needsEncryption) {
         self.posId = stamp.posId;
@@ -312,6 +346,15 @@ NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incomin
     if (self.posId) {
         [dict setObject:self.posId forKey:@"pos_id"];
     }
+    
+    if (self.posCounter) {
+        [dict setValue:[NSNumber numberWithInteger:self.posCounter] forKey:@"pos_counter"];
+    }
+
+    if (self.connID) {
+        [dict setValue:self.connID forKey:@"conn_id"];
+    }
+    
     
     return dict.copy;
 }

@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-29.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -17,6 +17,6 @@
 
 @property (nonatomic, readonly, nonnull) NSDate *toDate;
 
-- (NSDate *)toDateWithFormat:(NSString *)format;
+- (NSDate *_Nonnull)toDateWithFormat:(NSString *_Nonnull)format;
 
 @end

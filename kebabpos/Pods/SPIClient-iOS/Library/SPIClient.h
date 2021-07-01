@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-28.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -11,6 +11,7 @@
 #import "SPIModels.h"
 #import "SPITransaction.h"
 #import "SPISettlement.h"
+#import "SPITenantsService.h"
 
 @class SPIClient;
 @class SPIPreAuth;
@@ -55,6 +56,31 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  */
 - (void)spi:(SPIClient *)spi secretsChanged:(SPISecrets *)secrets state:(SPIState *)state;
 
+/**
+ Subscribe to this event when you want to know if the address of the device have changed.
+ */
+- (void)spi:(SPIClient *)spi deviceAddressChanged:(SPIState *)state;
+
+/**
+ Subscribe to this event to know when the Printing response,
+ */
+- (void)printingResponse:(SPIMessage *)message;
+
+/**
+ Subscribe to this event to know when the Terminal Status response,
+ */
+- (void)terminalStatusResponse:(SPIMessage *)message;
+
+/**
+ Subscribe to this event to know when the Terminal Configuration response,
+ */
+- (void)terminalConfigurationResponse:(SPIMessage *)message;
+
+/**
+ Subscribe to this event to know when the Battery Level changed,
+ */
+- (void)batteryLevelChanged:(SPIMessage *)message;
+
 @end
 
 /**
@@ -81,6 +107,29 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  state.
  */
 @property (nonatomic, copy) NSString *posId;
+
+/**
+ Uppercase AlphaNumeric string that Indentifies your POS instance. This value
+ is displayed on the EFTPOS screen. Can only be called set in the Unpaired
+ state.
+ */
+@property (nonatomic, copy) NSString *serialNumber;
+
+/**
+ Set the acquirer code of your bank, please contact mx51's Integration
+ Engineers for acquirer code.
+ */
+@property (nonatomic, retain) NSString *acquirerCode;
+
+/**
+ Set the api key used for auto address discovery feature, please contact
+ mx51's Integration Engineers for Api key.
+ */
+@property (nonatomic, retain) NSString *deviceApiKey;
+
+@property (nonatomic, assign) BOOL autoAddressResolutionEnable;
+
+@property (nonatomic, assign) BOOL testMode;
 
 /**
  Vendor identifier of the POS itself. This value is used to identify the POS software
@@ -211,6 +260,30 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
                 completion:(SPICompletionTxResult)completion;
 
 /**
+ Initiates a purchase transaction. Be subscribed to TxFlowStateChanged event to
+ get updates on the process.
+ 
+ NOTE: Tip and cashout are not allowed simultaneously.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param purchaseAmount The purchase amount in cents.
+ @param tipAmount The tip amount in cents.
+ @param cashoutAmount The cashout amount in cents.
+ @param promptForCashout Whether to prompt your customer for cashout on the EFTPOS.
+ @param options Additional options applied on per-transaction basis.
+ @param surchargeAmount The surcharge amount in cents.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiatePurchaseTx:(NSString *)posRefId
+            purchaseAmount:(NSInteger)purchaseAmount
+                 tipAmount:(NSInteger)tipAmount
+             cashoutAmount:(NSInteger)cashoutAmount
+          promptForCashout:(BOOL)promptForCashout
+                   options:(SPITransactionOptions *)options
+           surchargeAmount:(NSInteger)surchargeAmount
+                completion:(SPICompletionTxResult)completion;
+
+/**
  Initiates a refund transaction. Be subscribed to TxFlowStateChanged event to
  get updates on the process.
  
@@ -220,6 +293,36 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  */
 - (void)initiateRefundTx:(NSString *)posRefId
              amountCents:(NSInteger)amountCents
+              completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a refund transaction. Be subscribed to TxFlowStateChanged event to
+ get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The refund amount in cents.
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateRefundTx:(NSString *)posRefId
+             amountCents:(NSInteger)amountCents
+suppressMerchantPassword:(BOOL)suppressMerchantPassword
+              completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a refund transaction. Be subscribed to TxFlowStateChanged event to
+ get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The refund amount in cents.
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateRefundTx:(NSString *)posRefId
+             amountCents:(NSInteger)amountCents
+suppressMerchantPassword:(BOOL)suppressMerchantPassword
+                 options:(SPITransactionOptions *)options
               completion:(SPICompletionTxResult)completion;
 
 /**
@@ -234,6 +337,51 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
                     completion:(SPICompletionTxResult)completion;
 
 /**
+ Initiates a Mail Order / Telephone Order Purchase Transaction
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The purchase amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateMotoPurchaseTx:(NSString *)posRefId
+                   amountCents:(NSInteger)amountCents
+               surchargeAmount:(NSInteger)surchargeAmount
+                    completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a Mail Order / Telephone Order Purchase Transaction
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The purchase amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateMotoPurchaseTx:(NSString *)posRefId
+                   amountCents:(NSInteger)amountCents
+               surchargeAmount:(NSInteger)surchargeAmount
+      suppressMerchantPassword:(BOOL)suppressMerchantPassword
+                    completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a Mail Order / Telephone Order Purchase Transaction
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The purchase amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param suppressMerchantPassword Ability to suppress Merchant Password from POS.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateMotoPurchaseTx:(NSString *)posRefId
+                   amountCents:(NSInteger)amountCents
+               surchargeAmount:(NSInteger)surchargeAmount
+      suppressMerchantPassword:(BOOL)suppressMerchantPassword
+                       options:(SPITransactionOptions *)options
+                    completion:(SPICompletionTxResult)completion;
+
+/**
  Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
  event to get updates on the process.
  
@@ -243,6 +391,36 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  */
 - (void)initiateCashoutOnlyTx:(NSString *)posRefId
                   amountCents:(NSInteger)amountCents
+                   completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
+ event to get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The cashout amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateCashoutOnlyTx:(NSString *)posRefId
+                  amountCents:(NSInteger)amountCents
+              surchargeAmount:(NSInteger)surchargeAmount
+                   completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a cashout only transaction. Be subscribed to TxFlowStateChanged
+ event to get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param amountCents The cashout amount in cents.
+ @param surchargeAmount The surcharge amount in cents
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateCashoutOnlyTx:(NSString *)posRefId
+                  amountCents:(NSInteger)amountCents
+              surchargeAmount:(NSInteger)surchargeAmount
+                      options:(SPITransactionOptions *)options
                    completion:(SPICompletionTxResult)completion;
 
 /**
@@ -279,15 +457,41 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  @param posRefId The unique identifier for the transaction.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
-- (void)initiateSettleTx:(NSString *)posRefId completion:(SPICompletionTxResult)completion;
+- (void)initiateSettleTx:(NSString *)posRefId
+              completion:(SPICompletionTxResult)completion;
 
 /**
- Initiates a Mail Order / Telephone Order purchase transaction.
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateSettleTx:(NSString *)posRefId
+                 options:(SPITransactionOptions *)options
+              completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
  
  @param posRefId The unique identifier for the transaction.
  @param completion The completion block returning SPICompletionTxResult asynchronously.
  */
 - (void)initiateSettlementEnquiry:(NSString *)posRefId
+                       completion:(SPICompletionTxResult)completion;
+
+/**
+ Initiates a settlement transaction.
+ Be subscribed to TxFlowStateChanged event to get updates on the process.
+ 
+ @param posRefId The unique identifier for the transaction.
+ @param options Additional options applied on per-transaction basis.
+ @param completion The completion block returning SPICompletionTxResult asynchronously.
+ */
+- (void)initiateSettlementEnquiry:(NSString *)posRefId
+                          options:(SPITransactionOptions *)options
                        completion:(SPICompletionTxResult)completion;
 
 /**
@@ -314,6 +518,9 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
          transactionType:(SPITransactionType)txType
               completion:(SPICompletionTxResult)completion;
 
+
+- (void)initiateReversal:(NSString *)posRefId
+              completion:(SPICompletionTxResult)completion;
 /**
  Attempts to conclude whether a gltResponse matches an expected transaction
  and returns the outcome. If Success/Failed is returned, it means that the GTL
@@ -345,6 +552,23 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 - (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse posRefId:(NSString *)posRefId;
 
 /**
+ Attempts to conclude whether a gltResponse matches an expected transaction
+ and returns the outcome. If Success/Failed is returned, it means that the GTL
+ response did match, and that transaction was successful/failed. If Unknown is
+ returned, it means that the gltResponse does not match the expected
+ transaction.
+
+@param gltResponse The gltResponse message to check.
+@param expectedAmount The expected amount in cents.
+ @param requestDate The time you made your request.
+@param posRefId The reference ID that you passed in with the original request. Currently not used.
+*/
+- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
+                    expectedAmount:(NSInteger)expectedAmount
+                       requestDate:(NSDate *)requestDate
+                          posRefId:(NSString *)posRefId;
+
+/**
  Enables Pay-at-Table feature and returns the configuration object.
  
  @return Configuration object handling table and bill requests and responses.
@@ -357,5 +581,35 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  @return Configuration object handling the dispatch queue.
  */
 - (SPIPreAuth *)enablePreauth;
+
+/**
+ Printing Free Format Receipt
+ 
+ @param key The authentication token
+ @param payload The string of characters which represent the receipt that should be printed
+ */
+- (void)printReport:(NSString *)key
+            payload:(NSString *)payload;
+
+/**
+ Get Terminal Status, Charging, Battery Level
+ */
+- (void)getTerminalStatus;
+
+/**
+ Get Terminal Configuration - Comms Selected, Merchant Id, PA Version, Payment Interface Version, Plugin Version, Serial Number, Terminal Id, Terminal Model
+ */
+- (void)getTerminalConfiguration;
+
+/**
+ * Static call to retrieve the available tenants (payment providers) for mx51. This is used to display the payment providers available in your Simple Payments Integration setup.
+ * @param posVendorId Unique identifier for the POS vendor
+ * @param apiKey Device API key that was provided by mx51 to identify the POS
+ * @param countryCode An ISO 3166-1 alpha-2 country code. i.e for Australia - AU
+ */
++ (void)getAvailableTenants:(NSString *)posVendorId
+                     apiKey:(NSString *)apiKey
+                countryCode:(NSString *)countryCode
+                 completion:(SPITenantsResult)completion;
 
 @end

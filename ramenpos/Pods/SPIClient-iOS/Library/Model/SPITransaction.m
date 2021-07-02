@@ -361,6 +361,71 @@
 
 @end
 
+@implementation SPIReversalRequest : NSObject
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId {
+    
+    self = [super init];
+    
+    if (self) {
+        _posRefId = posRefId;
+    }
+    
+    return self;
+}
+
+- (SPIMessage *)toMessage {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    [data setValue:_posRefId forKey:@"pos_ref_id"];
+    
+    return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"rev"]
+                                       eventName:SPIReversalRequestKey
+                                            data:data
+                                 needsEncryption:true];
+}
+
+@end
+
+@implementation SPIReversalResponse : NSObject
+
+- (instancetype)initWithMessage:(SPIMessage *)message {
+    self = [super init];
+    
+    if (self) {
+        _message = message;
+        _posRefId = [message getDataStringValue:@"pos_ref_id"];
+        _isSuccess = message.isSuccess;
+    }
+    
+    return self;
+}
+
+- (BOOL)wasOperationInProgressError {
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS"];
+}
+
+- (BOOL)wasTransactionInProgressError {
+    return [self.message.error hasPrefix:@"TRANSACTION_IN_PROGRESS"];
+}
+
+- (BOOL)wasRefIdNotFoundError {
+    return [self.message.error hasPrefix:@"POS_REF_ID_NOT_FOUND"];
+}
+
+- (BOOL)couldNotBeReversedError {
+    return [self.message.error hasPrefix:@"INTERNAL_ERROR"];
+}
+
+- (NSString *)getErrorReason {
+    return [self.message getDataStringValue:@"error_reason"];
+}
+
+- (NSString *)getErrorDetail {
+    return [self.message getDataStringValue:@"error_detail"];
+}
+
+@end
+
 @implementation SPIRefundRequest : NSObject
 
 - (instancetype)initWithPosRefId:(NSString *)posRefId

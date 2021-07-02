@@ -61,6 +61,7 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
     SPITransactionTypeGetLastTransaction,
     SPITransactionTypePreAuth,
     SPITransactionTypeAccountVerify,
+    SPITransactionTypeReversal
 };
 
 /**

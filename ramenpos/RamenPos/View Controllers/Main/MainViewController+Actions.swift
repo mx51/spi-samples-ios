@@ -14,6 +14,8 @@ extension MainViewController {
     @IBAction func btnPurchaseClicked(_ sender: Any) {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
+        RamenApp.current.settings.lastRefId = posRefId
+        
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
         var tipAmount = 0
         var cashout = 0
@@ -164,6 +166,15 @@ extension MainViewController {
             showMessage(title: "Print Receipt", msg: "Please fill the parameters", type: "INFO", isShow: true)
             return
         }        
+    }
+    
+    @IBAction func reversalTapTapped(_ sender: Any) {
+        guard let refId = RamenApp.current.settings.lastRefId else {
+            showAlert(title: "Oops!", message: "You have no saved transactions")
+            return
+        }
+        
+        client.initiateReversal(refId, completion: printResult)
     }
     
     func sanitizePrintText(_ text: String?) -> String? {

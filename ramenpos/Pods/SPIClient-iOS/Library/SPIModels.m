@@ -115,6 +115,9 @@
             
         case SPITransactionTypeAccountVerify:
             return @"Account Verify";
+            
+        case SPITransactionTypeReversal:
+            return @"Reversal";
     }
 }
 

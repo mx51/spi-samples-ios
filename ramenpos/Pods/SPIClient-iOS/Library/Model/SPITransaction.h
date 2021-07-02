@@ -175,6 +175,38 @@
 
 @end
 
+@interface SPIReversalRequest : NSObject;
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId;
+
+- (SPIMessage *)toMessage;
+
+@end
+
+@interface SPIReversalResponse : NSObject;
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+@property (nonatomic, readonly, strong) SPIMessage *message;
+@property (nonatomic, readonly) BOOL isSuccess;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
+
+- (NSString *)getErrorReason;
+
+- (NSString *)getErrorDetail;
+
+- (BOOL)wasOperationInProgressError;
+
+- (BOOL)wasTransactionInProgressError;
+
+- (BOOL)wasRefIdNotFoundError;
+
+- (BOOL)couldNotBeReversedError;
+
+@end
+
 @interface SPIRefundRequest : NSObject
 
 @property (nonatomic, readonly, copy) NSString *refundId DEPRECATED_MSG_ATTRIBUTE("Use posRefId instead.");

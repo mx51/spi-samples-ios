@@ -73,16 +73,35 @@ extension MainViewController {
                 case .settleEnquiry:
                     handleFinishedSettlementEnquiry(txState: txState)
                     break
-                    
                 case .getLastTransaction:
                     handleFinishedGetLastTransaction(txState: txState)
                     break
+                case .reversal:
+                    handleFinishedReversal(txState: txState)
                 default:
                     logMessage(String(format: "# CAN'T HANDLE TX TYPE: {txState.Type}"))
                     break
                 }
             }
         case .idle:
+            break
+        default:
+            break
+        }
+    }
+    
+    func handleFinishedReversal(txState: SPITransactionFlowState) {
+        switch (txState.successState) {
+        case .success:
+            logMessage(String(format: "# NOICE - TRANSACTION REVERSED!"))
+        case .failed:
+            logMessage(String(format: "# WE DID NOT GET OUR MONEY BACK :("))
+            logMessage(String(format: "# Error: %@", txState.response.error))
+            logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
+        case .unknown:
+            logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE REVERSAL WENT THROUGH OR NOT :/"))
+            logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
+            logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
             break
         default:
             break

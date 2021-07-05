@@ -35,6 +35,9 @@ NSString *const SPICancelTransactionResponseKey = @"cancel_response";
 NSString *const SPIGetLastTransactionRequestKey = @"get_last_transaction";
 NSString *const SPIGetLastTransactionResponseKey = @"last_transaction";
 
+NSString *const SPIReversalRequestKey = @"reverse_transaction";
+NSString *const SPIReversalResponseKey = @"reverse_transaction_response";
+
 NSString *const SPIRefundRequestKey = @"refund";
 NSString *const SPIRefundResponseKey = @"refund_response";
 NSString *const SPISignatureRequiredKey = @"signature_required";
@@ -88,18 +91,34 @@ NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
 @implementation SPIMessageStamp
 
 - (instancetype)initWithPosId:(NSString *)posId
-                      secrets:(SPISecrets *)secrets
-              serverTimeDelta:(NSTimeInterval)serverTimeDelta {
+                      secrets:(SPISecrets *)secrets {
     
     self = [super init];
     
     if (self) {
         _posId = posId.copy;
         self.secrets = secrets;
-        _serverTimeDelta = serverTimeDelta;
+        self.connID = @"";
+        self.posCounter = 0;
     }
     
     return self;
+}
+
+- (void)resetConnection {
+    
+    NSInteger min = 100;
+    NSInteger max = 99999;
+    
+    [self setConnectionId: @""];
+    self.posCounter = min + arc4random() % (max - min);
+    
+}
+
+-  (void)setConnectionId:(NSString *)connID {
+    
+    self.connID = connID;
+    
 }
 
 @end
@@ -116,6 +135,8 @@ NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
         _dateTimeStamp = dict[@"datetime"];
         _posId = dict[@"pos_id"];
         _needsEncryption = NO;
+        _connID = dict[@"conn_id"];
+        _posCounter = [dict[@"pos_counter"] integerValue];
     }
     
     return self;
@@ -133,6 +154,8 @@ NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
         _eventName = eventName.copy;
         _data = data.copy;
         _needsEncryption = needsEncryption;
+        _connID = 0;
+        _posCounter = 0;
     }
     
     return self;
@@ -150,11 +173,6 @@ NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
     return [self getDataStringValue:@"error_detail"];
 }
 
-- (NSTimeInterval)serverTimeDelta {
-    NSDate *now = [NSDate date];
-    NSDate *serverDate = [self.dateTimeStamp toDate];
-    return [serverDate timeIntervalSinceDate:now];
-}
 
 - (SPIMessageSuccessState)successState {
     if (!_successState) {
@@ -170,8 +188,10 @@ NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
 
 - (NSString *)toJson:(SPIMessageStamp *)stamp {
     NSDate *currentDate = [NSDate date];
-    NSDate *adjustedDate = [currentDate dateByAddingTimeInterval:stamp.serverTimeDelta];
-    self.dateTimeStamp = [adjustedDate toString];
+    
+    self.dateTimeStamp = [currentDate toString];
+    self.connID = stamp.connID;
+    self.posCounter = stamp.posCounter++;
     
     if (!self.needsEncryption) {
         self.posId = stamp.posId;
@@ -326,6 +346,15 @@ NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
     if (self.posId) {
         [dict setObject:self.posId forKey:@"pos_id"];
     }
+    
+    if (self.posCounter) {
+        [dict setValue:[NSNumber numberWithInteger:self.posCounter] forKey:@"pos_counter"];
+    }
+
+    if (self.connID) {
+        [dict setValue:self.connID forKey:@"conn_id"];
+    }
+    
     
     return dict.copy;
 }

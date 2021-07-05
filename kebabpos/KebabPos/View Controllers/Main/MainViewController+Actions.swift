@@ -13,6 +13,8 @@ extension MainViewController {
     
     @IBAction func btnPurchaseClicked(_ sender: Any) {
         let posRefId = "kebab-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        KebabApp.current.settings.lastRefId = posRefId
 
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
         var tipAmount = 0
@@ -91,6 +93,15 @@ extension MainViewController {
     @IBAction func btnRecoverClicked(_ sender: UIButton) {
         guard let referenceId = txtReferenceId.text else { return }
         KebabApp.current.client.initiateRecovery(referenceId, transactionType: .getLastTransaction, completion: printResult)
+    }
+    
+    @IBAction func revTapTapped(_ sender: Any) {
+        guard let refId = KebabApp.current.settings.lastRefId else {
+            showAlert(title: "Error", message: "You have no saved transaction IDs")
+            return
+        }
+        
+        client.initiateReversal(refId, completion: printResult)
     }
     
 }

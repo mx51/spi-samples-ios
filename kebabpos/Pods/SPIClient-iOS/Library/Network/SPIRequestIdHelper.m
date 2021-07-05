@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-26.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import "SPIRequestIdHelper.h"
@@ -29,7 +29,7 @@
 
 + (NSString *)idForString:(NSString *)string {
     NSUInteger counter = [SPIRequestIdHelper sharedInstance].counter++;
-    return [NSString stringWithFormat:@"%@%ld", string, counter];
+    return [NSString stringWithFormat:@"%@%lu", string, (unsigned long)counter];
 }
 
 @end

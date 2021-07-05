@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-24.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -31,6 +31,9 @@ extern NSString *const SPICancelTransactionResponseKey;
 
 extern NSString *const SPIGetLastTransactionRequestKey;
 extern NSString *const SPIGetLastTransactionResponseKey;
+
+extern NSString *const SPIReversalRequestKey;
+extern NSString *const SPIReversalResponseKey;
 
 extern NSString *const SPIRefundRequestKey;
 extern NSString *const SPIRefundResponseKey;
@@ -68,6 +71,20 @@ extern NSString *const SPIPayAtTableSetTableConfigKey; // outgoing. When we want
 extern NSString *const SPIPayAtTableGetBillDetailsKey; // incoming. When eftpos wants to aretrieve the bill for a table.
 extern NSString *const SPIPayAtTableBillDetailsKey;    // outgoing. We reply with this when eftpos requests to us get_bill_details.
 extern NSString *const SPIPayAtTableBillPaymentKey;    // incoming. When the eftpos advices
+extern NSString *const SPIPayAtTableBillPaymentFlowEndedKey;
+extern NSString *const SPIPayAtTableGetOpenTablesKey;
+extern NSString *const SPIPayAtTableOpenTablesKey;
+
+extern NSString *const SPIPrintingRequestKey;
+extern NSString *const SPIPrintingResponseKey;
+
+extern NSString *const SPITerminalStatusRequestKey;
+extern NSString *const SPITerminalStatusResponseKey;
+
+extern NSString *const SPITerminalConfigurationRequestKey;
+extern NSString *const SPITerminalConfigurationResponseKey;
+
+extern NSString *const SPIBatteryLevelChangedKey;
 
 typedef NS_ENUM(NSInteger, SPIMessageSuccessState) {
     SPIMessageSuccessStateUnknown,
@@ -83,11 +100,15 @@ typedef NS_ENUM(NSInteger, SPIMessageSuccessState) {
 
 @property (nonatomic, copy) NSString *posId;
 @property (nonatomic, strong) SPISecrets *secrets;
-@property (nonatomic, assign) NSTimeInterval serverTimeDelta;
+@property (nonatomic, copy) NSString *connID;
+@property (nonatomic, assign) NSInteger posCounter;
 
 - (instancetype)initWithPosId:(NSString *)posId
-                      secrets:(SPISecrets *)secrets
-              serverTimeDelta:(NSTimeInterval)serverTimeDelta;
+                      secrets:(SPISecrets *)secrets;
+
+- (void)resetConnection;
+
+- (void)setConnectionId:(NSString *)connID;
 
 @end
 
@@ -111,6 +132,10 @@ typedef NS_ENUM(NSInteger, SPIMessageSuccessState) {
 // Pos_id is set here only for outgoing Un - encrypted messages.
 // (not in the envelope 's top level which would just have the "message" field.)
 @property (nonatomic, copy) NSString *posId;
+
+@property (nonatomic, copy) NSString *connID;
+
+@property (nonatomic, assign) NSInteger posCounter;
 
 // Sometimes the logic around the incoming message
 // might need access to the sugnature, for example in the key_check.

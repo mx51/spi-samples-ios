@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2017-11-29.
-//  Copyright © 2017 Assembly Payments. All rights reserved.
+//  Copyright © 2017 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -22,6 +22,7 @@
 @property (nonatomic) NSInteger tipAmount;
 @property (nonatomic) NSInteger cashoutAmount;
 @property (nonatomic) BOOL promptForCashout;
+@property (nonatomic) NSInteger surchargeAmount;
 
 @property (nonatomic, retain) SPIConfig *config;
 @property (nonatomic, retain) SPITransactionOptions *options;
@@ -114,6 +115,8 @@
 
 - (NSString *)getResponseValueWithAttribute:(NSString *)attribute;
 
+- (BOOL)wasTxnPastPointOfNoReturn;
+
 @end
 
 @interface SPIGetLastTransactionRequest : NSObject
@@ -129,6 +132,8 @@
 @property (nonatomic) SPIMessageSuccessState successState;
 
 - (instancetype)initWithMessage:(SPIMessage *)message;
+
+- (BOOL)wasTimeOutOfSyncError;
 
 - (BOOL)wasRetrievedSuccessfully;
 
@@ -148,6 +153,8 @@
 
 - (NSString *)getPosRefId;
 
+- (NSInteger)getBankNonCashAmount;
+
 - (NSString *)getSchemeApp DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
 - (NSString *)getSchemeName DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
@@ -156,7 +163,7 @@
 
 - (NSInteger)getTransactionAmount DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
-- (NSString *)getBankDateTimeString DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
+- (NSString *)getBankDateTimeString;
 
 - (NSString *)getRRN DEPRECATED_MSG_ATTRIBUTE("Should not need to look at this in a GLT response");
 
@@ -168,12 +175,46 @@
 
 @end
 
+@interface SPIReversalRequest : NSObject;
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId;
+
+- (SPIMessage *)toMessage;
+
+@end
+
+@interface SPIReversalResponse : NSObject;
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+@property (nonatomic, readonly, strong) SPIMessage *message;
+@property (nonatomic, readonly) BOOL isSuccess;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
+
+- (NSString *)getErrorReason;
+
+- (NSString *)getErrorDetail;
+
+- (BOOL)wasOperationInProgressError;
+
+- (BOOL)wasTransactionInProgressError;
+
+- (BOOL)wasRefIdNotFoundError;
+
+- (BOOL)couldNotBeReversedError;
+
+@end
+
 @interface SPIRefundRequest : NSObject
 
 @property (nonatomic, readonly, copy) NSString *refundId DEPRECATED_MSG_ATTRIBUTE("Use posRefId instead.");
 @property (nonatomic, readonly) NSInteger amountCents;
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic, assign) BOOL suppressMerchantPassword;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithPosRefId:(NSString *)posRefId
                      amountCents:(NSInteger)amountCents;
@@ -270,6 +311,9 @@
 @property (nonatomic, readonly) NSInteger purchaseAmount;
 @property (nonatomic, readonly, copy) NSString *posRefId;
 @property (nonatomic, retain) SPIConfig *config;
+@property (nonatomic) NSInteger surchargeAmount;
+@property (nonatomic, assign) BOOL suppressMerchantPassword;
+@property (nonatomic, retain) SPITransactionOptions *options;
 
 - (instancetype)initWithAmountCents:(NSInteger)amountCents
                            posRefId:(NSString *)posRefId;

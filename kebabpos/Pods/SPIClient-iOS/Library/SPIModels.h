@@ -3,13 +3,14 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2018-01-13.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
 #import "SPIMessage.h"
 #import "SPITransaction.h"
+#import "SPIDeviceService.h"
 
 /**
  Represents the 3 pairing statuses that the SPI instance can be in.
@@ -39,7 +40,7 @@ typedef NS_ENUM(NSUInteger, SPIFlow) {
 
 /**
  Types of supported transactions.
-
+ 
  - SPITransactionTypePurchase: Purchase.
  - SPITransactionTypeRefund: Refund.
  - SPITransactionTypeCashoutOnly: Cashout-only.
@@ -60,6 +61,7 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
     SPITransactionTypeGetLastTransaction,
     SPITransactionTypePreAuth,
     SPITransactionTypeAccountVerify,
+    SPITransactionTypeReversal
 };
 
 /**
@@ -182,6 +184,11 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 @property (nonatomic, strong) NSDate *lastStateRequestTime;
 
 /**
+ The id of the last glt request message that was sent. used to match with the response.
+ */
+@property (nonatomic, copy) NSString *lastGltRequestId;
+
+/**
  Whether we're currently attempting to cancel the transaction.
  */
 @property (nonatomic, assign) BOOL isAttemptingToCancel;
@@ -239,6 +246,11 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
  */
 @property (nonatomic, assign) BOOL isAwaitingGltResponse;
 
+/**
+ The pos ref id  when Get Last Transaction response.
+ */
+@property (nonatomic, copy) NSString *gltResponsePosRefId;
+
 - (instancetype)initWithTid:(NSString *)tid
                        type:(SPITransactionType)type
                 amountCents:(NSInteger)amountCents
@@ -251,7 +263,7 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 
 - (void)cancelFailed:(NSString *)msg;
 
-- (void)callingGlt;
+- (void)callingGlt:(NSString *)gltRequestId;
 
 - (void)gotGltResponse;
 
@@ -298,6 +310,11 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
  */
 @property (nonatomic, strong) SPITransactionFlowState *txFlowState;
 
+/**
+ When flow is AutoIP, this represents the state of the device service.
+ */
+@property (nonatomic, strong) SPIDeviceAddressStatus *deviceAddressStatus;
+
 + (NSString *)flowString:(SPIFlow)flow;
 
 @end
@@ -311,7 +328,10 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 @property (nonatomic) BOOL signatureFlowOnEftpos;
 @property (nonatomic) BOOL printMerchantCopy;
 
-- (void)addReceiptConfig:(NSMutableDictionary *)data;
+- (void)addReceiptConfig:(NSMutableDictionary *)data
+enabledPromptForCustomerCopyOnEftpos:(BOOL)enabledPromptForCustomerCopyOnEftpos
+enabledSignatureFlowOnEftpos:(BOOL)enabledSignatureFlowOnEftpos
+enabledPrintMerchantCopy:(BOOL)enabledPrintMerchantCopy;
 
 @end
 

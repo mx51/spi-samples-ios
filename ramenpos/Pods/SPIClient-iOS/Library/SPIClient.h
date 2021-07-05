@@ -518,6 +518,9 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
          transactionType:(SPITransactionType)txType
               completion:(SPICompletionTxResult)completion;
 
+
+- (void)initiateReversal:(NSString *)posRefId
+              completion:(SPICompletionTxResult)completion;
 /**
  Attempts to conclude whether a gltResponse matches an expected transaction
  and returns the outcome. If Success/Failed is returned, it means that the GTL

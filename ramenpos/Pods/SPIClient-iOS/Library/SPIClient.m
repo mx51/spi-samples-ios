@@ -84,7 +84,7 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 static NSInteger retriesBeforeResolvingDeviceAddress = 3; // How many retries before resolving Device Address
 
 static NSString *regexItemsForPosId = @"^[a-zA-Z0-9]*$";
-static NSString *regexItemsForEftposAddress = @"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$";
+static NSString *regexItemsForEftposAddress = @"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}(\\:[0-9]{1,5})?$";
 
 static NSInteger retriesBeforePairing = 3; // How many retries before resolving Device Address
 
@@ -919,6 +919,48 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     });
 }
 
+- (void)initiateReversal:(NSString *)posRefId
+              completion:(SPICompletionTxResult)completion {
+    
+    if (self.state.status == SPIStatusUnpaired) {
+        completion([[SPIInitiateTxResult alloc] initWithTxResult:false message:@"Not paired"]);
+        return;
+    }
+    
+    __weak __typeof(& *self) weakSelf = self;
+    
+    dispatch_async(self.queue, ^{
+        NSLog(@"initReversal txLock entering");
+        @synchronized(weakSelf.txLock) {
+            NSLog(@"initReversal txLock entered");
+            if (weakSelf.state.flow != SPIFlowIdle) {
+                completion([[SPIInitiateTxResult alloc] initWithTxResult:false message:@"Not idle"]);
+                return;
+            }
+            
+            weakSelf.state.flow = SPIFlowTransaction;
+            
+            SPIReversalRequest *revRequest = [[SPIReversalRequest alloc] initWithPosRefId:posRefId];
+            
+            SPIMessage *revRequestMsg = [revRequest toMessage];
+            
+            weakSelf.state.txFlowState = [[SPITransactionFlowState alloc] initWithTid:posRefId
+                                                                                 type:SPITransactionTypeReversal
+                                                                          amountCents:0
+                                                                              message:revRequestMsg
+                                                                                  msg:@"Waiting for EFTPOS connection to attempt reversal"];
+            
+            if ([weakSelf send:revRequestMsg]) {
+                [weakSelf.state.txFlowState sent:@"Asked EFTPOS for reversal"];
+            }
+            NSLog(@"initReversal txLock exiting");
+        }
+        
+        [weakSelf transactionFlowStateChanged];
+        completion([[SPIInitiateTxResult alloc] initWithTxResult:YES message:@"Reversal initiated"]);
+    });
+}
+
 - (void)printReport:(NSString *)key
             payload:(NSString *)payload {
     [self send:[[[SPIPrintingRequest alloc] initWithKey:key payload:payload] toMessage]];
@@ -975,7 +1017,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     
     if (_posId.length > 0) {
         // Our stamp for signing outgoing messages
-        self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:posId secrets:nil serverTimeDelta:0];
+        self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:posId secrets:nil];
     }
 }
 
@@ -1399,6 +1441,37 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     [self handleTxResponse:m type:SPITransactionTypeRefund checkPosRefId:YES];
 }
 
+- (void)handleReversalResponse:(SPIMessage *)m {
+    
+    NSLog(@"handleReversalResponse");
+    NSLog(@"hansdleReversalResp txLock entering");
+    @synchronized(self.txLock) {
+        NSLog(@"handleReversalResp txLock entered");
+        SPITransactionFlowState *txState = self.state.txFlowState;
+        NSDictionary *dict = m.data;
+        NSString *incomingPosRefId = [dict objectForKey:@"pos_ref_id"];
+        
+        SPIReversalResponse *revResp = [[SPIReversalResponse alloc] initWithMessage:m];
+        
+        if (self.state.flow != SPIFlowTransaction || txState.isFinished || txState.posRefId == incomingPosRefId) {
+            SPILog(@"Received Reversal response but I was not waiting for this one.");
+            return;
+        }
+        
+        if (!revResp.isSuccess) {
+            [txState completed:m.successState response:m msg:revResp.getErrorDetail];
+        } else {
+            [txState completed:m.successState response:m msg:@"Reversal completed"];
+        }
+    }
+    NSLog(@"handleReversalResp txLock exiting");
+    
+    
+    [self transactionFlowStateChanged];
+    
+}
+
+
 /**
  * Handle the settlement response received from the PIN pad.
  *
@@ -1765,6 +1838,8 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
             case SPIConnectionStateConnected:
                 self.retriesSinceLastDeviceAddressResolution = 0;
                 
+                [self.spiMessageStamp resetConnection];
+                
                 if (weakSelf.state.flow == SPIFlowPairing && weakSelf.state.status == SPIStatusUnpaired) {
                     weakSelf.state.pairingFlowState.message = @"Requesting to pair...";
                     [weakSelf pairingFlowStateChanged];
@@ -1785,7 +1860,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 weakSelf.mostRecentPongReceived = nil;
                 weakSelf.missedPongsCount = 0;
                 [weakSelf stopPeriodPing];
-                
+                [weakSelf.spiMessageStamp resetConnection];
                 if (weakSelf.state.status != SPIStatusUnpaired) {
                     weakSelf.state.status = SPIStatusPairedConnecting;
                     [weakSelf statusChanged];
@@ -1963,11 +2038,12 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 - (void)handleIncomingPong:(SPIMessage *)m {
     NSLog(@"handleIncomingPong");
     
-    // We need to maintain this time delta otherwise the server will not accept our messages.
-    self.spiMessageStamp.serverTimeDelta = m.serverTimeDelta;
+    
     
     if (self.mostRecentPongReceived == nil) {
         // First pong received after a connection, and after the pairing process is fully finalised.
+        // Receive connection id from PinPad after first pong, store this as this needs to be passed for every request.
+        [self.spiMessageStamp setConnectionId: m.connID];
         if (_state.status != SPIStatusUnpaired) {
             SPILog(@"First pong of connection and in paired state.");
             [self onReadyToTransact];
@@ -2052,7 +2128,11 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
         } else if ([eventName isEqualToString:SPIRefundResponseKey]) {
             [weakSelf handleRefundResponse:m];
             
-        } else if ([eventName isEqualToString:SPICashoutOnlyResponseKey]) {
+        } else if ([eventName isEqualToString:SPIReversalResponseKey]) {
+            [weakSelf handleReversalResponse:m];
+            
+        }
+        else if ([eventName isEqualToString:SPICashoutOnlyResponseKey]) {
             [weakSelf handleCashoutOnlyResponse:m];
             
         } else if ([eventName isEqualToString:SPIMotoPurchaseResponseKey]) {

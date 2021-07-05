@@ -30,6 +30,7 @@ class SettingsProvider {
         case serialNumber
         case tenant
         case tenantList
+        case lastRefId
     }
     
     private var defaultTenants = [
@@ -60,6 +61,11 @@ class SettingsProvider {
         }
     }
 
+    var lastRefId: String? {
+        get { return readSettingsFrom(key: .lastRefId) as? String }
+        set { setSettingsForKey(key: .lastRefId, value: newValue) }
+    }
+    
     var apiKey: String? {
         get { return readSettingsFrom(key: .apiKey) as? String }
         set { setSettingsForKey(key: .apiKey, value: newValue) }

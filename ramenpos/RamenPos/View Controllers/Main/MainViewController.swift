@@ -143,6 +143,11 @@ class MainViewController: UITableViewController, NotificationListener {
             DispatchQueue.main.async {
                 self.handleBatteryLevelChanged(message: message)
             }
+        case AppEvent.updateMessageReceived.rawValue:
+            guard let message = notification.object as? SPIMessage else { return }
+            DispatchQueue.main.async {
+                self.handleUpdateMessageReceived(message: message)
+            }
         default:
             break
         }

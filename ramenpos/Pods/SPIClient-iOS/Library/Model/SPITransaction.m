@@ -699,3 +699,19 @@
 }
 
 @end
+
+@implementation SPIUpdateMessage : NSObject
+
+-(instancetype)initWithMessage:(SPIMessage *)message {
+    self = [super init];
+    
+    if (self) {
+        _posRefId = [message getDataStringValue:@"pos_ref_id"];
+        _displayMessageCode = [message getDataStringValue:@"display_message_code"];
+        _displayMessageText = [message getDataStringValue:@"display_message_text"];
+    }
+    
+    return self;
+}
+
+@end

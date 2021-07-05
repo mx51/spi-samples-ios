@@ -84,7 +84,7 @@ static NSInteger missedPongsToDisconnect = 2; // How many missed pongs before di
 static NSInteger retriesBeforeResolvingDeviceAddress = 3; // How many retries before resolving Device Address
 
 static NSString *regexItemsForPosId = @"^[a-zA-Z0-9]*$";
-static NSString *regexItemsForEftposAddress = @"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$";
+static NSString *regexItemsForEftposAddress = @"^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}(\\:[0-9]{1,5})?$";
 
 static NSInteger retriesBeforePairing = 3; // How many retries before resolving Device Address
 
@@ -975,7 +975,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     
     if (_posId.length > 0) {
         // Our stamp for signing outgoing messages
-        self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:posId secrets:nil serverTimeDelta:0];
+        self.spiMessageStamp = [[SPIMessageStamp alloc] initWithPosId:posId secrets:nil];
     }
 }
 
@@ -1735,6 +1735,12 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     }
 }
 
+- (void)handleUpdateMessage:(SPIMessage *)m {
+    if([_delegate respondsToSelector:@selector(updateMessageReceived:)]) {
+        [_delegate updateMessageReceived:m];
+    }
+}
+
 #pragma mark - Internals for connection management
 
 - (void)resetConnection {
@@ -1765,6 +1771,8 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
             case SPIConnectionStateConnected:
                 self.retriesSinceLastDeviceAddressResolution = 0;
                 
+                [self.spiMessageStamp resetConnection];
+                
                 if (weakSelf.state.flow == SPIFlowPairing && weakSelf.state.status == SPIStatusUnpaired) {
                     weakSelf.state.pairingFlowState.message = @"Requesting to pair...";
                     [weakSelf pairingFlowStateChanged];
@@ -1785,7 +1793,7 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                 weakSelf.mostRecentPongReceived = nil;
                 weakSelf.missedPongsCount = 0;
                 [weakSelf stopPeriodPing];
-                
+                [weakSelf.spiMessageStamp resetConnection];
                 if (weakSelf.state.status != SPIStatusUnpaired) {
                     weakSelf.state.status = SPIStatusPairedConnecting;
                     [weakSelf statusChanged];
@@ -1963,11 +1971,12 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 - (void)handleIncomingPong:(SPIMessage *)m {
     NSLog(@"handleIncomingPong");
     
-    // We need to maintain this time delta otherwise the server will not accept our messages.
-    self.spiMessageStamp.serverTimeDelta = m.serverTimeDelta;
+    
     
     if (self.mostRecentPongReceived == nil) {
         // First pong received after a connection, and after the pairing process is fully finalised.
+        // Receive connection id from PinPad after first pong, store this as this needs to be passed for every request.
+        [self.spiMessageStamp setConnectionId: m.connID];
         if (_state.status != SPIStatusUnpaired) {
             SPILog(@"First pong of connection and in paired state.");
             [self onReadyToTransact];
@@ -2119,7 +2128,10 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
         } else if ([eventName isEqualToString:SPIBatteryLevelChangedKey]) {
             [weakSelf handleBatteryLevelChanged:m];
             
-        } else if ([eventName isEqualToString:SPIInvalidHmacSignature]) {
+        } else if ([eventName isEqualToString:SPITransactionUpdateKey]) {
+            [weakSelf handleUpdateMessage:m];
+        }
+        else if ([eventName isEqualToString:SPIInvalidHmacSignature]) {
             SPILog(@"I could not verify message from EFTPOS. You might have to un-pair EFTPOS and then reconnect.");
             
         } else if ([eventName isEqualToString:SPIEventError]) {

@@ -81,6 +81,11 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  */
 - (void)batteryLevelChanged:(SPIMessage *)message;
 
+/**
+Subscribe to this event to receive update messages
+*/
+- (void)updateMessageReceived:(SPIMessage *)message;
+
 @end
 
 /**

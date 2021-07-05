@@ -95,4 +95,11 @@ extension RamenApp: SPIDelegate {
         // Let's show the user what options he has at this stage.
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.batteryLevelChanged.rawValue), object: message)
     }
+    
+    func updateMessageReceived(_ message: SPIMessage!) {
+        SPILogMsg("updateMessageReceived")
+        
+        // Let's show the message
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.updateMessageReceived.rawValue), object: message)
+    }
 }

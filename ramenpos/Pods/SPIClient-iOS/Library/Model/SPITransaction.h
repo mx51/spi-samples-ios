@@ -328,3 +328,13 @@
 - (SPIMessage *)toMessage;
 
 @end
+
+@interface SPIUpdateMessage : NSObject
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+@property (nonatomic, readonly, copy) NSString *displayMessageCode;
+@property (nonatomic, readonly, copy) NSString *displayMessageText;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
+
+@end

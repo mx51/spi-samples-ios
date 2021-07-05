@@ -88,6 +88,8 @@ NSString *const SPITerminalConfigurationResponseKey = @"terminal_configuration";
 
 NSString *const SPIBatteryLevelChangedKey = @"battery_level_changed";
 
+NSString *const SPITransactionUpdateKey = @"txn_update_message";
+
 @implementation SPIMessageStamp
 
 - (instancetype)initWithPosId:(NSString *)posId

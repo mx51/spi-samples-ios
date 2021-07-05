@@ -86,6 +86,8 @@ extern NSString *const SPITerminalConfigurationResponseKey;
 
 extern NSString *const SPIBatteryLevelChangedKey;
 
+extern NSString *const SPITransactionUpdateKey;
+
 typedef NS_ENUM(NSInteger, SPIMessageSuccessState) {
     SPIMessageSuccessStateUnknown,
     SPIMessageSuccessStateSuccess,

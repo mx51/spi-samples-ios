@@ -439,4 +439,14 @@ extension MainViewController {
             lblBatteryLevel.textColor = UIColor.red
         }
     }
+    
+    func handleUpdateMessageReceived(message: SPIMessage) {
+        guard let updateMessage: SPIUpdateMessage = SPIUpdateMessage(message: message) else { return }
+        
+        let textMessage = """
+            ID    : \(updateMessage.posRefId ?? "")
+            Status: \(updateMessage.displayMessageText ?? "")
+        """
+        showAlert(title: "Status update", message: textMessage)
+    }
 }

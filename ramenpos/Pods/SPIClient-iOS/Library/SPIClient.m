@@ -1808,6 +1808,12 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
     }
 }
 
+- (void)handleUpdateMessage:(SPIMessage *)m {
+    if([_delegate respondsToSelector:@selector(updateMessageReceived:)]) {
+        [_delegate updateMessageReceived:m];
+    }
+}
+
 #pragma mark - Internals for connection management
 
 - (void)resetConnection {
@@ -2199,7 +2205,10 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
         } else if ([eventName isEqualToString:SPIBatteryLevelChangedKey]) {
             [weakSelf handleBatteryLevelChanged:m];
             
-        } else if ([eventName isEqualToString:SPIInvalidHmacSignature]) {
+        } else if ([eventName isEqualToString:SPITransactionUpdateKey]) {
+            [weakSelf handleUpdateMessage:m];
+        }
+        else if ([eventName isEqualToString:SPIInvalidHmacSignature]) {
             SPILog(@"I could not verify message from EFTPOS. You might have to un-pair EFTPOS and then reconnect.");
             
         } else if ([eventName isEqualToString:SPIEventError]) {

@@ -6,7 +6,7 @@ target 'RamenPos' do
     use_frameworks!
     
     # Pods for RamenPos
-    pod 'SPIClient-iOS', :git => 'https://github.com/mx51/spi-client-ios.git', :branch => 'SP-714-reversals'
+    pod 'SPIClient-iOS', :git => 'https://github.com/mx51/spi-client-ios.git', :branch => 'SP-306-chatty_messaging'
     
     target 'RamenPosTests' do
         inherit! :search_paths

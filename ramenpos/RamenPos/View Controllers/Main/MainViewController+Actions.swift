@@ -52,6 +52,9 @@ extension MainViewController {
     
     @IBAction func btnMotoClicked(_ sender: Any) {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        RamenApp.current.settings.lastRefId = posRefId
+        
         let suppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
@@ -77,6 +80,9 @@ extension MainViewController {
     
     @IBAction func btnRefundClicked(_ sender: Any) {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        RamenApp.current.settings.lastRefId = posRefId
+        
         let suppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
@@ -93,6 +99,9 @@ extension MainViewController {
     
     @IBAction func btnCashOutClicked(_ sender: Any) {
         let posRefId = "launder-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        RamenApp.current.settings.lastRefId = posRefId
+        
         var surchargeAmount = 0
         
         if segmentExtraAmount.selectedSegmentIndex > 0, let extraAmount = Int(txtExtraAmount.text ?? "") {

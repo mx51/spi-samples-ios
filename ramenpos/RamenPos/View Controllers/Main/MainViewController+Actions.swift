@@ -141,8 +141,16 @@ extension MainViewController {
         client.initiateSettlementEnquiry(id, options: options, completion: printResult)
     }
     
-    @IBAction func btnLastTransactionClicked(_ sender: Any) {
-        client.initiateGetLastTx(completion: printResult)
+    @IBAction func btnGetTransactionClicked(_ sender: Any) {
+        guard let referenceId: String = {
+            if txtReferenceId.text != nil {
+                return txtReferenceId.text
+            } else {
+                return RamenApp.current.settings.lastRefId
+            }
+        }() else { return }
+        
+        client.initiateGetTx(withPosRefID: referenceId, completion: printResult)
     }
     
     @IBAction func btnRecoverClicked(_ sender: UIButton) {

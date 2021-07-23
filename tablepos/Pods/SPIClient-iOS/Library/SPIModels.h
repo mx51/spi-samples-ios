@@ -58,9 +58,11 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
     SPITransactionTypeMOTO,
     SPITransactionTypeSettle,
     SPITransactionTypeSettleEnquiry,
+    SPITransactionTypeGetTransaction,
     SPITransactionTypeGetLastTransaction,
     SPITransactionTypePreAuth,
     SPITransactionTypeAccountVerify,
+    SPITransactionTypeReversal
 };
 
 /**
@@ -178,15 +180,18 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 @property (nonatomic, strong) NSDate *requestDate;
 
 /**
+ The time when the response was received from the EFTPOS.
+ */
+@property (nonatomic, strong) NSDate *completedDate;
+
+/**
  The time when we last asked for an update, including the original request at first.
  */
 @property (nonatomic, strong) NSDate *lastStateRequestTime;
 
-/**
- The id of the last glt request message that was sent. used to match with the response.
- */
-@property (nonatomic, copy) NSString *lastGltRequestId;
+@property (nonatomic, strong) NSDate *completedTime;
 
+@property (nonatomic, copy) NSString *gtRequestId;
 /**
  Whether we're currently attempting to cancel the transaction.
  */
@@ -245,10 +250,7 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
  */
 @property (nonatomic, assign) BOOL isAwaitingGltResponse;
 
-/**
- The pos ref id  when Get Last Transaction response.
- */
-@property (nonatomic, copy) NSString *gltResponsePosRefId;
+@property (nonatomic, assign) BOOL isAwaitingGtResponse;
 
 - (instancetype)initWithTid:(NSString *)tid
                        type:(SPITransactionType)type
@@ -262,9 +264,9 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 
 - (void)cancelFailed:(NSString *)msg;
 
-- (void)callingGlt:(NSString *)gltRequestId;
+- (void)callingGt:(NSString *)gtRequestId;
 
-- (void)gotGltResponse;
+- (void)gotGtResponse;
 
 - (void)failed:(SPIMessage *)response msg:(NSString *)msg;
 
@@ -280,7 +282,10 @@ typedef NS_ENUM(NSUInteger, SPITransactionType) {
 
 - (void)unknownCompleted:(NSString *)msg;
 
+- (NSString *)txTypeString;
+
 + (NSString *)txTypeString:(SPITransactionType)type;
+
 
 @end
 

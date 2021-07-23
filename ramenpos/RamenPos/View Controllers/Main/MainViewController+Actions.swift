@@ -142,13 +142,14 @@ extension MainViewController {
     }
     
     @IBAction func btnGetTransactionClicked(_ sender: Any) {
-        guard let referenceId: String = {
-            if txtReferenceId.text != nil {
-                return txtReferenceId.text
-            } else {
-                return RamenApp.current.settings.lastRefId
-            }
-        }() else { return }
+        var referenceId: String
+        if let id = txtReferenceId.text, id != "" {
+            referenceId = id
+        } else if let id = RamenApp.current.settings.lastRefId {
+            referenceId = id
+        } else {
+            return
+        }
         
         client.initiateGetTx(withPosRefID: referenceId, completion: printResult)
     }

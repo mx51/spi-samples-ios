@@ -76,6 +76,9 @@ extension MainViewController {
                 case .getLastTransaction:
                     handleFinishedGetLastTransaction(txState: txState)
                     break
+                case .getTransaction:
+                    handleFinishedGetLastTransaction(txState: txState)
+                    break
                 case .reversal:
                     handleFinishedReversal(txState: txState)
                 default:

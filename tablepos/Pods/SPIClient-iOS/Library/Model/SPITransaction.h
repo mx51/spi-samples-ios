@@ -119,6 +119,63 @@
 
 @end
 
+@interface SPIGetTransactionRequest : NSObject
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId;
+
+
+- (SPIMessage *)toMessage;
+
+@end
+
+@interface SPIGetTransactionResponse : NSObject
+
+@property (nonatomic, strong) SPIMessage *message;
+@property (nonatomic, copy, readonly) NSString *bankDateTimeString;
+@property (nonatomic) SPIMessageSuccessState successState;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
+
+- (BOOL)wasRetrievedSuccessfully;
+
+- (BOOL)wasRefIDNotFoundError;
+
+- (BOOL)wasTransactionInProgressError;
+
+- (BOOL)isInvalidArgumentsError;
+
+- (BOOL)isMissingArgumentsError;
+
+- (BOOL)isWaitingForSignatureResponse;
+
+- (BOOL)isWaitingForAuthCode;
+
+- (BOOL)isSomethingElseBlocking;
+
+- (BOOL)isStillInProgress;
+
+- (SPIMessageSuccessState)getSuccessState;
+
+- (BOOL)wasSuccessfulTx;
+
+- (NSString *)getPosRefId;
+
+- (SPIMessage *)getTxMessage;
+
+- (NSInteger)getBankNonCashAmount;
+
+- (NSString *)getBankDateTimeString;
+
+- (NSString *)getResponseText;
+
+- (NSString *)getResponseCode;
+
+- (void)copyMerchantReceiptToCustomerReceipt;
+
+@end
+
 @interface SPIGetLastTransactionRequest : NSObject
 
 - (SPIMessage *)toMessage;
@@ -132,8 +189,6 @@
 @property (nonatomic) SPIMessageSuccessState successState;
 
 - (instancetype)initWithMessage:(SPIMessage *)message;
-
-- (BOOL)wasTimeOutOfSyncError;
 
 - (BOOL)wasRetrievedSuccessfully;
 
@@ -172,6 +227,38 @@
 - (NSString *)getResponseCode;
 
 - (void)copyMerchantReceiptToCustomerReceipt;
+
+@end
+
+@interface SPIReversalRequest : NSObject;
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId;
+
+- (SPIMessage *)toMessage;
+
+@end
+
+@interface SPIReversalResponse : NSObject;
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+@property (nonatomic, readonly, strong) SPIMessage *message;
+@property (nonatomic, readonly) BOOL isSuccess;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
+
+- (NSString *)getErrorReason;
+
+- (NSString *)getErrorDetail;
+
+- (BOOL)wasOperationInProgressError;
+
+- (BOOL)wasTransactionInProgressError;
+
+- (BOOL)wasRefIdNotFoundError;
+
+- (BOOL)couldNotBeReversedError;
 
 @end
 
@@ -326,5 +413,15 @@
                         authCode:(NSString *)authCode;
 
 - (SPIMessage *)toMessage;
+
+@end
+
+@interface SPIUpdateMessage : NSObject
+
+@property (nonatomic, readonly, copy) NSString *posRefId;
+@property (nonatomic, readonly, copy) NSString *displayMessageCode;
+@property (nonatomic, readonly, copy) NSString *displayMessageText;
+
+- (instancetype)initWithMessage:(SPIMessage *)message;
 
 @end

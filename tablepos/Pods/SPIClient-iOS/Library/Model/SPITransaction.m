@@ -248,6 +248,133 @@
 
 @end
 
+@implementation SPIGetTransactionRequest : NSObject
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId {
+    self = [super init];
+    
+    if (self) {
+        _posRefId = posRefId;
+    }
+    
+    return self;
+}
+
+- (SPIMessage *)toMessage {
+    NSDictionary *originalData = @{
+                                   @"pos_ref_id" : self.posRefId
+                                   };
+    
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:originalData];
+    return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"gt"]
+                                       eventName:SPIGetTransactionRequestKey
+                                            data:data
+                                 needsEncryption:true];
+}
+
+@end
+
+@implementation SPIGetTransactionResponse : NSObject
+
+- (instancetype)initWithMessage:(SPIMessage *)message {
+    self = [super init];
+    
+    if (self) {
+        _message = message;
+    }
+    
+    return self;
+}
+
+- (BOOL)wasRetrievedSuccessfully {
+    return [self getSuccessState] == SPIMessageSuccessStateSuccess;
+}
+
+- (BOOL)wasRefIDNotFoundError {
+    return [self.message.error hasPrefix:@"POS_REF_ID_NOT_FOUND"];
+}
+
+- (BOOL)isInvalidArgumentsError {
+    return [self.message.error hasPrefix:@"INVALID_ARGUMENTS"];
+}
+
+- (BOOL)isMissingArgumentsError {
+    return [self.message.error hasPrefix:@"MISSING_ARGUMENTS"];
+}
+
+- (BOOL)wasTransactionInProgressError {
+    return [self.message.error hasPrefix:@"TRANSACTION_IN_PROGRESS"];
+}
+
+- (BOOL)isWaitingForSignatureResponse {
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS_AWAITING_SIGNATURE"];
+}
+
+- (BOOL)isWaitingForAuthCode {
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS_AWAITING_PHONE_AUTH_CODE"];
+}
+
+- (BOOL)isSomethingElseBlocking {
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS"];
+}
+
+- (BOOL)isStillInProgress {
+    return [self wasTransactionInProgressError];
+}
+
+- (SPIMessageSuccessState)getSuccessState {
+    return [_message successState];
+}
+
+- (BOOL)wasSuccessfulTx {
+    return self.message.successState == SPIMessageSuccessStateSuccess;
+}
+
+- (SPIMessage *)getTxMessage {
+    SPIMessage *m = [[SPIMessage alloc] initWithMessageId:self.message.mid eventName:@"gt" data: [self.message getDataDictionaryValue:@"tx"] needsEncryption:false];
+    return  m;
+}
+
+- (NSInteger)getBankNonCashAmount {
+    return [self.message getDataIntegerValue:@"bank_noncash_amount"];
+}
+
+- (NSString *)getBankDateTimeString {
+    // bank_date":"07092017","bank_time":"152137"
+    NSString *date = [self.message getDataStringValue:@"bank_date"];
+    NSString *time = [self.message getDataStringValue:@"bank_time"];
+    
+    if (!date || !time) return nil;
+    
+    // ddMMyyyyHHmmss
+    return [NSString stringWithFormat:@"%@%@", date, time];
+}
+
+- (NSString *)getResponseText {
+    return [self.message getDataStringValue:@"host_response_text"];
+}
+
+- (NSString *)getResponseCode {
+    return [self.message getDataStringValue:@"host_response_code"];
+}
+
+- (NSString *)getPosRefId {
+    return [self.message getDataStringValue:@"pos_ref_id"];
+}
+
+- (void)copyMerchantReceiptToCustomerReceipt {
+    NSString *cr = [self.message getDataStringValue:@"customer_receipt"];
+    NSString *mr = [self.message getDataStringValue:@"merchant_receipt"];
+    
+    if (cr.length != 0 && mr.length != 0) {
+        NSMutableDictionary *data = self.message.data.mutableCopy;
+        data[@"customer_receipt"] = mr;
+        self.message.data = data.copy;
+    }
+}
+
+@end
+
 @implementation SPIGetLastTransactionResponse : NSObject
 
 - (instancetype)initWithMessage:(SPIMessage *)message {
@@ -267,10 +394,6 @@
     // (as opposed to say an operation_in_progress_error)
     NSString *code = [self getResponseCode];
     return !(code == nil || code.length == 0);
-}
-
-- (BOOL)wasTimeOutOfSyncError {
-    return [self.message.error hasPrefix:@"TIME_OUT_OF_SYNC"];
 }
 
 - (BOOL)wasOperationInProgressError {
@@ -357,6 +480,71 @@
         data[@"customer_receipt"] = mr;
         self.message.data = data.copy;
     }
+}
+
+@end
+
+@implementation SPIReversalRequest : NSObject
+
+- (instancetype)initWithPosRefId:(NSString *)posRefId {
+    
+    self = [super init];
+    
+    if (self) {
+        _posRefId = posRefId;
+    }
+    
+    return self;
+}
+
+- (SPIMessage *)toMessage {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    [data setValue:_posRefId forKey:@"pos_ref_id"];
+    
+    return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"rev"]
+                                       eventName:SPIReversalRequestKey
+                                            data:data
+                                 needsEncryption:true];
+}
+
+@end
+
+@implementation SPIReversalResponse : NSObject
+
+- (instancetype)initWithMessage:(SPIMessage *)message {
+    self = [super init];
+    
+    if (self) {
+        _message = message;
+        _posRefId = [message getDataStringValue:@"pos_ref_id"];
+        _isSuccess = message.isSuccess;
+    }
+    
+    return self;
+}
+
+- (BOOL)wasOperationInProgressError {
+    return [self.message.error hasPrefix:@"OPERATION_IN_PROGRESS"];
+}
+
+- (BOOL)wasTransactionInProgressError {
+    return [self.message.error hasPrefix:@"TRANSACTION_IN_PROGRESS"];
+}
+
+- (BOOL)wasRefIdNotFoundError {
+    return [self.message.error hasPrefix:@"POS_REF_ID_NOT_FOUND"];
+}
+
+- (BOOL)couldNotBeReversedError {
+    return [self.message.error hasPrefix:@"INTERNAL_ERROR"];
+}
+
+- (NSString *)getErrorReason {
+    return [self.message getDataStringValue:@"error_reason"];
+}
+
+- (NSString *)getErrorDetail {
+    return [self.message getDataStringValue:@"error_detail"];
 }
 
 @end
@@ -696,6 +884,22 @@
                                        eventName:SPIAuthCodeAdviceKey
                                             data:data
                                  needsEncryption:true];
+}
+
+@end
+
+@implementation SPIUpdateMessage : NSObject
+
+-(instancetype)initWithMessage:(SPIMessage *)message {
+    self = [super init];
+    
+    if (self) {
+        _posRefId = [message getDataStringValue:@"pos_ref_id"];
+        _displayMessageCode = [message getDataStringValue:@"display_message_code"];
+        _displayMessageText = [message getDataStringValue:@"display_message_text"];
+    }
+    
+    return self;
 }
 
 @end

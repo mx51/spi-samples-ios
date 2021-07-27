@@ -1,0 +1,103 @@
+pool:
+  vmImage: 'macos-latest'
+pr:
+  branches:
+    include:
+    - '*'
+trigger:
+  branches:
+    include:
+    - '*'
+  tags:
+    include:
+    - '*'
+variables:
+- name: scheme
+  value: 'RamenPos'
+- name: sdk
+  value: 'iphoneos'
+- name: configuration
+  value: 'Release'
+- name: workspacePath
+  value: ./ramenpos/RamenPos.xcworkspace
+- name: branchName
+  value: $[variables['Build.SourceBranch']]
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - job: build
+    cancelTimeoutInMinutes: 5
+    displayName: Build
+    steps:
+    - task: CocoaPods@0
+      inputs:
+        projectDirectory: ./ramenpos
+        forceRepoUpdate: false
+    - task: InstallAppleCertificate@2
+      inputs:
+        certSecureFile: 'ramen-dist-cert.p12'
+        certPwd: $(P12Password)
+    - task: InstallAppleProvisioningProfile@1
+      inputs:
+        provProfileSecureFile: 'RamenPOS_prov.mobileprovision'
+    - task: ExtractVersionFromTag@1
+      inputs:
+        projectFolderPath: ./ramenpos
+    - task: UpdateiOSVersionInfoPlist@1
+      inputs:
+        infoPlistPath: './ramenpos/RamenPos/Resources/Info.plist'
+        bundleShortVersionString: '$(MAJOR).$(MINOR).$(PATCH)'
+        bundleVersion: '$(NUMBER_OF_COMMITS)'
+    - task: Xcode@5
+      displayName: Build
+      inputs:
+        actions: 'build'
+        configuration: '$(configuration)'
+        sdk: '$(sdk)'
+        xcWorkspacePath: '$(workspacePath)'
+        scheme: '$(scheme)'
+        signingOption: 'manual'
+        teamId: '6T5VWZNL33'
+        signingIdentity: '$(APPLE_CERTIFICATE_SIGNING_IDENTITY)'
+        provisioningProfileUuid: '$(APPLE_PROV_PROFILE_UUID)'
+        packageApp: true
+        useXcpretty: false
+    - task: CopyFiles@2
+      inputs:
+        contents: '**/*.ipa'
+        targetFolder: '$(build.artifactStagingDirectory)'
+        overWrite: true
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathtoPublish: '$(build.artifactStagingDirectory)/output/$(sdk)/$(configuration)'
+        artifactName: 'RamenPos'
+        publishLocation: 'Container'
+- stage: deploy
+  condition: and(succeeded(), contains(variables['branchName'], 'refs/tags/'))
+  dependsOn:
+  - build
+  displayName: Deploy
+  jobs:
+  - job: deploy
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: RamenPos
+    - task: AppStoreRelease@1
+      displayName: 'Publish to the App Store TestFlight track'
+      inputs:
+        authType: 'UserAndPass'
+        username: $(account)
+        password: $(accountPass)
+        isTwoFactorAuth: true
+        appSpecificPassword: $(appSpecPass)
+        releaseTrack: 'TestFlight'
+        appIdentifier: 'io.mx51.RamenPOS'
+        appType: 'iOS'
+        ipaPath: '$(Pipeline.Workspace)/**/*.ipa'
+        shouldSkipWaitingForProcessing: true
+        appSpecificId: '1577497888'
+        teamId: '6T5VWZNL33'
+        teamName: 'mx51 PTY LTD'
+

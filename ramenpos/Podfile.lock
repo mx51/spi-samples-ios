@@ -1,12 +1,12 @@
 PODS:
   - RNCryptor-objc (3.0.6)
   - SocketRocket (0.5.1)
-  - SPIClient-iOS (2.6.6):
+  - SPIClient-iOS (2.8.0):
     - RNCryptor-objc
     - SocketRocket
 
 DEPENDENCIES:
-  - SPIClient-iOS (from `https://github.com/mx51/spi-client-ios.git`, branch `SP-306-chatty_messaging`)
+  - SPIClient-iOS (from `https://github.com/mx51/spi-client-ios.git`, branch `feature/2.8`)
 
 SPEC REPOS:
   trunk:
@@ -15,19 +15,19 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   SPIClient-iOS:
-    :branch: SP-306-chatty_messaging
+    :branch: feature/2.8
     :git: https://github.com/mx51/spi-client-ios.git
 
 CHECKOUT OPTIONS:
   SPIClient-iOS:
-    :commit: 3e498a0abc2350e4740b1f4e95e44af3519bfc9c
+    :commit: 4ddd8b2d66aadaf480d4028371842abc9a72ced3
     :git: https://github.com/mx51/spi-client-ios.git
 
 SPEC CHECKSUMS:
   RNCryptor-objc: d1b228f9c02e2173df063f0617684c134aed890e
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
-  SPIClient-iOS: eae13185141088909b4b40586f1255c20a50df09
+  SPIClient-iOS: e8ee4099058ba92d10946c17e2c4465dbe4c5aa2
 
-PODFILE CHECKSUM: 0fd66d3f46bd29c809fc2826e1644846af38854e
+PODFILE CHECKSUM: 4f5f398c2843380c1e1d486b3e0834a5bb74dd69
 
 COCOAPODS: 1.10.1

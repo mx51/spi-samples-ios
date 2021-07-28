@@ -12,6 +12,7 @@
 #import "SPITransaction.h"
 #import "SPISettlement.h"
 #import "SPITenantsService.h"
+#import "SPITransactionReportHelper.h"
 
 @class SPIClient;
 @class SPIPreAuth;
@@ -152,6 +153,9 @@ Subscribe to this event to receive update messages
 
 @property (nonatomic, readonly) SPIConfig *config;
 
+@property (nonatomic, strong) SPITransactionReport *transactionReport;
+
+@property (nonatomic, readonly) NSString *libraryLanguage;
 /**
  If you provide secrets, it will start in PairedConnecting status; Otherwise
  it will start in Unpaired status.
@@ -499,6 +503,9 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                           options:(SPITransactionOptions *)options
                        completion:(SPICompletionTxResult)completion;
 
+- (void)initiateGetTxWithPosRefID:(NSString *)posRefId
+                      completion:(SPICompletionTxResult)completion;
+
 /**
  Initiates a get last transaction operation.
  Use this when you want to retrieve the most recent transaction that was
@@ -526,52 +533,6 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 
 - (void)initiateReversal:(NSString *)posRefId
               completion:(SPICompletionTxResult)completion;
-/**
- Attempts to conclude whether a gltResponse matches an expected transaction
- and returns the outcome. If Success/Failed is returned, it means that the GTL
- response did match, and that transaction was successful/failed. If Unknown is
- returned, it means that the gltResponse does not match the expected
- transaction.
- 
- @param gltResponse The gltResponse message to check.
- @param expectedType The expected type (e.g. Purchase, Refund).
- @param expectedAmount The expected amount in cents.
- @param requestDate The time you made your request.
- @param posRefId The reference ID that you passed in with the original request. Currently not used.
- */
-- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
-                      expectedType:(SPITransactionType)expectedType
-                    expectedAmount:(NSInteger)expectedAmount
-                       requestDate:(NSDate *)requestDate
-                          posRefId:(NSString *)posRefId DEPRECATED_MSG_ATTRIBUTE("Use gltMatch:gltResponse:posRefId instead.");
-
-/**
- Attempts to conclude whether a gltResponse matches an expected transaction
- and returns the outcome. If Success/Failed is returned, it means that the GTL
- response did match, and that transaction was successful/failed. If Unknown is
- returned, it means that the gltResponse does not match the expected
- transaction.
- 
- @param posRefId The reference ID that you passed in with the original request.
- */
-- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse posRefId:(NSString *)posRefId;
-
-/**
- Attempts to conclude whether a gltResponse matches an expected transaction
- and returns the outcome. If Success/Failed is returned, it means that the GTL
- response did match, and that transaction was successful/failed. If Unknown is
- returned, it means that the gltResponse does not match the expected
- transaction.
-
-@param gltResponse The gltResponse message to check.
-@param expectedAmount The expected amount in cents.
- @param requestDate The time you made your request.
-@param posRefId The reference ID that you passed in with the original request. Currently not used.
-*/
-- (SPIMessageSuccessState)gltMatch:(SPIGetLastTransactionResponse *)gltResponse
-                    expectedAmount:(NSInteger)expectedAmount
-                       requestDate:(NSDate *)requestDate
-                          posRefId:(NSString *)posRefId;
 
 /**
  Enables Pay-at-Table feature and returns the configuration object.

@@ -32,6 +32,9 @@ NSString *const SPIPurchaseResponseKey = @"purchase_response";
 NSString *const SPICancelTransactionRequestKey = @"cancel_transaction";
 NSString *const SPICancelTransactionResponseKey = @"cancel_response";
 
+NSString *const SPIGetTransactionRequestKey = @"get_transaction";
+NSString *const SPIGetTransactionResponseKey = @"get_transaction_response";
+
 NSString *const SPIGetLastTransactionRequestKey = @"get_last_transaction";
 NSString *const SPIGetLastTransactionResponseKey = @"last_transaction";
 
@@ -74,6 +77,7 @@ NSString *const SPIPayAtTableGetBillDetailsKey = @"get_bill_details"; // incomin
 NSString *const SPIPayAtTableBillDetailsKey = @"bill_details";        // outgoing. We reply with this when eftpos requests to us get_bill_details.
 NSString *const SPIPayAtTableBillPaymentKey = @"bill_payment";        // incoming. When the eftpos advices
 NSString *const SPIPayAtTableBillPaymentFlowEndedKey = @"bill_payment_flow_ended";
+NSString *const SPIPayAtTableBillPaymentFlowEndedAckKey = @"bill_payment_flow_ended_ack";
 NSString *const SPIPayAtTableGetOpenTablesKey = @"get_open_tables";
 NSString *const SPIPayAtTableOpenTablesKey = @"open_tables";
 

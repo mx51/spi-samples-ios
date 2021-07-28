@@ -1,4 +1,4 @@
-# SPI Samples iOS [![Build Status](https://travis-ci.org/mx51/spi-samples-ios.svg?branch=master)](https://travis-ci.org/mx51/spi-samples-ios)
+# SPI Samples iOS [![Build Status](https://dev.azure.com/mx51/SPIClient-Libraries/_apis/build/status/mx51.spi-samples-ios?branchName=master)](https://dev.azure.com/mx51/SPIClient-Libraries/_build/latest?definitionId=213&branchName=master)
 
 This is a set of SPI client samples for iOS.
 

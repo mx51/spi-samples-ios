@@ -195,3 +195,14 @@ typedef NS_ENUM(NSUInteger, SPIPaymentType) {
 - (instancetype)initWithMessage:(SPIMessage *)message;
 
 @end
+
+@interface SPIBillPaymentFlowEndedAckRequest : NSObject
+
+@property (nonatomic, copy) NSString *billId;
+@property (nonatomic, copy) NSString *Id;
+
+- (instancetype)initWithBillId:(NSString *)billId;
+
+- (SPIMessage *)toMessage;
+
+@end

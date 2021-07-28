@@ -76,6 +76,9 @@ extension MainViewController {
                 case .getLastTransaction:
                     handleFinishedGetLastTransaction(txState: txState)
                     break
+                case .getTransaction:
+                    handleFinishedGetLastTransaction(txState: txState)
+                    break
                 case .reversal:
                     handleFinishedReversal(txState: txState)
                 default:
@@ -266,18 +269,6 @@ extension MainViewController {
     
     func handleFinishedGetLastTransaction(txState: SPITransactionFlowState) {
         if (txState.response != nil) {
-            let gltResponse = SPIGetLastTransactionResponse(message: txState.response)
-            
-            if (txtReferenceId.text != "") {
-                // User specified that he intended to retrieve a specific tx by pos_ref_id
-                // This is how you can use a handy function to match it.
-                let success = client.gltMatch(gltResponse, posRefId: txtReferenceId.text)
-                if (success == .unknown) {
-                    logMessage(String(format: "# Did not retrieve expected transaction. Here is what we got:"))
-                } else {
-                    logMessage(String(format: "# Tx matched expected purchase request."))
-                }
-            }
             
             if let purchaseResponse = SPIPurchaseResponse(message: txState.response) {
                 logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
@@ -287,6 +278,7 @@ extension MainViewController {
                 logMessage(String(format: "# Customer receipt:"))
                 logMessage(purchaseResponse.getCustomerReceipt())
             }
+            
         } else {
             // We did not even get a response, like in the case of a time-out.
             logMessage(String(format: "# Could not retrieve last transaction."))

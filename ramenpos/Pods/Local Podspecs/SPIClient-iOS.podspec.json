@@ -1,12 +1,13 @@
 {
   "name": "SPIClient-iOS",
-  "version": "2.6.6",
+  "version": "2.8.0",
   "summary": "SPI Client iOS",
   "authors": [
     "Yoo-Jin Lee",
     "Mike Gouline",
     "Amir Kamali",
-    "Metin Avci"
+    "Metin Avci",
+    "Doniyor Zuparov"
   ],
   "license": {
     "type": "Apache License, Version 2.0"
@@ -14,7 +15,7 @@
   "homepage": "https://github.com/mx51/spi-client-ios",
   "source": {
     "git": "https://github.com/mx51/spi-client-ios.git",
-    "tag": "2.6.6"
+    "tag": "2.8.0"
   },
   "source_files": "Library/**/*.{h,m,c}",
   "requires_arc": true,

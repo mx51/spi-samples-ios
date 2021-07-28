@@ -12,6 +12,7 @@
 #import "SPITransaction.h"
 #import "SPISettlement.h"
 #import "SPITenantsService.h"
+#import "SPITransactionReportHelper.h"
 
 @class SPIClient;
 @class SPIPreAuth;
@@ -81,6 +82,11 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
  */
 - (void)batteryLevelChanged:(SPIMessage *)message;
 
+/**
+Subscribe to this event to receive update messages
+*/
+- (void)updateMessageReceived:(SPIMessage *)message;
+
 @end
 
 /**
@@ -147,6 +153,9 @@ typedef void (^SPICompletionState)(BOOL alreadyMovedToIdleState, SPIState *state
 
 @property (nonatomic, readonly) SPIConfig *config;
 
+@property (nonatomic, strong) SPITransactionReport *transactionReport;
+
+@property (nonatomic, readonly) NSString *libraryLanguage;
 /**
  If you provide secrets, it will start in PairedConnecting status; Otherwise
  it will start in Unpaired status.
@@ -494,6 +503,9 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
                           options:(SPITransactionOptions *)options
                        completion:(SPICompletionTxResult)completion;
 
+- (void)initiateGetTxWithPosRefID:(NSString *)posRefId
+                      completion:(SPICompletionTxResult)completion;
+
 /**
  Initiates a get last transaction operation.
  Use this when you want to retrieve the most recent transaction that was
@@ -518,6 +530,9 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
          transactionType:(SPITransactionType)txType
               completion:(SPICompletionTxResult)completion;
 
+
+- (void)initiateReversal:(NSString *)posRefId
+              completion:(SPICompletionTxResult)completion;
 /**
  Attempts to conclude whether a gltResponse matches an expected transaction
  and returns the outcome. If Success/Failed is returned, it means that the GTL

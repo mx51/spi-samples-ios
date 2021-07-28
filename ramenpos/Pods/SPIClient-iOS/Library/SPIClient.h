@@ -12,6 +12,7 @@
 #import "SPITransaction.h"
 #import "SPISettlement.h"
 #import "SPITenantsService.h"
+#import "SPITransactionReportHelper.h"
 
 @class SPIClient;
 @class SPIPreAuth;
@@ -152,6 +153,9 @@ Subscribe to this event to receive update messages
 
 @property (nonatomic, readonly) SPIConfig *config;
 
+@property (nonatomic, strong) SPITransactionReport *transactionReport;
+
+@property (nonatomic, readonly) NSString *libraryLanguage;
 /**
  If you provide secrets, it will start in PairedConnecting status; Otherwise
  it will start in Unpaired status.
@@ -498,6 +502,9 @@ suppressMerchantPassword:(BOOL)suppressMerchantPassword
 - (void)initiateSettlementEnquiry:(NSString *)posRefId
                           options:(SPITransactionOptions *)options
                        completion:(SPICompletionTxResult)completion;
+
+- (void)initiateGetTxWithPosRefID:(NSString *)posRefId
+                      completion:(SPICompletionTxResult)completion;
 
 /**
  Initiates a get last transaction operation.

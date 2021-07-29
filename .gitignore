@@ -22,9 +22,14 @@ xcuserdata/
 *.xccheckout
 *.xcscmblueprint
 
+
 ## Obj-C/Swift specific
 *.hmap
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+## Cocoa Pods
+Podfile.lock
+Pods/ 
 

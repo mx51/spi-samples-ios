@@ -1,6 +1,0 @@
-framework module Pods_RamenPosUITests {
-  umbrella header "Pods-RamenPosUITests-umbrella.h"
-
-  export *
-  module * { export * }
-}

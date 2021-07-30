@@ -1,6 +1,0 @@
-framework module Pods_RamenPos {
-  umbrella header "Pods-RamenPos-umbrella.h"
-
-  export *
-  module * { export * }
-}

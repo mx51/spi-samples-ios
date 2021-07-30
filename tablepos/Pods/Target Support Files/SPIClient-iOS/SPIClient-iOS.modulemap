@@ -1,6 +1,0 @@
-framework module SPIClient_iOS {
-  umbrella header "SPIClient-iOS-umbrella.h"
-
-  export *
-  module * { export * }
-}

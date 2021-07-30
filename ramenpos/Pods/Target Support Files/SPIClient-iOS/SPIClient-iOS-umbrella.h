@@ -18,6 +18,8 @@
 #import "NSString+Util.h"
 #import "SPICrypto.h"
 #import "SPIDiffieHellman.h"
+#import "SPITerminalHelper.h"
+#import "SPITransactionReportHelper.h"
 #import "JKBigInteger.h"
 #import "tommath.h"
 #import "tommath_class.h"

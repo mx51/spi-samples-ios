@@ -60,7 +60,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
         txtSerialNumber.text = RamenApp.current.settings.serialNumber
-        swchAutoResolution.isOn = RamenApp.current.settings.autoResolution ?? false
+        swchAutoResolution.isOn = RamenApp.current.settings.autoResolution ?? true
         swchTestModeValue.isOn = RamenApp.current.settings.testMode ?? false
     }
     
@@ -240,7 +240,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")
                 }))
-            case .DeviceAddressResponseCodeDeviceError:
+            case .DeviceAddressResponseCodeServiceError:
                 txtPosAddress.text = ""
                 alertVC = UIAlertController(title: "Device Address Error", message: "The device service error! \(state.deviceAddressStatus.responseCode)", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in

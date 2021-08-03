@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   SPIClient-iOS:
-    :commit: 4ddd8b2d66aadaf480d4028371842abc9a72ced3
+    :commit: 9428d0118258715746cd1f0a0d983fda3ad30d7f
     :git: https://github.com/mx51/spi-client-ios.git
 
 SPEC CHECKSUMS:

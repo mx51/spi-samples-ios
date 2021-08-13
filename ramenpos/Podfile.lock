@@ -6,7 +6,7 @@ PODS:
     - SocketRocket
 
 DEPENDENCIES:
-  - SPIClient-iOS (from `https://github.com/mx51/spi-client-ios.git`, branch `SP-166_IP_address_pairing_with_Auto_address_resolution`)
+  - SPIClient-iOS (from `https://github.com/mx51/spi-client-ios.git`, branch `feature/2.8`)
 
 SPEC REPOS:
   trunk:
@@ -15,12 +15,12 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   SPIClient-iOS:
-    :branch: SP-166_IP_address_pairing_with_Auto_address_resolution
+    :branch: feature/2.8
     :git: https://github.com/mx51/spi-client-ios.git
 
 CHECKOUT OPTIONS:
   SPIClient-iOS:
-    :commit: a71518f4f7b66ec270c3632c8b7039307bc120f6
+    :commit: 202f2c92246e92a35ef54c59f26ae45ef6df8978
     :git: https://github.com/mx51/spi-client-ios.git
 
 SPEC CHECKSUMS:
@@ -28,6 +28,6 @@ SPEC CHECKSUMS:
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
   SPIClient-iOS: e8ee4099058ba92d10946c17e2c4465dbe4c5aa2
 
-PODFILE CHECKSUM: f5bfc3d5d84ea236b190222e3a1c02086f7ddc6b
+PODFILE CHECKSUM: 4f5f398c2843380c1e1d486b3e0834a5bb74dd69
 
 COCOAPODS: 1.10.1

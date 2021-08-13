@@ -289,7 +289,7 @@
 				29B0139C20BAB40C00F93AAF /* Sources */,
 				29B0139D20BAB40C00F93AAF /* Frameworks */,
 				29B0139E20BAB40C00F93AAF /* Resources */,
-				05E8D3CD743AD47C7EB93E7A /* [CP] Embed Pods Frameworks */,
+				86873279C9BA9EEBC594E823 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -409,23 +409,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		05E8D3CD743AD47C7EB93E7A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7D69F218B1677C1A89B02656 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -442,6 +425,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		86873279C9BA9EEBC594E823 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RamenPos/Pods-RamenPos-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F777AF25481089C0B4474C19 /* [CP] Check Pods Manifest.lock */ = {
@@ -677,6 +677,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = 6T5VWZNL33;
 				INFOPLIST_FILE = RamenPos/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -702,6 +703,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = 6T5VWZNL33;
 				INFOPLIST_FILE = RamenPos/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

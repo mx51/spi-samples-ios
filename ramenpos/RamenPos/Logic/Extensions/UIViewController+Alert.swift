@@ -20,7 +20,7 @@ extension UIViewController {
     }
     
     func showAlert(alertController: UIAlertController) {
-        func displayNext(){
+        func displayNext() {
             if remainingAlerts.count > 0 {
                 let nextAlert = remainingAlerts.remove(at: 0)
                 self.showAlert(alertController: nextAlert)

@@ -136,11 +136,6 @@ class SettingsProvider {
         set { setSettingsForKey(key: .testMode, value: newValue) }
     }
     
-    var autoResolution: Bool? {
-        get { return readSettingsFrom(key: .autoResolution) as? Bool }
-        set { setSettingsForKey(key: .autoResolution, value: newValue) }
-    }
-    
     var suppressMerchantPassword: Bool? {
         get { return readSettingsFrom(key: .suppressMerchantPassword) as? Bool }
         set { setSettingsForKey(key: .suppressMerchantPassword, value: newValue) }

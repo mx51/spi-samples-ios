@@ -108,7 +108,7 @@ extension MainViewController {
             alertVC.addAction(cancelBtn)
         }
         
-        showAlert(alertController: alertVC)
+        present(alertVC, animated: true, completion: nil)
     }
     
     func txAuthCode() {

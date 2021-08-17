@@ -12,6 +12,10 @@ import SPIClient_iOS
 extension MainViewController {
     
     @IBAction func btnPurchaseClicked(_ sender: Any) {
+        initPurchase()
+    }
+    
+    func initPurchase() {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
         RamenApp.current.settings.lastRefId = posRefId
@@ -51,6 +55,10 @@ extension MainViewController {
     }
     
     @IBAction func btnMotoClicked(_ sender: Any) {
+        initMoto()
+    }
+    
+    func initMoto() {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
         RamenApp.current.settings.lastRefId = posRefId
@@ -79,6 +87,10 @@ extension MainViewController {
     }
     
     @IBAction func btnRefundClicked(_ sender: Any) {
+        initRefund()
+    }
+    
+    func initRefund() {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
         RamenApp.current.settings.lastRefId = posRefId
@@ -98,6 +110,10 @@ extension MainViewController {
     }
     
     @IBAction func btnCashOutClicked(_ sender: Any) {
+        initCashOut()
+    }
+    
+    func initCashOut() {
         let posRefId = "launder-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
         
         RamenApp.current.settings.lastRefId = posRefId
@@ -186,7 +202,7 @@ extension MainViewController {
         }        
     }
     
-    @IBAction func reversalTapTapped(_ sender: Any) {
+    @IBAction func reversalTapTapped() {
         guard let refId = RamenApp.current.settings.lastRefId else {
             showAlert(title: "Oops!", message: "You have no saved transactions")
             return

@@ -105,6 +105,7 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE REVERSAL WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "REVERSAL", retryHandler: reversalTapTapped)
             break
         default:
             break
@@ -147,6 +148,7 @@ extension MainViewController {
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# IF YOU CONFIRM THAT THE CUSTOMER PAID, CLOSE THE ORDER."))
             logMessage(String(format: "# OTHERWISE, RETRY THE PAYMENT FROM SCRATCH."))
+            showActionsAlert(transaction: "PURCHASE", retryHandler: initPurchase)
             break
         default:
             break
@@ -183,6 +185,7 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE REFUND WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "REFUND", retryHandler: initRefund)
             break
         default:
             break
@@ -222,6 +225,7 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE CASHOUT WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "CASHOUT", retryHandler: initCashOut)
             break
         default:
             break
@@ -261,6 +265,7 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE MOTO WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "MOTO", retryHandler: initMoto)
             break
         default:
             break
@@ -415,10 +420,10 @@ extension MainViewController {
             lblTerminalId.text = terminalConfigResponse.getTerminalId()
             lblTerminalModel.text = terminalConfigResponse.getTerminalModel()
             
-            showMessage(title: "Terminal Configuration", msg: "Terminal Configuration retrieving successful", type: "INFO", isShow: true)
+            //showMessage(title: "Terminal Configuration", msg: "Terminal Configuration retrieving successful", type: "INFO", isShow: true)
             return
         } else {
-            showMessage(title: "Terminal Configuration", msg: "ERROR: Terminal Configuration retrieving failed", type: "ERROR", isShow: true)
+            //showMessage(title: "Terminal Configuration", msg: "ERROR: Terminal Configuration retrieving failed", type: "ERROR", isShow: true)
         }
     }
     

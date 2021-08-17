@@ -74,7 +74,7 @@ extension MainViewController {
     }
     
     func clear() {
-        if (self.navigationController?.topViewController == self) {
+        if (self.navigationController?.topViewController == self && !isShowingPrompt) {
             self.presentedViewController?.dismiss(animated: false, completion: nil)
         }
     }

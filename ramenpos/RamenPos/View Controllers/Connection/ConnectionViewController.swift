@@ -240,7 +240,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")
                 }))
-            case .DeviceAddressResponseCodeDeviceError:
+            case .DeviceAddressResponseCodeServiceError:
                 txtPosAddress.text = ""
                 alertVC = UIAlertController(title: "Device Address Error", message: "The device service error! \(state.deviceAddressStatus.responseCode)", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in

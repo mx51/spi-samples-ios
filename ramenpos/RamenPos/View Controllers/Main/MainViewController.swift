@@ -170,6 +170,7 @@ class MainViewController: UITableViewController, NotificationListener {
     func showActionsAlert(transaction: String, retryHandler: @escaping () -> Void) {
         let alert = UIAlertController(title: "Actions", message: "WE'RE NOT QUITE SURE WHETHER THE \(transaction) WENT THROUGH OR NOT.\nCHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM.\nYOU CAN THE TAKE THE APPROPRIATE ACTION.", preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+            self.client.cancelTransaction()
             self.isShowingPrompt = false
         })
         let retryAction = UIAlertAction(title: "Retry", style: .default) { _ in

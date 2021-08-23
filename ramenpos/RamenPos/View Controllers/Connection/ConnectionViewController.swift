@@ -11,11 +11,11 @@ import SPIClient_iOS
 
 class ConnectionViewController: UITableViewController, NotificationListener {
     
-    @IBOutlet weak var txtOutput: UITextView!
     @IBOutlet weak var txtTenant: UITextField!
     @IBOutlet weak var txtOtherTenant: UITextField!
     @IBOutlet weak var txtPosId: UITextField!
     @IBOutlet weak var txtPosAddress: UITextField!
+    @IBOutlet weak var txtSerialNumber: UITextField!
     @IBOutlet weak var swchTestModeValue: UISwitch!
     @IBOutlet weak var btnPair: UIButton!
     @IBOutlet weak var btnUnpair: UIButton!
@@ -58,6 +58,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
+        txtSerialNumber.text = RamenApp.current.settings.serialNumber
         swchTestModeValue.isOn = RamenApp.current.settings.testMode ?? false
     }
     
@@ -76,6 +77,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         settings.posId = txtPosId.text
         settings.eftposAddress = txtPosAddress.text
+        settings.serialNumber = txtSerialNumber.text
         settings.encriptionKey = nil
         settings.hmacKey = nil
         
@@ -102,12 +104,10 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return
         }
         
-        
-        RamenApp.current.client.acquirerCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
+        RamenApp.current.client.tenantCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.client.testMode = swchTestModeValue.isOn
         
- 
     }
     
 
@@ -123,6 +123,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             DispatchQueue.main.async {
                 self.addressActivity.stopAnimating()
                 if let address = address {
+                    self.txtPosAddress.text = address
                     self.showAlert(title: "Adress", message:"Resolved IP Address:\(address)")
                 }
                 
@@ -210,7 +211,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         if (state.deviceAddressStatus != nil) {
             switch state.deviceAddressStatus.deviceAddressResponseCode {
             case .DeviceAddressResponseCodeSuccess:
-                txtPosAddress.text = state.deviceAddressStatus.address + ":8080"
+                txtPosAddress.text = state.deviceAddressStatus.address
                 alertVC = UIAlertController(title: "Device Address Status", message: "- Device Address has been updated to \(state.deviceAddressStatus.address ?? "")", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")
@@ -307,16 +308,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         showAlert(title: "Error", message: msg)
     }
     
-    func appendReceipt(_ msg: String?) {
-        SPILogMsg("appendReceipt \(String(describing: msg))")
-        
-        guard let msg = msg, msg.count > 0 else { return }
-        
-        DispatchQueue.main.async {
-            self.txtOutput.text = msg + "\n================\n" + self.txtOutput.text
-        }
-    }
-    
     func areControlsValid(isPairing: Bool) -> Bool {
         if ((txtTenant.text ?? "").isEmpty) {
             showError("Please select a Payment Provider")
@@ -329,7 +320,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
 
         if (isPairing && (txtPosAddress.text ?? "").isEmpty) {
-            showError("Please enable auto address resolution or enter a device address!")
+            showError("Please enter a device address!")
             return false
         }
         
@@ -338,6 +329,10 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return false
         }
         
+        if (!isPairing && (txtSerialNumber.text ?? "").isEmpty) {
+            showError("Please provide a Serial Number")
+            return false
+        }
         
         return true
     }

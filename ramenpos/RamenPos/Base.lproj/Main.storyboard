@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -1419,12 +1420,40 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="OR9-i4-CgX">
+                                        <rect key="frame" x="0.0" y="363.5" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="OR9-i4-CgX" id="nIt-dz-FpZ">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pVO-8c-j63">
+                                                    <rect key="frame" x="148.5" y="7" width="117" height="30"/>
+                                                    <state key="normal" title="Retrieve Address"/>
+                                                    <connections>
+                                                        <action selector="retrieveButtonClicked:" destination="gIy-KG-2PR" eventType="touchUpInside" id="j78-hZ-WLi"/>
+                                                    </connections>
+                                                </button>
+                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="kMm-TR-nEE">
+                                                    <rect key="frame" x="290" y="12" width="20" height="20"/>
+                                                    <color key="color" systemColor="linkColor"/>
+                                                </activityIndicatorView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="pVO-8c-j63" firstAttribute="centerY" secondItem="nIt-dz-FpZ" secondAttribute="centerY" id="4gm-aG-Kta"/>
+                                                <constraint firstItem="kMm-TR-nEE" firstAttribute="leading" secondItem="pVO-8c-j63" secondAttribute="trailing" constant="24.5" id="XsE-gY-eWE"/>
+                                                <constraint firstItem="kMm-TR-nEE" firstAttribute="centerY" secondItem="pVO-8c-j63" secondAttribute="centerY" id="dE2-Qr-eDs"/>
+                                                <constraint firstItem="pVO-8c-j63" firstAttribute="centerX" secondItem="nIt-dz-FpZ" secondAttribute="centerX" id="egY-lC-4NZ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Connection" id="gZU-Ai-arJ" userLabel="Connection">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="51x-vu-aLn">
                                         <rect key="frame" x="0.0" y="413.5" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="457.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="51x-vu-aLn" id="jB1-1j-E9P">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -1446,6 +1475,7 @@
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="d3P-wA-9Gg">
                                         <rect key="frame" x="0.0" y="457.5" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="501.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="d3P-wA-9Gg" id="CJU-6K-EYf">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -1467,6 +1497,7 @@
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="zXt-Pq-24j">
                                         <rect key="frame" x="0.0" y="501.5" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="545.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zXt-Pq-24j" id="O9M-nn-VpJ">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -1497,6 +1528,7 @@
                     <navigationItem key="navigationItem" title="Connection" id="alk-eV-Ewt"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
+                        <outlet property="addressActivity" destination="kMm-TR-nEE" id="oxi-kR-CZR"/>
                         <outlet property="btnCancelPair" destination="3gk-uR-ucO" id="oiZ-U4-cJ9"/>
                         <outlet property="btnPair" destination="6gE-af-Vdz" id="b5Z-aN-moP"/>
                         <outlet property="btnSave" destination="s2W-Vo-I2K" id="5Mc-tM-x97"/>
@@ -1517,6 +1549,9 @@
         <image name="header" width="2560" height="1707"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

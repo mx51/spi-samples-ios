@@ -36,7 +36,6 @@ class RamenApp: NSObject {
         client.posId = settings.posId
 
         client.testMode = settings.testMode ?? false
-        client.autoAddressResolutionEnable = settings.autoResolution ?? false
         client.serialNumber = settings.serialNumber
 
         client.config.signatureFlowOnEftpos = settings.customerSignatureFromEftpos ?? false

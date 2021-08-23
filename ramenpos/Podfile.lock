@@ -22,7 +22,6 @@ CHECKOUT OPTIONS:
   SPIClient-iOS:
     :commit: 202f2c92246e92a35ef54c59f26ae45ef6df8978
     :git: https://github.com/mx51/spi-client-ios.git
-
 SPEC CHECKSUMS:
   RNCryptor-objc: d1b228f9c02e2173df063f0617684c134aed890e
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531

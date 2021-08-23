@@ -21,7 +21,8 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var btnUnpair: UIButton!
     @IBOutlet weak var btnCancelPair: UIButton!
     @IBOutlet weak var btnSave: UIButton!
-
+    @IBOutlet weak var addressActivity: UIActivityIndicatorView!
+    
     var client: SPIClient {
         return RamenApp.current.client
     }
@@ -102,19 +103,37 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
         
         
-        btnSave.isEnabled = false
         RamenApp.current.client.acquirerCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
+        RamenApp.current.settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.client.testMode = swchTestModeValue.isOn
         
-        let alertVC = UIAlertController(title: "Device Address Info", message: "Device Address Service is waiting for response...", preferredStyle: .alert)
-        self.showAlert(alertController: alertVC)
+ 
     }
+    
+
+    @IBAction func retrieveButtonClicked(_ sender: Any) {
+        
+        if client.serialNumber == nil {
+            showAlert(title: "Error", message: "No serial number set!")
+            return
+        }
+        
+        addressActivity.startAnimating()
+        client.getTerminalAddress { address in
+            DispatchQueue.main.async {
+                self.addressActivity.stopAnimating()
+                if let address = address {
+                    self.showAlert(title: "Adress", message:"Resolved IP Address:\(address)")
+                }
+                
+            }
+        }
+    }
+    
     
     @IBAction func swchTestModeValueChanged(_ sender: UISwitch) {
-        RamenApp.current.settings.autoResolution = sender.isOn
         RamenApp.current.settings.testMode = swchTestModeValue.isOn
     }
-    
     
     
     @objc

@@ -289,7 +289,7 @@
 				29B0139C20BAB40C00F93AAF /* Sources */,
 				29B0139D20BAB40C00F93AAF /* Frameworks */,
 				29B0139E20BAB40C00F93AAF /* Resources */,
-				86873279C9BA9EEBC594E823 /* [CP] Embed Pods Frameworks */,
+				245E25DC570D199ADB1E61B5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -409,7 +409,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		7D69F218B1677C1A89B02656 /* [CP] Check Pods Manifest.lock */ = {
+		245E25DC570D199ADB1E61B5 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -677,7 +677,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 6T5VWZNL33;
 				INFOPLIST_FILE = RamenPos/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -703,7 +703,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_TEAM = 6T5VWZNL33;
 				INFOPLIST_FILE = RamenPos/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

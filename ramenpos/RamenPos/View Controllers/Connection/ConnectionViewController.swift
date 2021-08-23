@@ -103,14 +103,11 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
         
         
-        //btnSave.isEnabled = false
         RamenApp.current.client.acquirerCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.client.testMode = swchTestModeValue.isOn
         
-    
-//        let alertVC = UIAlertController(title: "Device Address Info", message: "Device Address Service is waiting for response...", preferredStyle: .alert)
-//        self.showAlert(alertController: alertVC)
+ 
     }
     
     @IBAction func retrieveButtonClicked(_ sender: Any) {

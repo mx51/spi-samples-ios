@@ -16,14 +16,13 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var txtOtherTenant: UITextField!
     @IBOutlet weak var txtPosId: UITextField!
     @IBOutlet weak var txtPosAddress: UITextField!
-    @IBOutlet weak var txtSerialNumber: UITextField!
     @IBOutlet weak var swchTestModeValue: UISwitch!
-    @IBOutlet weak var swchAutoResolution: UISwitch!
     @IBOutlet weak var btnPair: UIButton!
     @IBOutlet weak var btnUnpair: UIButton!
     @IBOutlet weak var btnCancelPair: UIButton!
     @IBOutlet weak var btnSave: UIButton!
-
+    @IBOutlet weak var addressActivity: UIActivityIndicatorView!
+    
     var client: SPIClient {
         return RamenApp.current.client
     }
@@ -59,8 +58,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
 
         txtPosId.text = RamenApp.current.settings.posId
         txtPosAddress.text = RamenApp.current.settings.eftposAddress
-        txtSerialNumber.text = RamenApp.current.settings.serialNumber
-        swchAutoResolution.isOn = RamenApp.current.settings.autoResolution ?? false
         swchTestModeValue.isOn = RamenApp.current.settings.testMode ?? false
     }
     
@@ -75,16 +72,13 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         }
         
         let settings = RamenApp.current.settings
-        settings.autoResolution = swchAutoResolution.isOn
         settings.testMode = swchTestModeValue.isOn
         settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         settings.posId = txtPosId.text
         settings.eftposAddress = txtPosAddress.text
-        settings.serialNumber = txtSerialNumber.text
         settings.encriptionKey = nil
         settings.hmacKey = nil
         
-        client.autoAddressResolutionEnable = swchAutoResolution.isOn
         client.posId = txtPosId.text
         client.eftposAddress = txtPosAddress.text
         client.pair()
@@ -108,42 +102,39 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return
         }
         
-        if (isUnnpaired && swchAutoResolution.isOn) {
-            client.posId = ""
-            client.eftposAddress = ""
-            client.serialNumber = ""
-            isUnnpaired = false
+        
+        RamenApp.current.client.acquirerCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
+        RamenApp.current.settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
+        RamenApp.current.client.testMode = swchTestModeValue.isOn
+        
+ 
+    }
+    
+    @IBAction func retrieveButtonClicked(_ sender: Any) {
+        
+        if client.serialNumber == nil {
+            showAlert(title: "Error", message: "No serial number set!")
+            return
         }
         
-        btnSave.isEnabled = false
-        RamenApp.current.client.acquirerCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
-        RamenApp.current.client.testMode = swchTestModeValue.isOn
-        RamenApp.current.client.autoAddressResolutionEnable = swchAutoResolution.isOn
-        RamenApp.current.client.serialNumber = txtSerialNumber.text
-        
-        let alertVC = UIAlertController(title: "Device Address Info", message: "Device Address Service is waiting for response...", preferredStyle: .alert)
-        self.showAlert(alertController: alertVC)
+        addressActivity.startAnimating()
+        client.getTerminalAddress { address in
+            DispatchQueue.main.async {
+                self.addressActivity.stopAnimating()
+                if let address = address {
+                    self.showAlert(title: "Adress", message:"Resolved IP Address:\(address)")
+                }
+                
+            }
+        }
     }
+    
     
     @IBAction func swchTestModeValueChanged(_ sender: UISwitch) {
-        RamenApp.current.settings.autoResolution = sender.isOn
         RamenApp.current.settings.testMode = swchTestModeValue.isOn
     }
     
-    @IBAction func swchAutoResolutionValueChanged(_ sender: UISwitch) {
-        if (!sender.isOn) {
-            swchTestModeValue.isOn = false
-            swchTestModeValue.isEnabled = false
-            btnSave.isEnabled = false
-        } else {
-            swchTestModeValue.isOn = true
-            swchTestModeValue.isEnabled = true
-            btnSave.isEnabled = true
-        }
-        
-        RamenApp.current.settings.autoResolution = sender.isOn
-        RamenApp.current.settings.testMode = swchTestModeValue.isOn
-    }
+    
     
     @objc
     func onNotificationArrived(notification: NSNotification) {
@@ -347,10 +338,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
             return false
         }
         
-        if (!isPairing && RamenApp.current.settings.autoResolution! && (txtSerialNumber.text ?? "").isEmpty) {
-            showError("Please provide a Serial Number")
-            return false
-        }
         
         return true
     }

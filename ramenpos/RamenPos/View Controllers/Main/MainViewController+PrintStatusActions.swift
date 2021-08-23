@@ -420,10 +420,7 @@ extension MainViewController {
             lblTerminalId.text = terminalConfigResponse.getTerminalId()
             lblTerminalModel.text = terminalConfigResponse.getTerminalModel()
             
-            //showMessage(title: "Terminal Configuration", msg: "Terminal Configuration retrieving successful", type: "INFO", isShow: true)
             return
-        } else {
-            //showMessage(title: "Terminal Configuration", msg: "ERROR: Terminal Configuration retrieving failed", type: "ERROR", isShow: true)
         }
     }
     

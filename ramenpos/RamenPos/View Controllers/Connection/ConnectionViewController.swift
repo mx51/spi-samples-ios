@@ -110,6 +110,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
  
     }
     
+
     @IBAction func retrieveButtonClicked(_ sender: Any) {
         
         if client.serialNumber == nil {
@@ -133,7 +134,6 @@ class ConnectionViewController: UITableViewController, NotificationListener {
     @IBAction func swchTestModeValueChanged(_ sender: UISwitch) {
         RamenApp.current.settings.testMode = swchTestModeValue.isOn
     }
-    
     
     
     @objc
@@ -210,7 +210,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         if (state.deviceAddressStatus != nil) {
             switch state.deviceAddressStatus.deviceAddressResponseCode {
             case .DeviceAddressResponseCodeSuccess:
-                txtPosAddress.text = state.deviceAddressStatus.address
+                txtPosAddress.text = state.deviceAddressStatus.address + ":8080"
                 alertVC = UIAlertController(title: "Device Address Status", message: "- Device Address has been updated to \(state.deviceAddressStatus.address ?? "")", preferredStyle: .alert)
                 alertVC.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                     SPILogMsg("# [ok] ")

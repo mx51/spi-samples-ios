@@ -1209,7 +1209,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zma-o9-cJr" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer numberOfTapsRequired="4" id="LBQ-cv-q87">
                     <connections>
-                        <action selector="reversalTapTapped:" destination="VF5-9E-4jW" id="SwF-Sf-Vya"/>
+                        <action selector="reversalTapTapped" destination="VF5-9E-4jW" id="Ch0-oi-79Z"/>
                     </connections>
                 </tapGestureRecognizer>
             </objects>

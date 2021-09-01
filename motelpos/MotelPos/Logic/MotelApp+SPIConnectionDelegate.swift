@@ -60,5 +60,9 @@ extension MotelApp: SPIDelegate {
         // Let's show the user what options he has at this stage.
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: AppEvent.transactionFlowStateChanged.rawValue), object: state)
     }
+    
+    func spi(_ spi: SPIClient, deviceAddressChanged state: SPIState) {
+        SPILogMsg("deviceAddressChanged \(state)")
+    }
 
 }

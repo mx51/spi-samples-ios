@@ -30,6 +30,7 @@ class SettingsProvider {
         case serialNumber
         case tenant
         case tenantList
+        case lastRefId
     }
     
     private var defaultTenants = [
@@ -60,6 +61,11 @@ class SettingsProvider {
         }
     }
 
+    var lastRefId: String? {
+        get { return readSettingsFrom(key: .lastRefId) as? String }
+        set { setSettingsForKey(key: .lastRefId, value: newValue) }
+    }
+    
     var apiKey: String? {
         get { return readSettingsFrom(key: .apiKey) as? String }
         set { setSettingsForKey(key: .apiKey, value: newValue) }
@@ -128,11 +134,6 @@ class SettingsProvider {
     var testMode: Bool? {
         get { return readSettingsFrom(key: .testMode) as? Bool }
         set { setSettingsForKey(key: .testMode, value: newValue) }
-    }
-    
-    var autoResolution: Bool? {
-        get { return readSettingsFrom(key: .autoResolution) as? Bool }
-        set { setSettingsForKey(key: .autoResolution, value: newValue) }
     }
     
     var suppressMerchantPassword: Bool? {

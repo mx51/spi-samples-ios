@@ -12,7 +12,13 @@ import SPIClient_iOS
 extension MainViewController {
     
     @IBAction func btnPurchaseClicked(_ sender: Any) {
+        initPurchase()
+    }
+    
+    func initPurchase() {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        RamenApp.current.settings.lastRefId = posRefId
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
         var tipAmount = 0
@@ -49,7 +55,14 @@ extension MainViewController {
     }
     
     @IBAction func btnMotoClicked(_ sender: Any) {
+        initMoto()
+    }
+    
+    func initMoto() {
         let posRefId = "ramen-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        RamenApp.current.settings.lastRefId = posRefId
+        
         let suppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
@@ -74,7 +87,14 @@ extension MainViewController {
     }
     
     @IBAction func btnRefundClicked(_ sender: Any) {
+        initRefund()
+    }
+    
+    func initRefund() {
         let posRefId = "yuck-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        RamenApp.current.settings.lastRefId = posRefId
+        
         let suppressMerchantPassword =  RamenApp.current.settings.suppressMerchantPassword ?? false
         
         guard let amount = Int(txtTransactionAmount.text ?? ""), amount > 0 else { return }
@@ -90,7 +110,14 @@ extension MainViewController {
     }
     
     @IBAction func btnCashOutClicked(_ sender: Any) {
+        initCashOut()
+    }
+    
+    func initCashOut() {
         let posRefId = "launder-" + Date().toString(format: "dd-MM-yyyy-HH-mm-ss")
+        
+        RamenApp.current.settings.lastRefId = posRefId
+        
         var surchargeAmount = 0
         
         if segmentExtraAmount.selectedSegmentIndex > 0, let extraAmount = Int(txtExtraAmount.text ?? "") {
@@ -130,8 +157,17 @@ extension MainViewController {
         client.initiateSettlementEnquiry(id, options: options, completion: printResult)
     }
     
-    @IBAction func btnLastTransactionClicked(_ sender: Any) {
-        client.initiateGetLastTx(completion: printResult)
+    @IBAction func btnGetTransactionClicked(_ sender: Any) {
+        var referenceId: String
+        if let id = txtReferenceId.text, id != "" {
+            referenceId = id
+        } else if let id = RamenApp.current.settings.lastRefId {
+            referenceId = id
+        } else {
+            return
+        }
+        
+        client.initiateGetTx(withPosRefID: referenceId, completion: printResult)
     }
     
     @IBAction func btnRecoverClicked(_ sender: UIButton) {
@@ -164,6 +200,15 @@ extension MainViewController {
             showMessage(title: "Print Receipt", msg: "Please fill the parameters", type: "INFO", isShow: true)
             return
         }        
+    }
+    
+    @IBAction func reversalTapTapped() {
+        guard let refId = RamenApp.current.settings.lastRefId else {
+            showAlert(title: "Oops!", message: "You have no saved transactions")
+            return
+        }
+        
+        client.initiateReversal(refId, completion: printResult)
     }
     
     func sanitizePrintText(_ text: String?) -> String? {

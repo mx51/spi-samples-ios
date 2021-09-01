@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Amir Kamali on 30/5/18.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 #import "SPICashout.h"
@@ -11,10 +11,16 @@
 
 @implementation SPICashoutOnlyRequest : NSObject
 
-- (instancetype)initWithAmountCents:(NSInteger)amountCents posRefId:(NSString *)posRefId {
-    _config = [[SPIConfig alloc] init];
-    _cashoutAmount = amountCents;
-    _posRefId = posRefId;
+- (instancetype)initWithAmountCents:(NSInteger)amountCents
+                           posRefId:(NSString *)posRefId {
+    self = [super init];
+    
+    if (self) {
+        _config = [[SPIConfig alloc] init];
+        _cashoutAmount = amountCents;
+        _posRefId = posRefId;
+    }
+    
     return self;
 }
 
@@ -22,7 +28,9 @@
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     [data setValue:_posRefId forKey:@"pos_ref_id"];
     [data setValue:[NSNumber numberWithInteger:_cashoutAmount] forKey:@"cash_amount"];
-    [_config addReceiptConfig:data];
+    [data setValue:[NSNumber numberWithInteger:_surchargeAmount] forKey:@"surcharge_amount"];
+    [_config addReceiptConfig:data enabledPromptForCustomerCopyOnEftpos:true enabledSignatureFlowOnEftpos:true enabledPrintMerchantCopy:true];
+    [_options addOptions:data];
     
     return [[SPIMessage alloc] initWithMessageId:[SPIRequestIdHelper idForString:@"cshout"]
                                        eventName:SPICashoutOnlyRequestKey
@@ -114,6 +122,10 @@
 
 - (BOOL)wasCustomerReceiptPrinted {
     return [_message getDataBoolValue:@"customer_receipt_printed" defaultIfNotFound:false];
+}
+
+- (NSInteger)getSurchargeAmount {
+    return [self.message getDataIntegerValue:@"surcharge_amount"];
 }
 
 - (NSString *)getResponseValue:(NSString *)attribute {

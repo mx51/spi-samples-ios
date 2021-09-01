@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2018-01-15.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 #import "NSObject+Util.h"

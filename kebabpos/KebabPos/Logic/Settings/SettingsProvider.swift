@@ -11,6 +11,7 @@ import Foundation
 class SettingsProvider {
     
     enum SettingKeys: String {
+        case lastRefId
         case posId
         case eftposAddress
         case encriptionKey
@@ -45,6 +46,11 @@ class SettingsProvider {
     var encriptionKey: String? {
         get { return readSettingsFrom(key: .encriptionKey) as? String }
         set { setSettingsForKey(key: .encriptionKey, value: newValue) }
+    }
+    
+    var lastRefId: String? {
+        get { return readSettingsFrom(key: .lastRefId) as? String }
+        set { setSettingsForKey(key: .lastRefId, value: newValue) }
     }
     
     var posId: String? {

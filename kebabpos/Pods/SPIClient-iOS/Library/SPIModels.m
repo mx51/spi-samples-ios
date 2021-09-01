@@ -3,7 +3,7 @@
 //  SPIClient-iOS
 //
 //  Created by Yoo-Jin Lee on 2018-01-13.
-//  Copyright © 2018 Assembly Payments. All rights reserved.
+//  Copyright © 2018 mx51. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -115,6 +115,9 @@
             
         case SPITransactionTypeAccountVerify:
             return @"Account Verify";
+            
+        case SPITransactionTypeReversal:
+            return @"Reversal";
     }
 }
 
@@ -140,9 +143,10 @@
     self.displayMessage = msg;
 }
 
-- (void)callingGlt {
+- (void)callingGlt:(NSString *)gltRequestId {
     self.isAwaitingGltResponse = YES;
     self.lastStateRequestTime = [NSDate date];
+    self.lastGltRequestId = gltRequestId;
 }
 
 - (void)gotGltResponse {
@@ -211,6 +215,8 @@
     state.cancelAttemptTime = self.cancelAttemptTime;
     state.request = self.request;
     state.isAwaitingGltResponse = self.isAwaitingGltResponse;
+    state.gltResponsePosRefId = self.gltResponsePosRefId;
+    state.lastGltRequestId = self.lastGltRequestId;
     
     return state;
 }
@@ -254,6 +260,7 @@
     state.flow = self.flow;
     state.pairingFlowState = self.pairingFlowState.copy;
     state.txFlowState = self.txFlowState.copy;
+    state.deviceAddressStatus = self.deviceAddressStatus.copy;
     return state;
 }
 
@@ -265,14 +272,17 @@
 
 @implementation SPIConfig
 
-- (void)addReceiptConfig:(NSMutableDictionary *)data {
-    if (_promptForCustomerCopyOnEftpos) {
+- (void)addReceiptConfig:(NSMutableDictionary *)data
+enabledPromptForCustomerCopyOnEftpos:(BOOL)enabledPromptForCustomerCopyOnEftpos
+ enabledSignatureFlowOnEftpos:(BOOL)enabledSignatureFlowOnEftpos
+     enabledPrintMerchantCopy:(BOOL)enabledPrintMerchantCopy{
+    if (_promptForCustomerCopyOnEftpos && enabledPromptForCustomerCopyOnEftpos) {
         [data setObject:[NSNumber numberWithBool:_promptForCustomerCopyOnEftpos] forKey:@"prompt_for_customer_copy"];
     }
-    if (_signatureFlowOnEftpos) {
+    if (_signatureFlowOnEftpos && enabledSignatureFlowOnEftpos) {
         [data setObject:[NSNumber numberWithBool:_signatureFlowOnEftpos] forKey:@"print_for_signature_required_transactions"];
     }
-    if (_printMerchantCopy) {
+    if (_printMerchantCopy && enabledPrintMerchantCopy) {
         [data setObject:[NSNumber numberWithBool:_printMerchantCopy] forKey:@"print_merchant_copy"];
     }
 }

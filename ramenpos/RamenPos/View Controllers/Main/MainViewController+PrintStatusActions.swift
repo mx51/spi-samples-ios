@@ -73,16 +73,39 @@ extension MainViewController {
                 case .settleEnquiry:
                     handleFinishedSettlementEnquiry(txState: txState)
                     break
-                    
                 case .getLastTransaction:
                     handleFinishedGetLastTransaction(txState: txState)
                     break
+                case .getTransaction:
+                    handleFinishedGetLastTransaction(txState: txState)
+                    break
+                case .reversal:
+                    handleFinishedReversal(txState: txState)
                 default:
                     logMessage(String(format: "# CAN'T HANDLE TX TYPE: {txState.Type}"))
                     break
                 }
             }
         case .idle:
+            break
+        default:
+            break
+        }
+    }
+    
+    func handleFinishedReversal(txState: SPITransactionFlowState) {
+        switch (txState.successState) {
+        case .success:
+            logMessage(String(format: "# NOICE - TRANSACTION REVERSED!"))
+        case .failed:
+            logMessage(String(format: "# WE DID NOT GET OUR MONEY BACK :("))
+            logMessage(String(format: "# Error: %@", txState.response.error))
+            logMessage(String(format: "# Error detail: %@", txState.response.errorDetail))
+        case .unknown:
+            logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE REVERSAL WENT THROUGH OR NOT :/"))
+            logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
+            logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "REVERSAL", retryHandler: reversalTapTapped)
             break
         default:
             break
@@ -125,6 +148,7 @@ extension MainViewController {
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# IF YOU CONFIRM THAT THE CUSTOMER PAID, CLOSE THE ORDER."))
             logMessage(String(format: "# OTHERWISE, RETRY THE PAYMENT FROM SCRATCH."))
+            showActionsAlert(transaction: "PURCHASE", retryHandler: initPurchase)
             break
         default:
             break
@@ -161,6 +185,7 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE REFUND WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "REFUND", retryHandler: initRefund)
             break
         default:
             break
@@ -200,6 +225,7 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE CASHOUT WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "CASHOUT", retryHandler: initCashOut)
             break
         default:
             break
@@ -239,6 +265,7 @@ extension MainViewController {
             logMessage(String(format: "# WE'RE NOT QUITE SURE WHETHER THE MOTO WENT THROUGH OR NOT :/"))
             logMessage(String(format: "# CHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM."))
             logMessage(String(format: "# YOU CAN THE TAKE THE APPROPRIATE ACTION."))
+            showActionsAlert(transaction: "MOTO", retryHandler: initMoto)
             break
         default:
             break
@@ -247,18 +274,6 @@ extension MainViewController {
     
     func handleFinishedGetLastTransaction(txState: SPITransactionFlowState) {
         if (txState.response != nil) {
-            let gltResponse = SPIGetLastTransactionResponse(message: txState.response)
-            
-            if (txtReferenceId.text != "") {
-                // User specified that he intended to retrieve a specific tx by pos_ref_id
-                // This is how you can use a handy function to match it.
-                let success = client.gltMatch(gltResponse, posRefId: txtReferenceId.text)
-                if (success == .unknown) {
-                    logMessage(String(format: "# Did not retrieve expected transaction. Here is what we got:"))
-                } else {
-                    logMessage(String(format: "# Tx matched expected purchase request."))
-                }
-            }
             
             if let purchaseResponse = SPIPurchaseResponse(message: txState.response) {
                 logMessage(String(format: "# Scheme: %@", purchaseResponse.schemeName))
@@ -268,6 +283,7 @@ extension MainViewController {
                 logMessage(String(format: "# Customer receipt:"))
                 logMessage(purchaseResponse.getCustomerReceipt())
             }
+            
         } else {
             // We did not even get a response, like in the case of a time-out.
             logMessage(String(format: "# Could not retrieve last transaction."))
@@ -404,10 +420,7 @@ extension MainViewController {
             lblTerminalId.text = terminalConfigResponse.getTerminalId()
             lblTerminalModel.text = terminalConfigResponse.getTerminalModel()
             
-            showMessage(title: "Terminal Configuration", msg: "Terminal Configuration retrieving successful", type: "INFO", isShow: true)
             return
-        } else {
-            showMessage(title: "Terminal Configuration", msg: "ERROR: Terminal Configuration retrieving failed", type: "ERROR", isShow: true)
         }
     }
     
@@ -419,5 +432,15 @@ extension MainViewController {
         } else {
             lblBatteryLevel.textColor = UIColor.red
         }
+    }
+    
+    func handleUpdateMessageReceived(message: SPIMessage) {
+        guard let updateMessage: SPIUpdateMessage = SPIUpdateMessage(message: message) else { return }
+        
+        let textMessage = """
+            ID    : \(updateMessage.posRefId ?? "")
+            Status: \(updateMessage.displayMessageText ?? "")
+        """
+        showAlert(title: "Status update", message: textMessage)
     }
 }

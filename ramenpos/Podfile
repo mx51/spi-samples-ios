@@ -6,7 +6,7 @@ target 'RamenPos' do
     use_frameworks!
     
     # Pods for RamenPos
-    pod 'SPIClient-iOS', '~> 2.6.6'
+    pod 'SPIClient-iOS', :git => 'https://github.com/mx51/spi-client-ios.git', :branch => 'feature/2.9'
     
     target 'RamenPosTests' do
         inherit! :search_paths
@@ -16,6 +16,12 @@ target 'RamenPos' do
     target 'RamenPosUITests' do
         inherit! :search_paths
         # Pods for testing
+    end
+    post_install do |installer|
+            installer.pods_project.build_configurations.each do |config|
+                config.build_settings['CODE_SIGNING_REQUIRED'] = "NO"
+                config.build_settings['CODE_SIGNING_ALLOWED'] = "NO"
+            end
     end
     
 end

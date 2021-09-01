@@ -69,6 +69,8 @@ extension SPITransactionType {
             return "Pre Auth"
         case .accountVerify:
             return "Account Verify"
+        case .reversal:
+            return "Reversal"
         }
     }
 }

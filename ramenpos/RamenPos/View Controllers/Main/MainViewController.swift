@@ -42,6 +42,8 @@ class MainViewController: UITableViewController, NotificationListener {
     @IBOutlet weak var lblTerminalModel: UILabel!
     @IBOutlet weak var swchSuppressMerchantPassword: UISwitch!
     
+    var isShowingPrompt = false
+    
     let indexPath_extraAmount = IndexPath(row: 2, section: 3)
     
     var client: SPIClient {
@@ -143,6 +145,11 @@ class MainViewController: UITableViewController, NotificationListener {
             DispatchQueue.main.async {
                 self.handleBatteryLevelChanged(message: message)
             }
+        case AppEvent.updateMessageReceived.rawValue:
+            guard let message = notification.object as? SPIMessage else { return }
+            DispatchQueue.main.async {
+                self.handleUpdateMessageReceived(message: message)
+            }
         default:
             break
         }
@@ -158,6 +165,27 @@ class MainViewController: UITableViewController, NotificationListener {
     func showError(_ msg: String, completion: (() -> Void)? = nil) {
         SPILogMsg("\r\nERROR: \(msg)")
         showAlert(title: "Error", message: msg)
+    }
+    
+    func showActionsAlert(transaction: String, retryHandler: @escaping () -> Void) {
+        let alert = UIAlertController(title: "Actions", message: "WE'RE NOT QUITE SURE WHETHER THE \(transaction) WENT THROUGH OR NOT.\nCHECK THE LAST TRANSACTION ON THE EFTPOS ITSELF FROM THE APPROPRIATE MENU ITEM.\nYOU CAN THE TAKE THE APPROPRIATE ACTION.", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+            self.client.cancelTransaction()
+            self.isShowingPrompt = false
+        })
+        let retryAction = UIAlertAction(title: "Retry", style: .default) { _ in
+            retryHandler()
+            self.isShowingPrompt = false
+        }
+        let overrideAction = UIAlertAction(title: "Override as paid", style: .default) { _ in
+            self.logMessage("# \(transaction) SUCCESSFUL")
+            self.isShowingPrompt = false
+        }
+        alert.addAction(retryAction)
+        alert.addAction(overrideAction)
+        alert.addAction(cancelAction)
+        isShowingPrompt = true
+        showAlert(alertController: alert)
     }
     
 }

@@ -107,6 +107,7 @@ class ConnectionViewController: UITableViewController, NotificationListener {
         RamenApp.current.client.tenantCode = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.settings.tenant = txtTenant.text != "Other" ? getTenantCode(tenantName: txtTenant.text!) : txtOtherTenant.text
         RamenApp.current.client.testMode = swchTestModeValue.isOn
+        RamenApp.current.client.serialNumber = txtSerialNumber.text
         
     }
     

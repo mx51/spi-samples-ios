@@ -1,12 +1,12 @@
 PODS:
   - RNCryptor-objc (3.0.6)
   - SocketRocket (0.5.1)
-  - SPIClient-iOS (2.9.1):
+  - SPIClient-iOS (2.9.3):
     - RNCryptor-objc
     - SocketRocket
 
 DEPENDENCIES:
-  - SPIClient-iOS (~> 2.9.1)
+  - SPIClient-iOS (~> 2.9.3)
 
 SPEC REPOS:
   trunk:
@@ -17,8 +17,8 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   RNCryptor-objc: d1b228f9c02e2173df063f0617684c134aed890e
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
-  SPIClient-iOS: c6c3ef701c56d61970dff7b7a49ed3609de4dc18
+  SPIClient-iOS: 67d2e0b6864cb30f80a055ad548e98c714c46fb0
 
-PODFILE CHECKSUM: 076fba70707f373a222299e7f66255a9e0b5d0e1
+PODFILE CHECKSUM: beaadc2d2ac8e2c09775b37fe310fae4fe5ce023
 
 COCOAPODS: 1.11.3

@@ -6,7 +6,7 @@ target 'RamenPos' do
     use_frameworks!
     
     # Pods for RamenPos
-    pod 'SPIClient-iOS', '~> 2.9.1'
+    pod 'SPIClient-iOS', '~> 2.9.3'
     # pod 'SPIClient-iOS', :git => 'https://github.com/mx51/spi-client-ios.git', :branch => 'feature/2.9.1'
 
     

@@ -40,7 +40,7 @@ stages:
         # certPwd: $(P12Password)
     - task: InstallAppleProvisioningProfile@1
       inputs:
-        provProfileSecureFile: 'RamenPOS_prov.mobileprovision'
+        provProfileSecureFile: 'RamenPOS.mobileprovision'
     - task: ExtractVersionFromTag@1
       inputs:
         projectFolderPath: ./ramenpos

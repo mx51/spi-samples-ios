@@ -37,7 +37,7 @@ stages:
     - task: InstallAppleCertificate@2
       inputs:
         certSecureFile: 'ramen-dist-cert.p12'
-        certPwd: $(P12Password)
+        # certPwd: $(P12Password)
     - task: InstallAppleProvisioningProfile@1
       inputs:
         provProfileSecureFile: 'RamenPOS_prov.mobileprovision'

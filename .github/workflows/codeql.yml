@@ -1,0 +1,16 @@
+name: "CodeQL"
+
+on:
+  schedule:
+    - cron: '30 22 * * 4'
+  workflow_dispatch:
+
+jobs:
+  run-security-scan:
+    uses: mx51/github-security-automation/.github/workflows/codeql.yml@main
+    # Uncomment and modify the lines below ONLY if the repo requires manual compilation
+    # with:
+    #   runner_size: "ubuntu-latest-4core"
+    #   build_command: "./gradlew clean build"
+    secrets: inherit
+    
